@@ -7,99 +7,27 @@
 //
 
 #include <iostream>
+#include "metaLib.hpp"
+#include "Logic.hpp"
 #include "GameWorld.hpp"
-#include "Container.hpp"
-
-struct RenderSystem;
-struct VelocitySystem;
-struct AccSystem;
-
-using Systems = meta::list<RenderSystem, VelocitySystem, AccSystem>;
-using Settings = GameSettings<Systems>;
-
-struct Transform {
-	std::string Name() const { return "Transform"; }
-	int x;
-	int y;
-    
-    Transform() {}
-    Transform(int x, int y) : x(x), y(y) {
-    
-    }
-};
-
-struct Velocity {
-	std::string Name() const { return "Velocity"; }
-	int x;
-	int y;
-};
-
-struct Renderable {
-	std::string Name() const { return "Renderable"; }
-	int imageNo;
-};
-
-struct VelocitySystem : public GameSystem<Transform, Velocity> {
-    void Update(float dt) { std::cout<<"Update from VelocitySystem"<<std::endl; }
-    
-    void ObjectAdded(Handle<GameObject<Settings>> object) {
-        std::cout<<"VelocitySystem ObjectAdded"<<std::endl;
-    }
-    
-    void ObjectRemoved(Handle<GameObject<Settings>> object) {
-        std::cout<<"VelocitySystem ObjectRemoved"<<std::endl;
-    }
-};
-
-struct RenderSystem : public GameSystem<Transform, Renderable> {
-    int index;
-    void Update(float dt) {
-        std::cout<<"Update from RenderSystem"<<std::endl; index++;
-    }
-    
-    void ObjectAdded(Handle<GameObject<Settings>> object) {
-        std::cout<<"RenderSystem ObjectAdded"<<std::endl;
-    }
-    
-    void ObjectRemoved(Handle<GameObject<Settings>> object) {
-        std::cout<<"RenderSystem ObjectRemoved"<<std::endl;
-    }
-};
-
-struct AccSystem : public GameSystem<Velocity, Renderable> {
-    void Update(float dt) { std::cout<<"Update from AccSystem"<<dt<<std::endl; }
-    
-    void ObjectAdded(Handle<GameObject<Settings>> object) {
-        std::cout<<"AccSystem ObjectAdded"<<std::endl;
-    }
-    
-    void ObjectRemoved(Handle<GameObject<Settings>> object) {
-        std::cout<<"AccSystem ObjectRemoved"<<std::endl;
-    }
-};
-
-struct Draggable {
-    bool canDrag;
-    int dragPosition;
-};
 
 int main() {
-    
-    GameWorld<Settings> world;
 
-    using ComponentSystems = meta::as_list<decltype(meta::FindComponentSystems<Systems, Settings::UniqueComponents>{}.Iterate())>;
-    using ComponentSystemsTuple = meta::mp_rename<ComponentSystems, std::tuple>;
+    GameWorld world;
     
-    ComponentSystemsTuple bla {};
-
-    //std::get<0>(bla).
+    {
     
-    auto object = world.CreateObject();
-    object->AddComponent<Transform>();
-    object->AddComponent<Velocity>();
-    object->AddComponent<Renderable>();
     
-    auto copy = object;
+    }
+    
+    Handle<GameObject> object;
+    for(int i=0; i<10; i++) {
+        auto instance = world.CreateObject();
+        instance->AddComponent<Transform>();
+        instance->AddComponent<Velocity>()->x = i+1;
+        instance->AddComponent<Renderable>();
+        if (i==0) object = instance;
+    }
     
     //object->RemoveComponent<Transform>();
     bool hasTransform1 = object->HasComponent<Transform>();
@@ -111,7 +39,12 @@ int main() {
     
     auto& renderSystem = world.GetSystem<RenderSystem>();
     
-    object->RemoveComponent<Velocity>();
+    int vel = object->GetComponent<Velocity>()->x;
+    
+    //object->RemoveComponent<Velocity>();
+    //object->RemoveComponent<Velocity>();
+    
+    object->Remove();
     
     auto trans = object->GetComponent<Transform>();
     if (trans) {

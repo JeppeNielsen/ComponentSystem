@@ -8,14 +8,16 @@
 
 #pragma once
 #include "metaLib.hpp"
+#include "GameSystem.hpp"
 #include <vector>
 #include <bitset>
 #include <array>
 #include "Container.hpp"
 
-
-template<typename Systems>
+template<typename...T>
 struct GameSettings {
+
+    using Systems = meta::list<T...>;
     
     constexpr static size_t NumberOfSystems = Systems{}.size();
     
@@ -49,9 +51,4 @@ struct GameSettings {
         static_assert(meta::find_index<UniqueComponents, Component> {} != meta::npos{}, "Component is not valid");
         return meta::find_index<UniqueComponents, Component> {};
     }
-};
-
-
-struct DefaulSettings {
-    using Settings = GameSettings<meta::list<int, double, float>>;
 };

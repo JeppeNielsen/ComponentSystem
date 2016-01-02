@@ -9,15 +9,22 @@
 #pragma once
 #include "metaLib.hpp"
 #include <vector>
-#include "GameSettings.hpp"
 
-template<typename Settings>
 class GameObject;
+class GameWorld;
+template<typename T>
+class Handle;
 
 template<typename... T>
 class GameSystem {
 public:
     using Components = meta::list<T...>;
+private:
+    using ObjectCollection = std::vector<Handle<GameObject>>;
+    ObjectCollection objects;
+    friend class GameObject;
 protected:
-    using Objects = std::vector<GameObject<DefaulSettings::Settings>>;
+    const ObjectCollection& Objects() {
+        return objects;
+    }
 };

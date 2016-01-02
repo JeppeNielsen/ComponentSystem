@@ -24,9 +24,8 @@ private:
     Container<Object>* container;
     
     friend class Container<Object>;
-
-    Handle() : index(0), version(0), container(0) {}
 public:
+    Handle() : index(0), version(0), container(0) {}
     Handle(const Handle<Object>& handle) : container(handle.container), index(handle.index), version(handle.version) {}
 
     Object* operator->() {
@@ -41,10 +40,6 @@ public:
     bool IsValid() {
         if (!container) return false;
         return version == container->Version(index);
-    }
-    
-    static Handle<Object> Empty() {
-        return Handle();
     }
 };
 
@@ -78,6 +73,7 @@ public:
             std::swap(objectDatas[h.index], objectDatas[size]);
             h.index = size;
             ++h.version;
+            handleDatas[size].index = index;
         }
     }
     

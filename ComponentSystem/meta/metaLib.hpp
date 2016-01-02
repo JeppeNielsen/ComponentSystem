@@ -173,10 +173,14 @@ struct FindComponentSystems<Systems, meta::list<TOther, Ts...>>
 };
 
 
+template<typename TFirst, typename...T>
+struct ReturnType {
+    using t = TFirst;
+    using type = ReturnType<TFirst, T...>;
+};
 
-
-
-
+template<typename... T>
+using ReturnContainedType = typename ReturnType<T...>::t;
 
 }
 

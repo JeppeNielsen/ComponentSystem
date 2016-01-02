@@ -6,6 +6,12 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		72961DF21C36F9E9006B3FBC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961DF11C36F9E9006B3FBC /* main.cpp */; };
+		72961DF51C373BF7006B3FBC /* Logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961DF41C373BF7006B3FBC /* Logic.cpp */; };
+		72961E061C373CDD006B3FBC /* GameWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961E051C373CDD006B3FBC /* GameWorld.cpp */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		72E26FA81C3072340035E270 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -19,14 +25,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		72961DF11C36F9E9006B3FBC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		72961DF31C372F45006B3FBC /* Logic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Logic.hpp; sourceTree = "<group>"; };
+		72961DF41C373BF7006B3FBC /* Logic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logic.cpp; sourceTree = "<group>"; };
+		72961E051C373CDD006B3FBC /* GameWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameWorld.cpp; sourceTree = "<group>"; };
 		72E26FAA1C3072340035E270 /* ComponentSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ComponentSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 		72E26FB51C3072C00035E270 /* meta.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = meta.hpp; sourceTree = "<group>"; };
 		72E26FB61C3072C00035E270 /* meta_fwd.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = meta_fwd.hpp; sourceTree = "<group>"; };
 		72E26FB81C30738E0035E270 /* GameSettings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSettings.hpp; sourceTree = "<group>"; };
-		72E26FBC1C30747C0035E270 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		72E26FBE1C30762F0035E270 /* metaLib.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metaLib.hpp; sourceTree = "<group>"; };
 		72E26FBF1C3078830035E270 /* GameWorld.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameWorld.hpp; sourceTree = "<group>"; };
-		72E26FC01C3078FA0035E270 /* GameObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GameObject.hpp; sourceTree = "<group>"; };
 		72E26FC41C308E9A0035E270 /* GameSystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSystem.hpp; sourceTree = "<group>"; };
 		72E26FC71C32D83C0035E270 /* Container.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Container.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,13 +69,15 @@
 		72E26FAC1C3072340035E270 /* ComponentSystem */ = {
 			isa = PBXGroup;
 			children = (
-				72E26FB41C3072C00035E270 /* meta */,
-				72E26FBC1C30747C0035E270 /* main.cpp */,
-				72E26FB81C30738E0035E270 /* GameSettings.hpp */,
-				72E26FBF1C3078830035E270 /* GameWorld.hpp */,
-				72E26FC01C3078FA0035E270 /* GameObject.hpp */,
-				72E26FC41C308E9A0035E270 /* GameSystem.hpp */,
 				72E26FC71C32D83C0035E270 /* Container.hpp */,
+				72E26FB81C30738E0035E270 /* GameSettings.hpp */,
+				72E26FC41C308E9A0035E270 /* GameSystem.hpp */,
+				72961E051C373CDD006B3FBC /* GameWorld.cpp */,
+				72E26FBF1C3078830035E270 /* GameWorld.hpp */,
+				72961DF41C373BF7006B3FBC /* Logic.cpp */,
+				72961DF31C372F45006B3FBC /* Logic.hpp */,
+				72961DF11C36F9E9006B3FBC /* main.cpp */,
+				72E26FB41C3072C00035E270 /* meta */,
 			);
 			path = ComponentSystem;
 			sourceTree = "<group>";
@@ -138,6 +148,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72961DF51C373BF7006B3FBC /* Logic.cpp in Sources */,
+				72961DF21C36F9E9006B3FBC /* main.cpp in Sources */,
+				72961E061C373CDD006B3FBC /* GameWorld.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
