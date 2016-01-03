@@ -18,15 +18,10 @@ int main() {
     
     Timer timer;
     
-    {
-    
-    
-    }
-    
     timer.Begin();
     
-    Handle<GameObject> object;
-    for(int i=0; i<1000; i++) {
+    GameObject* object;
+    for(int i=0; i<1000000; i++) {
         auto instance = world.CreateObject();
         instance->AddComponent<Transform>();
         instance->AddComponent<Velocity>()->x = i+1;
@@ -34,30 +29,18 @@ int main() {
         if (i==0) object = instance;
     }
     
-    //object->RemoveComponent<Transform>();
-    bool hasTransform1 = object->HasComponent<Transform>();
-    
     world.Update(1);
+    std::cout<<world.ObjectCount()<<std::endl;
     
-    //object->RemoveComponent<Transform>();
-    world.Update(1);
-    
-    auto& renderSystem = world.GetSystem<RenderSystem>();
-    
-    
-    world.Update(0.1f);
     
     double time = timer.End();
-    
     std::cout <<" Time = "<< time <<std::endl;
     
     timer.Begin();
-    
-    for (int i=0; i<30000; ++i) {
+    for (int i=0; i<100; ++i) {
         world.Update(1);
     }
     time = timer.End();
-    
     std::cout <<" Time2 = "<< time <<std::endl;
     
     

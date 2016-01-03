@@ -11,81 +11,37 @@
 #include <assert.h>
 
 template<typename Object>
-class Container;
-
-template<typename Object>
-class Handle {
-private:
-    Handle(Container<Object>* container, int index, int version)
-    : container(container), index(index), version(version) {}
-
-    int index;
-    int version;
-    Container<Object>* container;
-    
-    friend class Container<Object>;
-public:
-    Handle() : index(0), version(0), container(0) {}
-    Handle(const Handle<Object>& handle) : container(handle.container), index(handle.index), version(handle.version) {}
-
-    Object* operator->() {
-        if (!IsValid()) return 0;
-        return container->GetObject(index);
-    }
-    
-    explicit operator bool() {
-        return operator->();
-    }
-    
-    bool IsValid() {
-        if (!container) return false;
-        return version == container->Version(index);
-    }
-};
-
-template<typename Object>
 class Container {
 public:
     friend Object;
-
-    int CreateObject() {
+    
+    struct ObjectInstance {
+        Object object;
+        int references;
+        
+        friend Object;
+    };
+    
+    ObjectInstance* CreateObject() {
         TryGrow();
-        int freeIndex = size++;
-        auto& d = objectDatas[freeIndex];
-        ++d.references;
-        return d.handleIndex;
+        ObjectInstance* instance = objects[size++];
+        ++instance->references;
+        return instance;
     }
     
     int Size() const { return size; }
 
     Object* GetObject(int index) {
-        return &objects[handleDatas[index].index];
+        return &objects[index]->object;
     }
     
-    void RemoveObject(int index) {
-        auto& h = handleDatas[index];
-        auto& d = objectDatas[h.index];
-        --d.references;
-        
-        if (d.references == 0) {
+    void RemoveObject(ObjectInstance* instance) {
+        if ((--instance->references) == 0) {
             --size;
-            std::swap(objects[h.index], objects[size]);
-            std::swap(objectDatas[h.index], objectDatas[size]);
-            h.index = size;
-            ++h.version;
-            handleDatas[size].index = index;
+            std::swap(instance, objects[size]);
         }
     }
     
-    Handle<Object> GetHandle(int index) {
-        return Handle<Object>(this, index, handleDatas[index].version);
-    }
-    
-    int Version(int index) {
-        return handleDatas[index].version;
-    }
-    
-
 private:
     
     void TryGrow() {
@@ -94,51 +50,26 @@ private:
     }
 
     void Grow(int newCapacity) {
-        
-        handleDatas.resize(newCapacity);
         objects.resize(newCapacity);
-        objectDatas.resize(newCapacity);
-        
         for (int i=size; i<newCapacity; ++i) {
-            auto& h = handleDatas[i];
-            h.index = i;
-            h.version = 0;
-            
-            auto& d = objectDatas[i];
-            d.references = 0;
-            d.handleIndex = i;
+            objects[i] = new ObjectInstance();
+            objects[i]->references = 0;
         }
         capacity = newCapacity;
     }
     
-    void Swap(int a, int b) {
-        std::swap(objects[a], objects[b]);
-        std::swap(objectDatas[a], objectDatas[b]);
-        ++objectDatas[b].version;
-    }
-    
-    struct HandleData {
-        int index;
-        int version;
-    };
-    
-    struct ObjectData {
-        int references;
-        int handleIndex;
-        bool alive() { return references>0; }
-    };
-    
-    using HandleDatas = std::vector<HandleData>;
-    using Objects = std::vector<Object>;
-    using ObjectDatas = std::vector<ObjectData>;
-    
-    HandleDatas handleDatas;
+    using Objects = std::vector<ObjectInstance*>;
     Objects objects;
-    ObjectDatas objectDatas;
     
     int size;
     int capacity;
     
 public:
     Container() : size(0), capacity(0) {}
+    ~Container() {
+        for (int i=0; i<objects.size(); ++i) {
+            delete objects[i];
+        }
+        objects.clear();
+    }
 };

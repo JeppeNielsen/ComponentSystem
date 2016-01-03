@@ -11,9 +11,11 @@
 
 typename GameWorld::Worlds GameWorld::worlds;
 
-Handle<GameObject> GameWorld::CreateObject() {
-    int index = objects.CreateObject();
-    objects.GetObject(index)->index = index;
-    return objects.GetHandle(index);
+GameObject* GameWorld::CreateObject() {
+    int index;
+    auto object = objects.CreateObject();
+    object->object.instance = object;
+    object->object.world = this;
+    return &object->object;
 }
 

@@ -20,7 +20,7 @@ class GameSystem {
 public:
     using Components = meta::list<T...>;
 private:
-    using ObjectCollection = std::vector<Handle<GameObject>>;
+    using ObjectCollection = std::vector<GameObject*>;
     ObjectCollection objects;
     friend class GameObject;
 protected:
