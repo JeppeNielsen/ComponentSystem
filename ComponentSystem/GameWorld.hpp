@@ -151,25 +151,27 @@ public:
         assert(HasComponent<Component>());
         removedComponents[Settings::template GetComponentID<Component>()] = true;
         auto& world = GetWorld();
+        int thisIndex = this->index;
         
-        world.removeActions.emplace_back([&world, this]() {
+        world.removeActions.emplace_back([&world, thisIndex]() {
+            auto* object = world.objects.GetObject(thisIndex);
             auto& container = std::get<Settings::template GetComponentID<Component>()>(world.components);
-            container.RemoveObject(components[Settings::template GetComponentID<Component>()]);
-            auto activeComponentsBefore = activeComponents;
-            activeComponents[Settings::template GetComponentID<Component>()] = false;
-            removedComponents[Settings::template GetComponentID<Component>()] = false;
-            meta::for_each_in_tuple_non_const(std::get< Settings::template GetComponentID<Component>() >(world.componentSystems), [&world, activeComponentsBefore, this] (auto& sys) {
+            container.RemoveObject(object->components[Settings::template GetComponentID<Component>()]);
+            auto activeComponentsBefore = object->activeComponents;
+            object->activeComponents[Settings::template GetComponentID<Component>()] = false;
+            object->removedComponents[Settings::template GetComponentID<Component>()] = false;
+            meta::for_each_in_tuple_non_const(std::get< Settings::template GetComponentID<Component>() >(world.componentSystems), [&world, activeComponentsBefore, object] (auto& sys) {
                 auto& system = std::get< Settings::template GetSystemID< std::remove_reference_t<decltype(sys)> >() >(world.systems);
                 auto& bitSet = world.systemBitsets[Settings::template GetSystemID<std::remove_reference_t<decltype(system)> >()];
                 bool wasInterest = (activeComponentsBefore & bitSet) == bitSet;
                 if (wasInterest) {
-                    int objectIndexInSystem = indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()];
+                    int objectIndexInSystem = object->indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()];
                     int lastIndex = (int)system.objects.size() - 1;
                     GameObject& lastObject = *system.objects[lastIndex].operator->();
                     lastObject.indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()]=objectIndexInSystem;
                     std::swap(system.objects[objectIndexInSystem], system.objects[lastIndex]);
                     system.objects.pop_back();
-                    system.ObjectRemoved(world.objects.GetHandle(index));
+                    system.ObjectRemoved(world.objects.GetHandle(object->index));
                 }
             });
         });
@@ -186,15 +188,16 @@ public:
         int index = container.CreateObject();
         components[Settings::template GetComponentID<Component>()] = index;
         auto activeComponentsBefore = activeComponents;
+        int thisIndex = this->index;
         
-        world.createActions.emplace_back([&world, activeComponentsBefore, this]() {
-            meta::for_each_in_tuple_non_const(std::get< Settings::template GetComponentID<Component>() >(world.componentSystems), [&world, activeComponentsBefore, this] (auto& sys) {
+        world.createActions.emplace_back([&world, activeComponentsBefore, thisIndex]() {
+            meta::for_each_in_tuple_non_const(std::get< Settings::template GetComponentID<Component>() >(world.componentSystems), [&world, activeComponentsBefore, thisIndex] (auto& sys) {
                 auto& system = std::get< Settings::template GetSystemID< std::remove_reference_t<decltype(sys)> >() >(world.systems);
                 auto& bitSet = world.systemBitsets[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()];
                 bool isInterest = (activeComponentsBefore & bitSet) == bitSet;
                 if (isInterest) {
-                    auto handle = world.objects.GetHandle(this->index);
-                    indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()]=(int)system.objects.size();
+                    auto handle = world.objects.GetHandle(thisIndex);
+                    handle->indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()]=(int)system.objects.size();
                     system.objects.push_back(handle);
                     system.ObjectAdded(handle);
                 }
@@ -203,8 +206,6 @@ public:
         
         return container.GetHandle(index);
     }
-    
-    
     
     void Remove() {
         if (isRemoved) return;

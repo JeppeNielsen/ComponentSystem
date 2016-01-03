@@ -36,38 +36,38 @@ struct VelocitySystem : public GameSystem<Transform, Velocity> {
     void Update(float dt);
     
     void ObjectAdded(Handle<GameObject> object) {
-        std::cout<<"VelocitySystem ObjectAdded"<<std::endl;
+        //std::cout<<"VelocitySystem ObjectAdded"<<std::endl;
     }
     
     void ObjectRemoved(Handle<GameObject> object) {
-        std::cout<<"VelocitySystem ObjectRemoved"<<std::endl;
+        //std::cout<<"VelocitySystem ObjectRemoved"<<std::endl;
     }
 };
 
 struct RenderSystem : public GameSystem<Transform, Renderable> {
     int index;
     void Update(float dt) {
-        std::cout<<"Update from RenderSystem"<<std::endl; index++;
+        //std::cout<<"Update from RenderSystem"<<std::endl; index++;
     }
     
     void ObjectAdded(Handle<GameObject> object) {
-        std::cout<<"RenderSystem ObjectAdded"<<std::endl;
+        //std::cout<<"RenderSystem ObjectAdded"<<std::endl;
     }
     
     void ObjectRemoved(Handle<GameObject> object) {
-        std::cout<<"RenderSystem ObjectRemoved"<<std::endl;
+        //std::cout<<"RenderSystem ObjectRemoved"<<std::endl;
     }
 };
 
 struct AccSystem : public GameSystem<Velocity, Renderable> {
-    void Update(float dt) { std::cout<<"Update from AccSystem"<<dt<<std::endl; }
+    //void Update(float dt) { std::cout<<"Update from AccSystem"<<dt<<std::endl; }
     
     void ObjectAdded(Handle<GameObject> object) {
-        std::cout<<"AccSystem ObjectAdded"<<std::endl;
+        //std::cout<<"AccSystem ObjectAdded"<<std::endl;
     }
     
     void ObjectRemoved(Handle<GameObject> object) {
-        std::cout<<"AccSystem ObjectRemoved"<<std::endl;
+        //std::cout<<"AccSystem ObjectRemoved"<<std::endl;
     }
 };
 

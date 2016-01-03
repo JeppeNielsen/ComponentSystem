@@ -90,7 +90,7 @@ private:
     
     void TryGrow() {
         if (size<capacity) return;
-        Grow((capacity + 10) * 2);
+        Grow((capacity + 20) * 2);
     }
 
     void Grow(int newCapacity) {

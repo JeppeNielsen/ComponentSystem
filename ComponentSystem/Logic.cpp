@@ -13,7 +13,9 @@
 void VelocitySystem::Update(float dt) {
     int i=0;
     for(auto e : Objects()) {
-        std::cout<<"Update from VelocitySystem : "<< i << " vel: x = " << e->GetComponent<Velocity>()->x <<std::endl;
+        //e->Remove();
+        //std::cout<<"Update from VelocitySystem : "<< i << " vel: x = " << e->GetComponent<Velocity>()->x <<std::endl;
         i++;
+        i+=e->GetComponent<Velocity>()->x;
     }
 }
