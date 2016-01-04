@@ -12,7 +12,6 @@
 typename GameWorld::Worlds GameWorld::worlds;
 
 GameObject* GameWorld::CreateObject() {
-    int index;
     auto object = objects.CreateObject();
     object->object.instance = object;
     object->object.world = this;

@@ -152,7 +152,6 @@ public:
         removedComponents[Settings::template GetComponentID<Component>()] = true;
         
         world->removeActions.emplace_back([this]() {
-            auto& container = std::get<Settings::template GetComponentID<Component>()>(world->components);
             typename Container<Component>::ObjectInstance* instance = (typename Container<Component>::ObjectInstance*)components[Settings::template GetComponentID<Component>()];
             
             
