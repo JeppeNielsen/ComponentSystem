@@ -43,9 +43,6 @@ public:
     SystemBitsets systemBitsets;
     Components components;
     
-    int worldIndex;
-    static Worlds worlds;
-    
     Actions createActions;
     Actions removeActions;
     
@@ -67,14 +64,8 @@ public:
 
     GameWorld() {
         InitializeSystemBitsets();
-        worldIndex = (int)worlds.size();
-        worlds.push_back(this);
     }
     
-    ~GameWorld() {
-        worlds[worldIndex] = 0;
-    }
-
     GameObject* CreateObject();
     
     template<typename System>
@@ -110,7 +101,7 @@ public:
 
 class GameObject {
 private:
-    GameObject() : isRemoved(false), activeComponents(0), removedComponents(0) { }
+    GameObject()  { }
     
     using Settings = GameWorldSettings;
     
@@ -128,6 +119,12 @@ private:
     friend class GameWorld;
     friend class Container<GameObject>::ObjectInstance;
     
+    void Reset() {
+        isRemoved=false;
+        activeComponents.reset();
+        removedComponents.reset();
+    }
+    
 public:
     template<typename Component>
     bool HasComponent() const {
@@ -139,9 +136,6 @@ public:
         if (!HasComponent<Component>()) {
             return 0;
         }
-        //auto& container = std::get<Settings::template GetComponentID<Component>()>(world->components);
-        //typename Container<Component>::ObjectInstance* instance;
-        
         return &((typename Container<Component>::ObjectInstance*)components[Settings::template GetComponentID<Component>()])->object;
     }
     

@@ -9,12 +9,11 @@
 #include "Logic.hpp"
 #include "GameWorld.hpp"
 
-typename GameWorld::Worlds GameWorld::worlds;
-
 GameObject* GameWorld::CreateObject() {
     auto object = objects.CreateObject();
     object->object.instance = object;
     object->object.world = this;
+    object->object.Reset();
     return &object->object;
 }
 
