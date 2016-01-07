@@ -30,10 +30,6 @@ public:
     }
     
     int Size() const { return size; }
-
-    Object* GetObject(int index) {
-        return &objects[index]->object;
-    }
     
     void RemoveObject(ObjectInstance* instance) {
         if ((--instance->references) == 0) {

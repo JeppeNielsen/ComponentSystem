@@ -56,8 +56,6 @@ public:
         });
     }
     
-    
-    
     friend class GameObject;
     
 public:
