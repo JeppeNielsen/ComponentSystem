@@ -24,6 +24,7 @@ public:
     
     using Systems = typename Settings::SystemsTuple;
     using UpdateSystems = typename Settings::UpdateSystemsTuple;
+    using AddedToWorldSystems = typename Settings::AddedToWorldSystemsTuple;
     
     using ComponentSystems = typename Settings::ComponentSystemsTuple;
     
@@ -38,6 +39,7 @@ public:
     
     Systems systems;
     UpdateSystems updateSystems;
+    AddedToWorldSystems addedToWorldSystems;
     ComponentSystems componentSystems;
     
     SystemBitsets systemBitsets;
@@ -64,6 +66,16 @@ public:
         InitializeSystemBitsets();
     }
     
+    void Initialize() {
+        meta::for_each_in_tuple(addedToWorldSystems, [&](auto system) {
+            std::get<
+                Settings::template GetSystemID<
+                    std::remove_pointer_t<decltype(system)>
+                >()
+            >(systems).AddedToWorld(*this);
+        });
+    }
+    
     GameObject* CreateObject();
     
     template<typename System>
@@ -74,12 +86,12 @@ public:
     void Update(float dt) {
         DoActions(createActions);
         DoActions(removeActions);
-        meta::for_each_in_tuple(updateSystems, [this, dt] (auto& system) {
+        meta::for_each_in_tuple(updateSystems, [this, dt] (auto system) {
             std::get<
                     Settings::template GetSystemID<
-                    std::remove_const_t< std::remove_reference_t<decltype(system)> >
+                    std::remove_pointer_t< decltype(system)>
                     >()
-                    >(systems).Update(dt);
+                >(systems).Update(dt);
         });
     }
     

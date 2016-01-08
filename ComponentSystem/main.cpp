@@ -15,13 +15,14 @@
 int main() {
 
     GameWorld world;
+    world.Initialize();
     
     Timer timer;
     
     timer.Begin();
     
     GameObject* object;
-    for(int i=0; i<1000000; i++) {
+    for(int i=0; i<1; i++) {
         auto instance = world.CreateObject();
         instance->AddComponent<Transform>();
         instance->AddComponent<Velocity>()->x = i+1;

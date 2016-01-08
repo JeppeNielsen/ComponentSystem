@@ -28,6 +28,7 @@ struct Renderable {
 };
 
 struct VelocitySystem : GameSystem<Transform, Velocity> {
+    void AddedToWorld(GameWorld& world);
     void ObjectAdded(GameObject* object);
     void ObjectRemoved(GameObject* object);
     void Update(float dt);

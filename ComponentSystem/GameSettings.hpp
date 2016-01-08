@@ -28,9 +28,14 @@ struct GameSettings {
     template <typename... Ts>
     using TupleOfContainers = std::tuple<Container<Ts>...>;
     
+    template <typename... Ts>
+    using TupleOfPointers = std::tuple<Ts*...>;
+    
     using SystemsTuple = meta::mp_rename<Systems, std::tuple>;
     using UpdateSystems = meta::filter<Systems, meta::HasUpdateFunction>;
-    using UpdateSystemsTuple = meta::mp_rename<UpdateSystems, std::tuple>;
+    using UpdateSystemsTuple = meta::mp_rename<UpdateSystems, TupleOfPointers>;
+    using AddedToWorldSystems = meta::filter<Systems, meta::HasAddedToWorldFunction>;
+    using AddedToWorldSystemsTuple = meta::mp_rename<AddedToWorldSystems, TupleOfPointers>;
     
     using AllComponents = meta::mp_rename<UniqueComponents, TupleOfContainers>;
     

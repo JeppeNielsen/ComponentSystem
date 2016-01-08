@@ -12,8 +12,6 @@
 
 class GameObject;
 class GameWorld;
-template<typename T>
-class Handle;
 
 template<typename... T>
 class GameSystem {
