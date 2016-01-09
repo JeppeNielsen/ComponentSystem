@@ -15,7 +15,7 @@ void VelocitySystem::AddedToWorld(GameWorld &world) {
     obj->AddComponent<Transform>();
     obj->AddComponent<Velocity>();
     
-    std::cout << "VelocitySystem AddedToWorld"<<std::endl;
+    std::cout << "VelocitySystem::AddedToWorld"<<std::endl;
 }
 
 void VelocitySystem::ObjectAdded(GameObject *object) {
@@ -36,6 +36,17 @@ void VelocitySystem::Update(float dt) {
     }
     index = i;
 }
+
+RenderSystem::RenderSystem() {
+    Counter++;
+    std::cout<< " RenderSystem ctor "<< Counter<<std::endl;
+}
+
+void RenderSystem::AddedToWorld(GameWorld &world) {
+    std::cout<< " RenderSystem::AddedToWorld "<< Counter<<std::endl;
+}
+
+int RenderSystem::Counter = 0;
 
 void RenderSystem::ObjectAdded(GameObject *object) {
 

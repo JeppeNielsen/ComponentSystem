@@ -162,8 +162,8 @@ public:
             auto activeComponentsBefore = activeComponents;
             activeComponents[Settings::template GetComponentID<Component>()] = false;
             removedComponents[Settings::template GetComponentID<Component>()] = false;
-            meta::for_each_in_tuple_non_const(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [activeComponentsBefore, instance, this] (auto& sys) {
-                auto& system = std::get< Settings::template GetSystemID< std::remove_reference_t<decltype(sys)> >() >(world->systems);
+            meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [activeComponentsBefore, instance, this] (auto systemPointer) {
+                auto& system = std::get< Settings::template GetSystemID< std::remove_pointer_t<decltype(systemPointer)> >() >(world->systems);
                 auto& bitSet = world->systemBitsets[Settings::template GetSystemID<std::remove_reference_t<decltype(system)> >()];
                 bool wasInterest = (activeComponentsBefore & bitSet) == bitSet;
                 if (wasInterest) {
@@ -192,8 +192,8 @@ public:
         
         
         world->createActions.emplace_back([activeComponentsBefore, this]() {
-            meta::for_each_in_tuple_non_const(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [this, activeComponentsBefore] (auto& sys) {
-                auto& system = std::get< Settings::template GetSystemID< std::remove_reference_t<decltype(sys)> >() >(world->systems);
+            meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [this, activeComponentsBefore] (auto systemPointer) {
+                auto& system = std::get< Settings::template GetSystemID< std::remove_pointer_t<decltype(systemPointer)> >() >(world->systems);
                 auto& bitSet = world->systemBitsets[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()];
                 bool isInterest = (activeComponentsBefore & bitSet) == bitSet;
                 if (isInterest) {

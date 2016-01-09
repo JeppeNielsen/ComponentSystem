@@ -194,9 +194,12 @@ struct FindComponentSystems<Systems, meta::list<Ts...>>
 template <typename Systems, typename TOther, typename... Ts>
 struct FindComponentSystems<Systems, meta::list<TOther, Ts...>>
 {
+    template<typename...T>
+    using TupleOfPointers = std::tuple<T*...>;
+
 	constexpr auto Iterate() const {
         using systemsThatHaveComponent = meta::filter<Systems, ContainsComponent<TOther>>;
-        using tuple = mp_rename<systemsThatHaveComponent, std::tuple>;
+        using tuple = mp_rename<systemsThatHaveComponent, TupleOfPointers>;
         
 	    return std::tuple_cat(std::tuple<tuple>{ }, FindComponentSystems<Systems, meta::list<Ts...>>{}.Iterate());
 	}

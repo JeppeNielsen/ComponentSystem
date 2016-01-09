@@ -36,10 +36,14 @@ struct VelocitySystem : GameSystem<Transform, Velocity> {
 };
 
 struct RenderSystem : GameSystem<Transform, Renderable> {
+    RenderSystem();
     void ObjectAdded(GameObject* object);
     void ObjectRemoved(GameObject* object);
     void Update(float dt);
+    void AddedToWorld(GameWorld& world);
     int index;
+    
+    static int Counter;
 };
 
 struct AccSystem : GameSystem<Velocity, Renderable> {
@@ -47,4 +51,4 @@ struct AccSystem : GameSystem<Velocity, Renderable> {
     void ObjectRemoved(GameObject* object);
 };
 
-struct GameWorldSettings : GameSettings<RenderSystem, VelocitySystem, AccSystem> {};
+struct GameWorldSettings : GameSettings<VelocitySystem, RenderSystem, AccSystem> {};
