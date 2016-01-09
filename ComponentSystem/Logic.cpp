@@ -32,6 +32,8 @@ void VelocitySystem::Update(float dt) {
         //e->Remove();
         //std::cout<<"Update from VelocitySystem : "<< i << " vel: x = " << e->GetComponent<Velocity>()->x <<std::endl;
         i++;
+        std::cout<< "Transform.x = " << e->GetComponent<Transform>()->x << std::endl;
+        
         i+=e->GetComponent<Velocity>()->x;
     }
     index = i;

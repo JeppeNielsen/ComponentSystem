@@ -21,10 +21,13 @@ int main() {
     
     timer.Begin();
     
+    GameObject* sourceTransform = world.CreateObject();
+    sourceTransform->AddComponent<Transform>()->x = 123;
+    
     GameObject* object;
-    for(int i=0; i<1; i++) {
+    for(int i=0; i<10; i++) {
         auto instance = world.CreateObject();
-        instance->AddComponent<Transform>();
+        instance->AddComponent<Transform>(sourceTransform);
         instance->AddComponent<Velocity>()->x = i+1;
         instance->AddComponent<Renderable>();
         if (i==0) object = instance;
