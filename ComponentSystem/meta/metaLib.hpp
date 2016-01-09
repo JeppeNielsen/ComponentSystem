@@ -191,11 +191,6 @@ struct FindComponentSystems<Systems, meta::list<Ts...>>
     }
 };
 
-template<typename...T>
-struct TupleContainer {
-    std::tuple<T...> tuple;
-};
-
 template <typename Systems, typename TOther, typename... Ts>
 struct FindComponentSystems<Systems, meta::list<TOther, Ts...>>
 {
