@@ -54,6 +54,8 @@ private:
 public:
 
     GameWorld();
+    ~GameWorld();
+    
     void Initialize();
     GameObject* CreateObject();
     
@@ -65,6 +67,7 @@ public:
     void Update(float dt);
     void DoActions(Actions& list);
     int ObjectCount();
+    void Clear();
 };
 
 class GameObject {
@@ -113,13 +116,11 @@ public:
         removedComponents[Settings::template GetComponentID<Component>()] = true;
         
         world->removeActions.emplace_back([this]() {
-            typename Container<Component>::ObjectInstance* instance = (typename Container<Component>::ObjectInstance*)components[Settings::template GetComponentID<Component>()];
-            
             
             auto activeComponentsBefore = activeComponents;
             activeComponents[Settings::template GetComponentID<Component>()] = false;
             removedComponents[Settings::template GetComponentID<Component>()] = false;
-            meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [activeComponentsBefore, instance, this] (auto systemPointer) {
+            meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [activeComponentsBefore, this] (auto systemPointer) {
                 auto& system = std::get< Settings::template GetSystemID< std::remove_pointer_t<decltype(systemPointer)> >() >(world->systems);
                 auto& bitSet = world->systemBitsets[Settings::template GetSystemID<std::remove_reference_t<decltype(system)> >()];
                 bool wasInterest = (activeComponentsBefore & bitSet) == bitSet;
@@ -134,6 +135,9 @@ public:
                 }
             });
             
+            typename Container<Component>::ObjectInstance* instance = (typename Container<Component>::ObjectInstance*)components[Settings::template GetComponentID<Component>()];
+            auto& container = std::get<Settings::template GetComponentID<Component>()>(world->components);
+            container.RemoveObject(instance);
         });
     }
     

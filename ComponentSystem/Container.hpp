@@ -18,6 +18,7 @@ public:
     struct ObjectInstance {
         Object object;
         int references;
+        Container<Object>* owner;
         
         friend Object;
     };
@@ -33,9 +34,35 @@ public:
     
     void RemoveObject(ObjectInstance* instance) {
         if ((--instance->references) == 0) {
-            --size;
-            std::swap(instance, objects[size]);
+            if (instance->owner == this) {
+                --size;
+                std::swap(instance, objects[size]);
+            } else {
+                if (!instance->owner) {
+                    delete instance;
+                } else {
+                    --instance->owner->size;
+                    std::swap(instance, instance->owner->objects[instance->owner->size]);
+                }
+            }
         }
+    }
+    
+    Object* Get(int index) {
+        return &objects[index]->object;
+    }
+    
+    void Clear() {
+        for (int i=0; i<capacity; ++i) {
+            if (objects[i]->references==0) {
+                delete objects[i];
+            } else {
+                objects[i]->owner = 0;
+            }
+        }
+        size = 0;
+        capacity = 0;
+        objects.clear();
     }
     
 private:
@@ -50,6 +77,7 @@ private:
         for (int i=size; i<newCapacity; ++i) {
             objects[i] = new ObjectInstance();
             objects[i]->references = 0;
+            objects[i]->owner = this;
         }
         capacity = newCapacity;
     }
@@ -63,9 +91,6 @@ private:
 public:
     Container() : size(0), capacity(0) {}
     ~Container() {
-        for (int i=0; i<objects.size(); ++i) {
-            delete objects[i];
-        }
-        objects.clear();
+        Clear();
     }
 };

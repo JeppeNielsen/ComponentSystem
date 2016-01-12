@@ -14,17 +14,24 @@ struct Transform {
 	std::string Name() const { return "Transform"; }
 	int x;
 	int y;
+    
+    Transform() { std::cout<<"Transform ctor"<<std::endl; }
+    ~Transform() { std::cout<<"Transform dtor"<<std::endl; }
 };
 
 struct Velocity {
 	std::string Name() const { return "Velocity"; }
 	int x;
 	int y;
+    Velocity() { std::cout<<"Velocity ctor"<<std::endl; }
+    ~Velocity() { std::cout<<"Velocity dtor"<<std::endl; }
 };
 
 struct Renderable {
 	std::string Name() const { return "Renderable"; }
 	int imageNo;
+    Renderable() { std::cout<<"Renderable ctor"<<std::endl; }
+    ~Renderable() { std::cout<<"Renderable dtor"<<std::endl; }
 };
 
 struct VelocitySystem : GameSystem<Transform, Velocity> {

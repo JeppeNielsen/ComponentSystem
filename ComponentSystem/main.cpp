@@ -12,7 +12,7 @@
 #include "GameWorld.hpp"
 #include "Timer.hpp"
 
-int main() {
+int main_nono() {
 
     GameWorld world;
     world.Initialize();

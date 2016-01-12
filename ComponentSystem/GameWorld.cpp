@@ -64,6 +64,18 @@ int GameWorld::ObjectCount() {
     return objects.Size();
 }
 
+void GameWorld::Clear() {
+    for(int i=0; i<objects.Size(); ++i) {
+        objects.Get(i)->Remove();
+    }
+    DoActions(createActions);
+    DoActions(removeActions);
+}
+
+GameWorld::~GameWorld() {
+    Clear();
+}
+
 void GameObject::Reset() {
     isRemoved = false;
     activeComponents.reset();
@@ -75,7 +87,10 @@ void GameObject::Remove() {
     isRemoved = true;
     
     meta::for_each_in_tuple(world->components, [this] (auto& component) {
-        RemoveComponent<meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>>();
+        using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
+        if (HasComponent<ComponentType>()) {
+            RemoveComponent<ComponentType>();
+        }
     });
     
     world->removeActions.emplace_back([this]() {
@@ -83,6 +98,7 @@ void GameObject::Remove() {
         isRemoved = false;
     });
 }
+
 
 
 

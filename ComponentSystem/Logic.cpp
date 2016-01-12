@@ -11,10 +11,10 @@
 #include "GameWorld.hpp"
 
 void VelocitySystem::AddedToWorld(GameWorld &world) {
-    auto obj = world.CreateObject();
+    /*auto obj = world.CreateObject();
     obj->AddComponent<Transform>();
     obj->AddComponent<Velocity>();
-    
+    */
     std::cout << "VelocitySystem::AddedToWorld"<<std::endl;
 }
 
