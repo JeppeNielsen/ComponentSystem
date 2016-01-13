@@ -9,7 +9,6 @@
 #include <iostream>
 #include "metaLib.hpp"
 #include "Logic.hpp"
-#include "GameWorld.hpp"
 #include "Timer.hpp"
 
 int main_nono() {

@@ -24,7 +24,6 @@ struct GameSettings {
     using AllComponentsInSystems = meta::as_list<decltype(meta::FindComponents<Systems>{}.Iterate())>;
     using UniqueComponents = meta::unique<AllComponentsInSystems>;
     
-    
     template <typename... Ts>
     using TupleOfContainers = std::tuple<Container<Ts>...>;
     

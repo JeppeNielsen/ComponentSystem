@@ -59,3 +59,4 @@ struct AccSystem : GameSystem<Velocity, Renderable> {
 };
 
 struct GameWorldSettings : GameSettings<VelocitySystem, RenderSystem, AccSystem> {};
+#include "GameWorld.hpp"

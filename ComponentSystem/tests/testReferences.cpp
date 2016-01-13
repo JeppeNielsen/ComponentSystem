@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include "Logic.hpp"
-#include "GameWorld.hpp"
 
 int main() {
 

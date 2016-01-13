@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		72961DF21C36F9E9006B3FBC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961DF11C36F9E9006B3FBC /* main.cpp */; };
 		72961DF51C373BF7006B3FBC /* Logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961DF41C373BF7006B3FBC /* Logic.cpp */; };
-		72961E061C373CDD006B3FBC /* GameWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961E051C373CDD006B3FBC /* GameWorld.cpp */; };
 		72961E0A1C3871D9006B3FBC /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961E081C3871D9006B3FBC /* Timer.cpp */; };
 		72C987631C44429F008BEFF3 /* testReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987621C44429F008BEFF3 /* testReferences.cpp */; };
 /* End PBXBuildFile section */
@@ -30,7 +29,6 @@
 		72961DF11C36F9E9006B3FBC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		72961DF31C372F45006B3FBC /* Logic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Logic.hpp; sourceTree = "<group>"; };
 		72961DF41C373BF7006B3FBC /* Logic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logic.cpp; sourceTree = "<group>"; };
-		72961E051C373CDD006B3FBC /* GameWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameWorld.cpp; sourceTree = "<group>"; };
 		72961E081C3871D9006B3FBC /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
 		72961E091C3871D9006B3FBC /* Timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Timer.hpp; sourceTree = "<group>"; };
 		72C987621C44429F008BEFF3 /* testReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testReferences.cpp; sourceTree = "<group>"; };
@@ -94,7 +92,6 @@
 				72E26FC71C32D83C0035E270 /* Container.hpp */,
 				72E26FB81C30738E0035E270 /* GameSettings.hpp */,
 				72E26FC41C308E9A0035E270 /* GameSystem.hpp */,
-				72961E051C373CDD006B3FBC /* GameWorld.cpp */,
 				72E26FBF1C3078830035E270 /* GameWorld.hpp */,
 				72961DF41C373BF7006B3FBC /* Logic.cpp */,
 				72961DF31C372F45006B3FBC /* Logic.hpp */,
@@ -175,7 +172,6 @@
 				72961DF51C373BF7006B3FBC /* Logic.cpp in Sources */,
 				72961DF21C36F9E9006B3FBC /* main.cpp in Sources */,
 				72C987631C44429F008BEFF3 /* testReferences.cpp in Sources */,
-				72961E061C373CDD006B3FBC /* GameWorld.cpp in Sources */,
 				72961E0A1C3871D9006B3FBC /* Timer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

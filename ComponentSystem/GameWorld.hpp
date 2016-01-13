@@ -50,24 +50,69 @@ private:
     Actions createActions;
     Actions removeActions;
     
-    void InitializeSystemBitsets();
+    void InitializeSystemBitsets() {
+        int i = 0;
+        meta::for_each_in_tuple(systems, [&](auto system) {
+            meta::for_each_in_tuple(meta::IteratorPointer<typename decltype(system)::Components>{}.Iterate(), [&,this](auto component) {
+                systemBitsets[i][Settings::template GetComponentID<std::remove_pointer_t< decltype(component) >>()] = true;
+            });
+            ++i;
+        });
+    }
 public:
 
-    GameWorld();
-    ~GameWorld();
-    
-    void Initialize();
-    GameObject* CreateObject();
-    
     template<typename System>
     System& GetSystem() {
         return std::get<Settings::template GetSystemID<System>()>(systems);
     }
-    
-    void Update(float dt);
-    void DoActions(Actions& list);
-    int ObjectCount();
+
+    template<typename T>
+    GameObject* CreateObject();
+
+    GameWorld() {
+        InitializeSystemBitsets();
+    }
+
+    void Initialize() {
+        meta::for_each_in_tuple(addedToWorldSystems, [&](auto system) {
+            std::get<
+                Settings::template GetSystemID<
+                    std::remove_pointer_t<decltype(system)>
+                >()
+            >(systems).AddedToWorld(*this);
+        });
+    }
+
+    void Update(float dt) {
+        DoActions(createActions);
+        DoActions(removeActions);
+        meta::for_each_in_tuple(updateSystems, [this, dt] (auto system) {
+            std::get<
+                    Settings::template GetSystemID<
+                    std::remove_pointer_t< decltype(system)>
+                    >()
+                >(systems).Update(dt);
+        });
+    }
+
+    void DoActions(Actions& list) {
+       for(int i=0; i<list.size(); ++i) {
+            list[i]();
+       }
+       list.clear();
+    }
+
+    int ObjectCount() {
+        return objects.Size();
+    }
+
+    template<typename T>
     void Clear();
+    
+    ~GameWorld() {
+        Clear<void>();
+    }
+   
 };
 
 class GameObject {
@@ -90,12 +135,31 @@ private:
     friend class GameWorld;
     friend class Container<GameObject>::ObjectInstance;
     
-    void Reset();
+    void Reset() {
+        isRemoved = false;
+        activeComponents.reset();
+        removedComponents.reset();
+    }
     
 public:
     
-    void Remove();
-
+    void Remove() {
+        if (isRemoved) return;
+        isRemoved = true;
+        
+        meta::for_each_in_tuple(world->components, [this] (auto& component) {
+            using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
+            if (HasComponent<ComponentType>()) {
+                RemoveComponent<ComponentType>();
+            }
+        });
+        
+        world->removeActions.emplace_back([this]() {
+            world->objects.RemoveObject(instance);
+            isRemoved = false;
+        });
+    }
+       
     template<typename Component>
     bool HasComponent() const {
         return activeComponents[Settings::template GetComponentID<Component>()];
@@ -181,5 +245,20 @@ private:
     }
 };
 
+template<typename T = void>
+GameObject* GameWorld::CreateObject() {
+    auto object = objects.CreateObject();
+    object->object.instance = object;
+    object->object.world = this;
+    object->object.Reset();
+    return &object->object;
+}
 
-
+template<typename T = void>
+void GameWorld::Clear() {
+    for(int i=0; i<objects.Size(); ++i) {
+        objects.Get(i)->Remove();
+    }
+    DoActions(createActions);
+    DoActions(removeActions);
+}
