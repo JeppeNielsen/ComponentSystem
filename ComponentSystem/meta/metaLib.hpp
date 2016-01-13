@@ -45,6 +45,26 @@ struct Iterator<meta::list<TOther, Ts...>>
     }
 };
 
+
+template <typename>
+struct IteratorPointer;
+
+template <typename... Ts>
+struct IteratorPointer<meta::list<Ts...>>
+{
+    constexpr auto Iterate() const {
+        return std::tuple<>{ };
+    }
+};
+
+template <typename TOther, typename... Ts>
+struct IteratorPointer<meta::list<TOther, Ts...>>
+{
+	constexpr auto Iterate() const {
+        return std::tuple_cat(std::tuple<TOther*>{}, IteratorPointer<meta::list<Ts...>>{}.Iterate());
+    }
+};
+
 template <typename>
 struct FindComponents;
 

@@ -20,8 +20,8 @@ GameObject* GameWorld::CreateObject() {
 void GameWorld::InitializeSystemBitsets() {
     int i = 0;
     meta::for_each_in_tuple(systems, [&](auto system) {
-        meta::for_each_in_tuple(meta::Iterator<typename decltype(system)::Components>{}.Iterate(), [&,this](auto component) {
-            systemBitsets[i][Settings::template GetComponentID<decltype(component)>()] = true;
+        meta::for_each_in_tuple(meta::IteratorPointer<typename decltype(system)::Components>{}.Iterate(), [&,this](auto component) {
+            systemBitsets[i][Settings::template GetComponentID<std::remove_pointer_t< decltype(component) >>()] = true;
         });
         ++i;
     });
