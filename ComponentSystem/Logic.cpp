@@ -10,62 +10,74 @@
 #include <iostream>
 #include "GameWorld.hpp"
 
-void VelocitySystem::AddedToWorld(GameWorld &world) {
-    /*auto obj = world.CreateObject();
-    obj->AddComponent<Transform>();
-    obj->AddComponent<Velocity>();
-    */
-    std::cout << "VelocitySystem::AddedToWorld"<<std::endl;
+VelocitySystem::VelocitySystem() {
+    std::cout << "VelocitySystem ctor"<<std::endl;
+}
+
+VelocitySystem::~VelocitySystem() {
+    std::cout << "VelocitySystem dtor"<<std::endl;
+}
+
+void VelocitySystem::Initialize(GameWorld &world) {
+    std::cout << "VelocitySystem::Initialize"<<std::endl;
 }
 
 void VelocitySystem::ObjectAdded(GameObject *object) {
-
+    std::cout << "VelocitySystem::ObjectAdded"<<std::endl;
 }
 
 void VelocitySystem::ObjectRemoved(GameObject *object) {
-    //object->Remove();
+    std::cout << "VelocitySystem::ObjectRemoved"<<std::endl;
 }
 
 void VelocitySystem::Update(float dt) {
-    int i=0;
-    for(auto e : Objects()) {
-        //e->Remove();
-        //std::cout<<"Update from VelocitySystem : "<< i << " vel: x = " << e->GetComponent<Velocity>()->x <<std::endl;
-        i++;
-        std::cout<< "Transform.x = " << e->GetComponent<Transform>()->x << std::endl;
-        
-        i+=e->GetComponent<Velocity>()->x;
-    }
-    index = i;
+    std::cout << "VelocitySystem::ObjectRemoved"<<std::endl;
 }
 
 RenderSystem::RenderSystem() {
-    Counter++;
-    std::cout<< " RenderSystem ctor "<< Counter<<std::endl;
+    std::cout<< "RenderSystem ctor"<<std::endl;
 }
 
-void RenderSystem::AddedToWorld(GameWorld &world) {
-    std::cout<< " RenderSystem::AddedToWorld "<< Counter<<std::endl;
+RenderSystem::~RenderSystem() {
+    std::cout<< "RenderSystem dtor"<<std::endl;
 }
 
-int RenderSystem::Counter = 0;
+void RenderSystem::Initialize(GameWorld &world) {
+    std::cout<< "RenderSystem::Initialize"<<std::endl;
+}
 
 void RenderSystem::ObjectAdded(GameObject *object) {
-
+    std::cout<< "RenderSystem::ObjectAdded"<<std::endl;
 }
 
 void RenderSystem::ObjectRemoved(GameObject *object) {
-    
+    std::cout<< "RenderSystem::ObjectRemoved"<<std::endl;
 }
 
 void RenderSystem::Update(float dt) {
-
+    std::cout<< "RenderSystem::Update"<<std::endl;
 }
 
-void AccSystem::ObjectAdded(GameObject *object) {
-
+AccSystem::AccSystem() {
+    std::cout<< "AccSystem ctor"<<std::endl;
 }
 
-void AccSystem::ObjectRemoved(GameObject *object) {
+AccSystem::~AccSystem() {
+    std::cout<< "AccSystem dtor"<<std::endl;
+}
 
+void AccSystem::Initialize(GameWorld& world) {
+    std::cout<< "AccSystem::Initialize"<<std::endl;
+}
+
+void AccSystem::ObjectAdded(GameObject* object) {
+    std::cout<< "AccSystem::ObjectAdded"<<std::endl;
+}
+
+void AccSystem::ObjectRemoved(GameObject* object) {
+    std::cout<< "AccSystem::ObjectRemoved"<<std::endl;
+}
+
+void AccSystem::Update(float dt) {
+    std::cout<< "AccSystem::Update"<<std::endl;
 }

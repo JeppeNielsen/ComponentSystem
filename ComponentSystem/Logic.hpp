@@ -35,27 +35,30 @@ struct Renderable {
 };
 
 struct VelocitySystem : GameSystem<Transform, Velocity> {
-    void AddedToWorld(GameWorld& world);
+    VelocitySystem();
+    ~VelocitySystem();
+    void Initialize(GameWorld& world);
     void ObjectAdded(GameObject* object);
     void ObjectRemoved(GameObject* object);
     void Update(float dt);
-    int index;
 };
 
 struct RenderSystem : GameSystem<Transform, Renderable> {
     RenderSystem();
+    ~RenderSystem();
+    void Initialize(GameWorld& world);
     void ObjectAdded(GameObject* object);
     void ObjectRemoved(GameObject* object);
     void Update(float dt);
-    void AddedToWorld(GameWorld& world);
-    int index;
-    
-    static int Counter;
 };
 
 struct AccSystem : GameSystem<Velocity, Renderable> {
+    AccSystem();
+    ~AccSystem();
+    void Initialize(GameWorld& world);
     void ObjectAdded(GameObject* object);
     void ObjectRemoved(GameObject* object);
+    void Update(float dt);
 };
 
 struct GameWorldSettings : GameSettings<VelocitySystem, RenderSystem, AccSystem> {};
