@@ -31,7 +31,7 @@ void VelocitySystem::ObjectRemoved(GameObject *object) {
 }
 
 void VelocitySystem::Update(float dt) {
-    std::cout << "VelocitySystem::ObjectRemoved"<<std::endl;
+    std::cout << "VelocitySystem::Update"<<std::endl;
 }
 
 RenderSystem::RenderSystem() {

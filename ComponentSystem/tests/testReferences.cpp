@@ -12,22 +12,19 @@
 int main() {
 
     GameWorld world;
+    world.Initialize();
+    
     GameObject* test = 0;
     {
-    GameWorld content;
-    GameObject* expensiveTransform = content.CreateObject();
-    expensiveTransform->AddComponent<Transform>()->x = 123456;
-    content.Update(0);
-    
-    world.Initialize();
-    test = world.CreateObject();
-    test->AddComponent<Transform>(expensiveTransform);
-    
+        GameWorld content;
+        GameObject* expensiveTransform = content.CreateObject();
+        expensiveTransform->AddComponent<Transform>()->x = 123456;
+        content.Update(0);
+        
+        test = world.CreateObject();
+        test->AddComponent<Transform>(expensiveTransform);
     }
     
-    
     std::cout<<test->GetComponent<Transform>()->x<<std::endl;
-    
-
     return 0;
 }
