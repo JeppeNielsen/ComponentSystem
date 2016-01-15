@@ -33,8 +33,6 @@ private:
     using SystemBitsets = typename Settings::SystemBitsets;
     using Components = typename Settings::AllComponents;
     
-    using Worlds = std::vector<GameWorld*>;
-    
     using Actions = std::vector<std::function<void()>>;
     
     Objects objects;
@@ -51,12 +49,11 @@ private:
     Actions removeActions;
     
     void InitializeSystemBitsets() {
-        int i = 0;
         meta::for_each_in_tuple(systems, [&](auto system) {
             meta::for_each_in_tuple(meta::IteratorPointer<typename decltype(system)::Components>{}.Iterate(), [&,this](auto component) {
-                systemBitsets[i][Settings::template GetComponentID<std::remove_pointer_t< decltype(component) >>()] = true;
+                systemBitsets[Settings::template GetSystemID<decltype(system)>()]
+                             [Settings::template GetComponentID<std::remove_pointer_t< decltype(component) >>()] = true;
             });
-            ++i;
         });
     }
 public:
@@ -125,7 +122,6 @@ private:
     typename Settings::Bitset removedComponents;
     
     std::array<void*, typename Settings::UniqueComponents{}.size()> components;
-    std::array<int, typename Settings::UniqueComponents{}.size()> componentIndices;
     std::array<int, typename Settings::Systems{}.size()> indexInSystem;
     
     bool isRemoved;
@@ -180,7 +176,6 @@ public:
         removedComponents[Settings::template GetComponentID<Component>()] = true;
         
         world->removeActions.emplace_back([this]() {
-            
             auto activeComponentsBefore = activeComponents;
             activeComponents[Settings::template GetComponentID<Component>()] = false;
             removedComponents[Settings::template GetComponentID<Component>()] = false;
@@ -206,7 +201,7 @@ public:
     }
     
     template<typename Component, typename... TArgs>
-    auto AddComponent(TArgs&&... mXs) {
+    Component* AddComponent(TArgs&&... mXs) {
         assert(!HasComponent<Component>());
         auto& container = std::get<Settings::template GetComponentID<Component>()>(world->components);
         SetComponent<Component>(container.CreateObject());
@@ -214,7 +209,7 @@ public:
     }
     
     template<typename Component>
-    auto AddComponent(GameObject* source) {
+    Component* AddComponent(GameObject* source) {
         assert(source);
         assert(!HasComponent<Component>());
         assert(source->HasComponent<Component>());
