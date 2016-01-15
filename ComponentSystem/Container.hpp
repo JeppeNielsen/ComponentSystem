@@ -13,14 +13,10 @@
 template<typename Object>
 class Container {
 public:
-    friend Object;
-    
     struct ObjectInstance {
         Object object;
         int references;
         Container<Object>* owner;
-        
-        friend Object;
     };
     
     ObjectInstance* CreateObject() {
