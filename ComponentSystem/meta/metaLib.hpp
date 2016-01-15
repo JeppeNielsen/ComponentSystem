@@ -145,20 +145,20 @@ struct HasUpdateFunction {
 };
 
 template<typename, typename T>
-struct has_AddedToWorld {
+struct has_Initialize {
     static_assert(
         std::integral_constant<T, false>::value,
         "Second template parameter needs to be of function type.");
 };
 
 template<typename C, typename Ret, typename... Args>
-struct has_AddedToWorld<C, Ret(Args...)> {
+struct has_Initialize<C, Ret(Args...)> {
 public:
     template<typename T>
     static constexpr auto check(T*)
     -> typename
         std::is_same<
-            decltype( std::declval<T>().AddedToWorld( std::declval<Args>()... ) ),
+            decltype( std::declval<T>().Initialize( std::declval<Args>()... ) ),
             Ret
         >::type;
 
@@ -172,9 +172,9 @@ public:
 
 
 
-struct HasAddedToWorldFunction {
+struct HasInitializeFunction {
     template <typename... Args>
-    using apply = has_AddedToWorld<Args..., void(GameWorld&)>;
+    using apply = has_Initialize<Args..., void(GameWorld&)>;
 };
 
 

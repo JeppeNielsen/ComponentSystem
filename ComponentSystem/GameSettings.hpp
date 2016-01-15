@@ -33,8 +33,8 @@ struct GameSettings {
     using SystemsTuple = meta::mp_rename<Systems, std::tuple>;
     using UpdateSystems = meta::filter<Systems, meta::HasUpdateFunction>;
     using UpdateSystemsTuple = meta::mp_rename<UpdateSystems, TupleOfPointers>;
-    using AddedToWorldSystems = meta::filter<Systems, meta::HasAddedToWorldFunction>;
-    using AddedToWorldSystemsTuple = meta::mp_rename<AddedToWorldSystems, TupleOfPointers>;
+    using InitializeSystems = meta::filter<Systems, meta::HasInitializeFunction>;
+    using InitializeSystemsTuple = meta::mp_rename<InitializeSystems, TupleOfPointers>;
     
     using AllComponents = meta::mp_rename<UniqueComponents, TupleOfContainers>;
     

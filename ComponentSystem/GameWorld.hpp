@@ -26,7 +26,7 @@ private:
     
     using Systems = typename Settings::SystemsTuple;
     using UpdateSystems = typename Settings::UpdateSystemsTuple;
-    using AddedToWorldSystems = typename Settings::AddedToWorldSystemsTuple;
+    using InitializeSystems = typename Settings::InitializeSystemsTuple;
     
     using ComponentSystems = typename Settings::ComponentSystemsTuple;
     
@@ -39,7 +39,7 @@ private:
     
     Systems systems;
     UpdateSystems updateSystems;
-    AddedToWorldSystems addedToWorldSystems;
+    InitializeSystems initializeSystems;
     ComponentSystems componentSystems;
     
     SystemBitsets systemBitsets;
@@ -49,9 +49,10 @@ private:
     Actions removeActions;
     
     void InitializeSystemBitsets() {
-        meta::for_each_in_tuple(systems, [&](auto system) {
-            meta::for_each_in_tuple(meta::IteratorPointer<typename decltype(system)::Components>{}.Iterate(), [&,this](auto component) {
-                systemBitsets[Settings::template GetSystemID<decltype(system)>()]
+        meta::for_each_in_tuple(systems, [&](auto& system) {
+            using SystemType = std::remove_const_t<std::remove_reference_t<decltype(system)>>;
+            meta::for_each_in_tuple(meta::IteratorPointer<typename SystemType::Components>{}.Iterate(), [&,this](auto component) {
+                systemBitsets[Settings::template GetSystemID<SystemType>()]
                              [Settings::template GetComponentID<std::remove_pointer_t< decltype(component) >>()] = true;
             });
         });
@@ -71,12 +72,12 @@ public:
     }
 
     void Initialize() {
-        meta::for_each_in_tuple(addedToWorldSystems, [&](auto system) {
+        meta::for_each_in_tuple(initializeSystems, [&](auto system) {
             std::get<
                 Settings::template GetSystemID<
                     std::remove_pointer_t<decltype(system)>
                 >()
-            >(systems).AddedToWorld(*this);
+            >(systems).Initialize(*this);
         });
     }
 
