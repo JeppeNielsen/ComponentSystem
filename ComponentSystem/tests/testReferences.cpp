@@ -22,9 +22,13 @@ int main() {
         content.Update(0);
         
         test = world.CreateObject();
+        test->AddComponent<Velocity>();
         test->AddComponent<Transform>(expensiveTransform);
+        test->AddComponent<Renderable>();
+        
+        world.Update(0);
     }
     
-    std::cout<<test->GetComponent<Transform>()->x<<std::endl;
+    //std::cout<<test->GetComponent<Transform>()->x<<std::endl;
     return 0;
 }
