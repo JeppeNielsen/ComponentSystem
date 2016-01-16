@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		72961DF21C36F9E9006B3FBC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961DF11C36F9E9006B3FBC /* main.cpp */; };
-		72961DF51C373BF7006B3FBC /* Logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961DF41C373BF7006B3FBC /* Logic.cpp */; };
-		72961E0A1C3871D9006B3FBC /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72961E081C3871D9006B3FBC /* Timer.cpp */; };
-		72C987631C44429F008BEFF3 /* testReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987621C44429F008BEFF3 /* testReferences.cpp */; };
+		72C9877B1C4AEB36008BEFF3 /* Logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987741C4AEB36008BEFF3 /* Logic.cpp */; };
+		72C9877C1C4AEB36008BEFF3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987761C4AEB36008BEFF3 /* main.cpp */; };
+		72C9877D1C4AEB36008BEFF3 /* testReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987771C4AEB36008BEFF3 /* testReferences.cpp */; };
+		72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987791C4AEB36008BEFF3 /* Timer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,20 +26,22 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		72961DF11C36F9E9006B3FBC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		72961DF31C372F45006B3FBC /* Logic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Logic.hpp; sourceTree = "<group>"; };
-		72961DF41C373BF7006B3FBC /* Logic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logic.cpp; sourceTree = "<group>"; };
-		72961E081C3871D9006B3FBC /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
-		72961E091C3871D9006B3FBC /* Timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Timer.hpp; sourceTree = "<group>"; };
-		72C987621C44429F008BEFF3 /* testReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testReferences.cpp; sourceTree = "<group>"; };
+		72C987681C4AEB36008BEFF3 /* Container.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Container.hpp; sourceTree = "<group>"; };
+		72C987691C4AEB36008BEFF3 /* GameSettings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSettings.hpp; sourceTree = "<group>"; };
+		72C9876A1C4AEB36008BEFF3 /* GameSystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSystem.hpp; sourceTree = "<group>"; };
+		72C9876B1C4AEB36008BEFF3 /* GameWorld.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameWorld.hpp; sourceTree = "<group>"; };
+		72C9876D1C4AEB36008BEFF3 /* Event.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Event.hpp; sourceTree = "<group>"; };
+		72C9876E1C4AEB36008BEFF3 /* Property.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Property.hpp; sourceTree = "<group>"; };
+		72C987701C4AEB36008BEFF3 /* meta.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = meta.hpp; sourceTree = "<group>"; };
+		72C987711C4AEB36008BEFF3 /* meta_fwd.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = meta_fwd.hpp; sourceTree = "<group>"; };
+		72C987721C4AEB36008BEFF3 /* metaLib.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metaLib.hpp; sourceTree = "<group>"; };
+		72C987741C4AEB36008BEFF3 /* Logic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logic.cpp; sourceTree = "<group>"; };
+		72C987751C4AEB36008BEFF3 /* Logic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Logic.hpp; sourceTree = "<group>"; };
+		72C987761C4AEB36008BEFF3 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		72C987771C4AEB36008BEFF3 /* testReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testReferences.cpp; sourceTree = "<group>"; };
+		72C987791C4AEB36008BEFF3 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
+		72C9877A1C4AEB36008BEFF3 /* Timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Timer.hpp; sourceTree = "<group>"; };
 		72E26FAA1C3072340035E270 /* ComponentSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ComponentSystem; sourceTree = BUILT_PRODUCTS_DIR; };
-		72E26FB51C3072C00035E270 /* meta.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = meta.hpp; sourceTree = "<group>"; };
-		72E26FB61C3072C00035E270 /* meta_fwd.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = meta_fwd.hpp; sourceTree = "<group>"; };
-		72E26FB81C30738E0035E270 /* GameSettings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSettings.hpp; sourceTree = "<group>"; };
-		72E26FBE1C30762F0035E270 /* metaLib.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metaLib.hpp; sourceTree = "<group>"; };
-		72E26FBF1C3078830035E270 /* GameWorld.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameWorld.hpp; sourceTree = "<group>"; };
-		72E26FC41C308E9A0035E270 /* GameSystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSystem.hpp; sourceTree = "<group>"; };
-		72E26FC71C32D83C0035E270 /* Container.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Container.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,21 +55,54 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		72961E071C3871D9006B3FBC /* utils */ = {
+		72C987671C4AEB36008BEFF3 /* ComponentSystem */ = {
 			isa = PBXGroup;
 			children = (
-				72961E081C3871D9006B3FBC /* Timer.cpp */,
-				72961E091C3871D9006B3FBC /* Timer.hpp */,
+				72C987681C4AEB36008BEFF3 /* Container.hpp */,
+				72C987691C4AEB36008BEFF3 /* GameSettings.hpp */,
+				72C9876A1C4AEB36008BEFF3 /* GameSystem.hpp */,
+				72C9876B1C4AEB36008BEFF3 /* GameWorld.hpp */,
 			);
-			path = utils;
+			path = ComponentSystem;
 			sourceTree = "<group>";
 		};
-		72C987611C444213008BEFF3 /* tests */ = {
+		72C9876C1C4AEB36008BEFF3 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				72C987621C44429F008BEFF3 /* testReferences.cpp */,
+				72C9876D1C4AEB36008BEFF3 /* Event.hpp */,
+				72C9876E1C4AEB36008BEFF3 /* Property.hpp */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		72C9876F1C4AEB36008BEFF3 /* meta */ = {
+			isa = PBXGroup;
+			children = (
+				72C987701C4AEB36008BEFF3 /* meta.hpp */,
+				72C987711C4AEB36008BEFF3 /* meta_fwd.hpp */,
+				72C987721C4AEB36008BEFF3 /* metaLib.hpp */,
+			);
+			path = meta;
+			sourceTree = "<group>";
+		};
+		72C987731C4AEB36008BEFF3 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				72C987741C4AEB36008BEFF3 /* Logic.cpp */,
+				72C987751C4AEB36008BEFF3 /* Logic.hpp */,
+				72C987761C4AEB36008BEFF3 /* main.cpp */,
+				72C987771C4AEB36008BEFF3 /* testReferences.cpp */,
 			);
 			path = tests;
+			sourceTree = "<group>";
+		};
+		72C987781C4AEB36008BEFF3 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				72C987791C4AEB36008BEFF3 /* Timer.cpp */,
+				72C9877A1C4AEB36008BEFF3 /* Timer.hpp */,
+			);
+			path = utils;
 			sourceTree = "<group>";
 		};
 		72E26FA11C3072340035E270 = {
@@ -89,28 +124,13 @@
 		72E26FAC1C3072340035E270 /* ComponentSystem */ = {
 			isa = PBXGroup;
 			children = (
-				72E26FC71C32D83C0035E270 /* Container.hpp */,
-				72E26FB81C30738E0035E270 /* GameSettings.hpp */,
-				72E26FC41C308E9A0035E270 /* GameSystem.hpp */,
-				72E26FBF1C3078830035E270 /* GameWorld.hpp */,
-				72961DF41C373BF7006B3FBC /* Logic.cpp */,
-				72961DF31C372F45006B3FBC /* Logic.hpp */,
-				72961DF11C36F9E9006B3FBC /* main.cpp */,
-				72E26FB41C3072C00035E270 /* meta */,
-				72C987611C444213008BEFF3 /* tests */,
-				72961E071C3871D9006B3FBC /* utils */,
+				72C987671C4AEB36008BEFF3 /* ComponentSystem */,
+				72C9876C1C4AEB36008BEFF3 /* Data */,
+				72C9876F1C4AEB36008BEFF3 /* meta */,
+				72C987731C4AEB36008BEFF3 /* tests */,
+				72C987781C4AEB36008BEFF3 /* utils */,
 			);
 			path = ComponentSystem;
-			sourceTree = "<group>";
-		};
-		72E26FB41C3072C00035E270 /* meta */ = {
-			isa = PBXGroup;
-			children = (
-				72E26FB51C3072C00035E270 /* meta.hpp */,
-				72E26FB61C3072C00035E270 /* meta_fwd.hpp */,
-				72E26FBE1C30762F0035E270 /* metaLib.hpp */,
-			);
-			path = meta;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,10 +189,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				72961DF51C373BF7006B3FBC /* Logic.cpp in Sources */,
-				72961DF21C36F9E9006B3FBC /* main.cpp in Sources */,
-				72C987631C44429F008BEFF3 /* testReferences.cpp in Sources */,
-				72961E0A1C3871D9006B3FBC /* Timer.cpp in Sources */,
+				72C9877D1C4AEB36008BEFF3 /* testReferences.cpp in Sources */,
+				72C9877C1C4AEB36008BEFF3 /* main.cpp in Sources */,
+				72C9877B1C4AEB36008BEFF3 /* Logic.cpp in Sources */,
+				72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
