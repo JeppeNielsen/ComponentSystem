@@ -24,8 +24,7 @@ private:
         void (Obj::*f)(Args...);
 
         template<typename ...Ts>
-        void operator()(Ts&&... args)
-        {
+        void operator()(Ts&&... args) {
             (x->*f)(std::forward<Ts>(args)...);
         }
     };
@@ -37,8 +36,7 @@ private:
         void (Obj::*f)(Args..., Context);
 
         template<typename ...Ts>
-        void operator()(Ts&&... args)
-        {
+        void operator()(Ts&&... args) {
             (x->*f)(std::forward<Ts>(args)..., context);
         }
     };
