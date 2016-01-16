@@ -25,8 +25,9 @@ private:
     using Objects = Container<GameObject>;
     
     using Systems = typename Settings::SystemsTuple;
-    using UpdateSystems = typename Settings::UpdateSystemsTuple;
-    using InitializeSystems = typename Settings::InitializeSystemsTuple;
+    using InitializeSystems = typename Settings::InitializeSystems;
+    using UpdateSystems = typename Settings::UpdateSystems;
+    using RenderSystems = typename Settings::RenderSystems;
     
     using ComponentSystems = typename Settings::ComponentSystemsTuple;
     
@@ -38,8 +39,11 @@ private:
     Objects objects;
     
     Systems systems;
-    UpdateSystems updateSystems;
+    
     InitializeSystems initializeSystems;
+    UpdateSystems updateSystems;
+    RenderSystems renderSystems;
+    
     ComponentSystems componentSystems;
     
     SystemBitsets systemBitsets;
@@ -87,9 +91,19 @@ public:
         meta::for_each_in_tuple(updateSystems, [this, dt] (auto system) {
             std::get<
                     Settings::template GetSystemID<
-                    std::remove_pointer_t< decltype(system)>
+                        std::remove_pointer_t< decltype(system)>
                     >()
                 >(systems).Update(dt);
+        });
+    }
+    
+    void Render() {
+        meta::for_each_in_tuple(renderSystems, [this] (auto system) {
+            std::get<
+                    Settings::template GetSystemID<
+                        std::remove_pointer_t< decltype(system)>
+                    >()
+                >(systems).Render();
         });
     }
 

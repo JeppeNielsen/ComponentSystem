@@ -81,3 +81,7 @@ void AccSystem::ObjectRemoved(GameObject* object) {
 void AccSystem::Update(float dt) {
     std::cout<< "AccSystem::Update"<<std::endl;
 }
+
+void AccSystem::Render() {
+    std::cout<< "AccSystem::Render"<<std::endl;
+}

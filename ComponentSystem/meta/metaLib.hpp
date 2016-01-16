@@ -110,75 +110,6 @@ constexpr void for_each_in_tuple_non_const(std::tuple<Ts...> & tuple, F&& func){
     for_each_in_tuple_non_const(tuple, func, std::make_index_sequence<sizeof...(Ts)>());
 }
 
-//---------------------------------------------
-
-
-template<typename, typename T>
-struct has_update {
-    static_assert(
-        std::integral_constant<T, false>::value,
-        "Second template parameter needs to be of function type.");
-};
-
-template<typename C, typename Ret, typename... Args>
-struct has_update<C, Ret(Args...)> {
-public:
-    template<typename T>
-    static constexpr auto check(T*)
-    -> typename
-        std::is_same<
-            decltype( std::declval<T>().Update( std::declval<Args>()... ) ),
-            Ret
-        >::type;
-
-    template<typename>
-    static constexpr std::false_type check(...);
-
-    typedef decltype(check<C>(0)) type;
-public:
-    static constexpr bool value = type::value;
-};
-
-struct HasUpdateFunction {
-    template <typename... Args>
-    using apply = has_update<Args..., void(float)>;
-};
-
-template<typename, typename T>
-struct has_Initialize {
-    static_assert(
-        std::integral_constant<T, false>::value,
-        "Second template parameter needs to be of function type.");
-};
-
-template<typename C, typename Ret, typename... Args>
-struct has_Initialize<C, Ret(Args...)> {
-public:
-    template<typename T>
-    static constexpr auto check(T*)
-    -> typename
-        std::is_same<
-            decltype( std::declval<T>().Initialize( std::declval<Args>()... ) ),
-            Ret
-        >::type;
-
-    template<typename>
-    static constexpr std::false_type check(...);
-
-    typedef decltype(check<C>(0)) type;
-public:
-    static constexpr bool value = type::value;
-};
-
-
-
-struct HasInitializeFunction {
-    template <typename... Args>
-    using apply = has_Initialize<Args..., void(GameWorld&)>;
-};
-
-
-
 template<typename Component, typename System, typename... Args>
 struct has_component {
 public:
@@ -190,8 +121,6 @@ public:
     typedef typename std::conditional<
     meta::find_index<typename System::Components, Component>{}!=meta::npos{},
     std::true_type, std::false_type>::type type;
-public:
-    //static constexpr bool value = true;
 };
 
 template<typename Component>
@@ -235,10 +164,44 @@ struct ReturnType {
 template<typename... T>
 using ReturnContainedType = typename ReturnType<T...>::t;
 
+
+
+
+
+#define HAS_OPTIONAL_METHOD(methodName, signature) \
+template<typename, typename T>          \
+struct has_ ## methodName {                 \
+    static_assert(                      \
+        std::integral_constant<T, false>::value, \
+        "Second template parameter needs to be of function type.");\
+};\
+\
+template<typename C, typename Ret, typename... Args>\
+struct has_ ## methodName<C, Ret(Args...)> {\
+public:\
+    template<typename T>\
+    static constexpr auto check(T*)\
+    -> typename\
+        std::is_same<\
+            decltype( std::declval<T>().methodName( std::declval<Args>()... ) ),\
+            Ret\
+        >::type;\
+\
+    template<typename>\
+    static constexpr std::false_type check(...);\
+\
+    typedef decltype(check<C>(0)) type;\
+public:\
+    static constexpr bool value = type::value;\
+};\
+\
+struct Has ## methodName ## Function {\
+    template <typename... Args>\
+    using apply = has_ ## methodName<Args..., signature>;\
+};
+
+HAS_OPTIONAL_METHOD(Initialize, void(GameWorld&));
+HAS_OPTIONAL_METHOD(Update, void(float));
+HAS_OPTIONAL_METHOD(Render, void());
+
 }
-
-
-
-
-
-

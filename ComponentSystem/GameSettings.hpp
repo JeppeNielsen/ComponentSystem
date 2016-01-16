@@ -31,10 +31,9 @@ struct GameSettings {
     using TupleOfPointers = std::tuple<Ts*...>;
     
     using SystemsTuple = meta::mp_rename<Systems, std::tuple>;
-    using UpdateSystems = meta::filter<Systems, meta::HasUpdateFunction>;
-    using UpdateSystemsTuple = meta::mp_rename<UpdateSystems, TupleOfPointers>;
-    using InitializeSystems = meta::filter<Systems, meta::HasInitializeFunction>;
-    using InitializeSystemsTuple = meta::mp_rename<InitializeSystems, TupleOfPointers>;
+    using InitializeSystems = meta::mp_rename<meta::filter<Systems, meta::HasInitializeFunction>, TupleOfPointers>;
+    using UpdateSystems = meta::mp_rename<meta::filter<Systems, meta::HasUpdateFunction>, TupleOfPointers>;
+    using RenderSystems = meta::mp_rename<meta::filter<Systems, meta::HasRenderFunction>, TupleOfPointers>;
     
     using AllComponents = meta::mp_rename<UniqueComponents, TupleOfContainers>;
     

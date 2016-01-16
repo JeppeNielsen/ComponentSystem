@@ -27,6 +27,7 @@ int main() {
         test->AddComponent<Renderable>();
         
         world.Update(0);
+        world.Render();
     }
     
     //std::cout<<test->GetComponent<Transform>()->x<<std::endl;

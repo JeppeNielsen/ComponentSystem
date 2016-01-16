@@ -59,6 +59,7 @@ struct AccSystem : GameSystem<Velocity, Renderable> {
     void ObjectAdded(GameObject* object);
     void ObjectRemoved(GameObject* object);
     void Update(float dt);
+    void Render();
 };
 
 struct GameWorldSettings : GameSettings<VelocitySystem, RenderSystem, AccSystem> {};
