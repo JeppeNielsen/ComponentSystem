@@ -9,7 +9,7 @@
 #include <iostream>
 #include "Logic.hpp"
 
-int main() {
+int main_nonol() {
 
     GameWorld world;
     world.Initialize();

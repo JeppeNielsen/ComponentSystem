@@ -11,6 +11,7 @@
 #include <tuple>
 
 struct GameWorld;
+struct TypeInfo;
 
 namespace meta {
 
@@ -203,5 +204,7 @@ struct Has ## methodName ## Function {\
 HAS_OPTIONAL_METHOD(Initialize, void(GameWorld&));
 HAS_OPTIONAL_METHOD(Update, void(float));
 HAS_OPTIONAL_METHOD(Render, void());
+
+HAS_OPTIONAL_METHOD(GetType, TypeInfo());
 
 }

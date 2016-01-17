@@ -13,6 +13,7 @@
 #include <bitset>
 #include <array>
 #include "Container.hpp"
+#include "TypeInfo.hpp"
 
 template<typename...T>
 struct GameSettings {
@@ -42,6 +43,10 @@ struct GameSettings {
     
     using ComponentSystems = meta::as_list<decltype(meta::FindComponentSystems<Systems, UniqueComponents>{}.Iterate())>;
     using ComponentSystemsTuple = meta::mp_rename<ComponentSystems, std::tuple>;
+    
+    using SerializableComponents = meta::mp_rename<meta::filter<UniqueComponents, meta::HasGetTypeFunction>, TupleOfPointers>;
+    
+    using ComponentNames = std::array<std::string, UniqueComponents{}.size()>;
     
     template<typename System>
     constexpr static size_t GetSystemID() {

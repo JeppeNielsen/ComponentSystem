@@ -11,27 +11,38 @@
 #include "GameSettings.hpp"
 
 struct Transform {
-	std::string Name() const { return "Transform"; }
 	int x;
 	int y;
     
     //Transform() { std::cout<<"Transform ctor"<<std::endl; }
     //~Transform() { std::cout<<"Transform dtor"<<std::endl; }
+    
+    TYPE_FIELDS_BEGIN()
+    TYPE_FIELD(x)
+    TYPE_FIELD(y)
+    TYPE_FIELDS_END
 };
 
 struct Velocity {
-	std::string Name() const { return "Velocity"; }
 	int x;
 	int y;
     //Velocity() { std::cout<<"Velocity ctor"<<std::endl; }
     //~Velocity() { std::cout<<"Velocity dtor"<<std::endl; }
+    
+    TYPE_FIELDS_BEGIN()
+    TYPE_FIELD(x)
+    TYPE_FIELD(y)
+    TYPE_FIELDS_END
 };
 
 struct Renderable {
-	std::string Name() const { return "Renderable"; }
 	int imageNo;
     //Renderable() { std::cout<<"Renderable ctor"<<std::endl; }
     //~Renderable() { std::cout<<"Renderable dtor"<<std::endl; }
+    
+    TYPE_FIELDS_BEGIN()
+    TYPE_FIELD(imageNo)
+    TYPE_FIELDS_END
 };
 
 struct VelocitySystem : GameSystem<Transform, Velocity> {

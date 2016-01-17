@@ -9,6 +9,8 @@
 #pragma once
 #include "GameSettings.hpp"
 #include "Container.hpp"
+#include "minijson_writer.hpp"
+#include "minijson_reader.hpp"
 #include <type_traits>
 #include <assert.h>
 
@@ -33,6 +35,8 @@ private:
     
     using SystemBitsets = typename Settings::SystemBitsets;
     using Components = typename Settings::AllComponents;
+    using SerializableComponents = typename Settings::SerializableComponents;
+    using ComponentNames = typename Settings::ComponentNames;
     
     using Actions = std::vector<std::function<void()>>;
     
@@ -49,6 +53,9 @@ private:
     SystemBitsets systemBitsets;
     Components components;
     
+    SerializableComponents serializableComponents;
+    ComponentNames componentNames;
+    
     Actions createActions;
     Actions removeActions;
     
@@ -61,6 +68,13 @@ private:
             });
         });
     }
+    
+    void InitializeComponentNames() {
+        meta::for_each_in_tuple(serializableComponents, [this] (auto componentPointer) {
+            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
+            componentNames[Settings::GetComponentID<ComponentType>()] = ComponentType{}.GetType().name;
+        });
+    }
 public:
 
     template<typename System>
@@ -70,9 +84,13 @@ public:
 
     template<typename T>
     GameObject* CreateObject();
-
+    
+    template<typename T>
+    GameObject* CreateObject(std::istream &jsonStream, std::function<void(GameObject*)> onCreated);
+    
     GameWorld() {
         InitializeSystemBitsets();
+        InitializeComponentNames();
     }
 
     void Initialize() {
@@ -234,6 +252,16 @@ public:
         return GetComponent<Component>();
     }
     
+    using SerializePredicate = std::function<bool(GameObject*, size_t)>;
+    
+    void ToJson(std::ostream& stream, SerializePredicate predicate) {
+        minijson::writer_configuration config;
+        config = config.pretty_printing(true);
+        minijson::object_writer writer(stream, config);
+        WriteJson(writer, predicate);
+        writer.close();
+    }
+    
 private:
     template<typename Component>
     void SetComponent(typename Container<Component>::ObjectInstance* instance) {
@@ -252,6 +280,82 @@ private:
                 }
             });
         });
+    }
+    
+    void WriteJson(minijson::object_writer& writer, SerializePredicate predicate) {
+
+        minijson::object_writer gameObject = writer.nested_object("GameObject");
+        minijson::array_writer components = gameObject.nested_array("Components");
+        
+        meta::for_each_in_tuple(world->serializableComponents, [this, &components, &predicate] (auto componentPointer) {
+            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
+            if (HasComponent<ComponentType>()) {
+                if (!(predicate && !predicate(this, Settings::GetComponentID<ComponentType>()))) {
+                    SerializeComponent<ComponentType>(components, false, 0);
+                }
+            }
+        });
+
+        components.close();
+        /*
+        if (!children.empty()) {
+            minijson::array_writer children_object = gameObject.nested_array("Children");
+            for(auto child : children) {
+                if (predicate && !predicate(child, -1)) {
+                    continue;
+                }
+                minijson::object_writer child_object = children_object.nested_object();
+                child->WriteJson(child_object, predicate);
+                child_object.close();
+            }
+            children_object.close();
+        }
+        */
+        gameObject.close();
+    }
+    
+    template<typename Component>
+    void SerializeComponent(minijson::array_writer& writer, bool isReference, std::string* referenceID ) {
+        minijson::object_writer componentWriter = writer.nested_object();
+        Component* component = GetComponent<Component>();
+        auto type = component->GetType();
+        std::string& name = world->componentNames[Settings::GetComponentID<Component>()];
+        if (!isReference) {
+            minijson::object_writer jsonComponent = componentWriter.nested_object(name.c_str());
+            type.Serialize(jsonComponent);
+            jsonComponent.close();
+        } else {
+            std::string referenceName = name + ":ref";
+            minijson::object_writer jsonComponent = componentWriter.nested_object(referenceName.c_str());
+            if (!referenceID) {
+                jsonComponent.write("id", "");
+            } else {
+                jsonComponent.write("id", *referenceID);
+            }
+            jsonComponent.close();
+        }
+        componentWriter.close();
+    }
+    
+    void AddComponent(minijson::istream_context& context, std::string componentName) {
+        bool addedAny = false;
+        meta::for_each_in_tuple(world->serializableComponents, [this, &context, &componentName, &addedAny] (auto componentPointer) {
+            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
+            if (componentName == world->componentNames[Settings::GetComponentID<ComponentType>()]) {
+                if (!HasComponent<ComponentType>()) {
+                    ComponentType* component = AddComponent<ComponentType>();
+                    auto type = component->GetType();
+                    type.Deserialize(context);
+                    addedAny = true;
+                } else {
+                    std::cout<<"Only one component per type allowed per object"<<std::endl;
+                    minijson::ignore(context);
+                }
+            }
+        });
+        if (!addedAny) {
+            minijson::ignore(context);
+        }
     }
 };
 
@@ -272,3 +376,44 @@ void GameWorld::Clear() {
     DoActions(createActions);
     DoActions(removeActions);
 }
+
+template<typename T = void>
+GameObject* GameWorld::CreateObject(std::istream &jsonStream, std::function<void(GameObject*)> onCreated) {
+    minijson::istream_context context(jsonStream);
+    GameObject* object = 0;
+    try {
+         minijson::parse_object(context, [&] (const char* n, minijson::value v) {
+            std::string name = n;
+            if (name == "GameObject" && v.type() == minijson::Object) {
+                object = CreateObject();
+                minijson::parse_object(context, [&] (const char* n, minijson::value v) {
+                    std::string name = n;
+                    if (name == "Components" && v.type() == minijson::Array && object) {
+                        minijson::parse_array(context, [&] (minijson::value v) {
+                            if (v.type() == minijson::Object) {
+                                minijson::parse_object(context, [&] (const char* n, minijson::value v) {
+                                    object->AddComponent(context, n);
+                                });
+                            }
+                        });
+                    } /*else if (name == "Children" && v.type() == minijson::Array && object) {
+                        minijson::parse_array(context, [&] (minijson::value v) {
+                            GameObject* child = CreateGameObjectJson(context, iterator);
+                            if (child) {
+                                child->Parent = object;
+                            }
+                        });
+                    }
+                    */
+                    if (onCreated) {
+                        onCreated(object);
+                    }
+                });
+            }
+         });
+    } catch (std::exception e) {
+        std::cout << e.what() << std::endl;
+    }
+    return object;
+}
+

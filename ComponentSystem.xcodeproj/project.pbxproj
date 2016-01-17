@@ -11,6 +11,7 @@
 		72C9877C1C4AEB36008BEFF3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987761C4AEB36008BEFF3 /* main.cpp */; };
 		72C9877D1C4AEB36008BEFF3 /* testReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987771C4AEB36008BEFF3 /* testReferences.cpp */; };
 		72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987791C4AEB36008BEFF3 /* Timer.cpp */; };
+		72C987901C4BD03A008BEFF3 /* testSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C9878F1C4BD03A008BEFF3 /* testSerialization.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +42,11 @@
 		72C987771C4AEB36008BEFF3 /* testReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testReferences.cpp; sourceTree = "<group>"; };
 		72C987791C4AEB36008BEFF3 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
 		72C9877A1C4AEB36008BEFF3 /* Timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Timer.hpp; sourceTree = "<group>"; };
+		72C9878B1C4BC4B9008BEFF3 /* JsonSerializer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JsonSerializer.hpp; sourceTree = "<group>"; };
+		72C9878C1C4BC4B9008BEFF3 /* minijson_reader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = minijson_reader.hpp; sourceTree = "<group>"; };
+		72C9878D1C4BC4B9008BEFF3 /* minijson_writer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = minijson_writer.hpp; sourceTree = "<group>"; };
+		72C9878E1C4BC4B9008BEFF3 /* TypeInfo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TypeInfo.hpp; sourceTree = "<group>"; };
+		72C9878F1C4BD03A008BEFF3 /* testSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testSerialization.cpp; sourceTree = "<group>"; };
 		72E26FAA1C3072340035E270 /* ComponentSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ComponentSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -92,6 +98,7 @@
 				72C987751C4AEB36008BEFF3 /* Logic.hpp */,
 				72C987761C4AEB36008BEFF3 /* main.cpp */,
 				72C987771C4AEB36008BEFF3 /* testReferences.cpp */,
+				72C9878F1C4BD03A008BEFF3 /* testSerialization.cpp */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -103,6 +110,17 @@
 				72C9877A1C4AEB36008BEFF3 /* Timer.hpp */,
 			);
 			path = utils;
+			sourceTree = "<group>";
+		};
+		72C9878A1C4BC4B9008BEFF3 /* Serialization */ = {
+			isa = PBXGroup;
+			children = (
+				72C9878B1C4BC4B9008BEFF3 /* JsonSerializer.hpp */,
+				72C9878C1C4BC4B9008BEFF3 /* minijson_reader.hpp */,
+				72C9878D1C4BC4B9008BEFF3 /* minijson_writer.hpp */,
+				72C9878E1C4BC4B9008BEFF3 /* TypeInfo.hpp */,
+			);
+			path = Serialization;
 			sourceTree = "<group>";
 		};
 		72E26FA11C3072340035E270 = {
@@ -127,6 +145,7 @@
 				72C987671C4AEB36008BEFF3 /* ComponentSystem */,
 				72C9876C1C4AEB36008BEFF3 /* Data */,
 				72C9876F1C4AEB36008BEFF3 /* meta */,
+				72C9878A1C4BC4B9008BEFF3 /* Serialization */,
 				72C987731C4AEB36008BEFF3 /* tests */,
 				72C987781C4AEB36008BEFF3 /* utils */,
 			);
@@ -192,6 +211,7 @@
 				72C9877D1C4AEB36008BEFF3 /* testReferences.cpp in Sources */,
 				72C9877C1C4AEB36008BEFF3 /* main.cpp in Sources */,
 				72C9877B1C4AEB36008BEFF3 /* Logic.cpp in Sources */,
+				72C987901C4BD03A008BEFF3 /* testSerialization.cpp in Sources */,
 				72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
