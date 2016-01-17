@@ -340,6 +340,9 @@ private:
     void AddComponent(minijson::istream_context& context, std::string componentName) {
         bool addedAny = false;
         meta::for_each_in_tuple(world->serializableComponents, [this, &context, &componentName, &addedAny] (auto componentPointer) {
+            if (addedAny) {
+                return;
+            }
             using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
             if (componentName == world->componentNames[Settings::GetComponentID<ComponentType>()]) {
                 if (!HasComponent<ComponentType>()) {
