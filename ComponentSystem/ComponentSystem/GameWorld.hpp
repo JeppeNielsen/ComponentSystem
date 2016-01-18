@@ -13,6 +13,7 @@
 #include "minijson_reader.hpp"
 #include <type_traits>
 #include <assert.h>
+#include "Property.hpp"
 
 #define FWD(x) (::std::forward<decltype(x)>(x))
 
@@ -147,9 +148,9 @@ public:
 
 class GameObject {
 private:
-    GameObject()  { }
     
     using Settings = GameWorldSettings;
+    using ObjectCollection = std::vector<GameObject*>;
     
     typename Settings::Bitset activeComponents;
     typename Settings::Bitset removedComponents;
@@ -160,6 +161,8 @@ private:
     bool isRemoved;
     Container<GameObject>::ObjectInstance* instance;
     GameWorld* world;
+    ObjectCollection children;
+    
     
     friend class GameWorld;
     friend class Container<GameObject>::ObjectInstance;
@@ -170,7 +173,26 @@ private:
         removedComponents.reset();
     }
     
+    GameObject() {
+        Parent = 0;
+        Parent.Changed.Bind([this](GameObject* value) {
+            assert(value!=this);
+            GameObject* prevParent = Parent.PreviousValue();
+            if (prevParent) {
+                auto& children = prevParent->children;
+                children.erase(std::find(children.begin(), children.end(), this));
+            }
+            
+            if (value) {
+                value->children.push_back(this);
+            }
+        });
+    }
+    
 public:
+
+    Property<GameObject*> Parent;
+    const ObjectCollection& Children() { return children; }
     
     void Remove() {
         if (isRemoved) return;
@@ -187,6 +209,10 @@ public:
             world->objects.RemoveObject(instance);
             isRemoved = false;
         });
+        
+        for(auto child : children) {
+            child->Remove();
+        }
     }
        
     template<typename Component>

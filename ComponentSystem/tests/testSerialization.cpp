@@ -9,7 +9,7 @@
 #include "Logic.hpp"
 #include <fstream>
 
-int main() {
+int main_serialization() {
 
     GameWorld world;
     /*
@@ -51,5 +51,5 @@ int main() {
     
     }
     
-    
+    return 0;
 }

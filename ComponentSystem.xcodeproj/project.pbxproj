@@ -12,6 +12,8 @@
 		72C9877D1C4AEB36008BEFF3 /* testReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987771C4AEB36008BEFF3 /* testReferences.cpp */; };
 		72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987791C4AEB36008BEFF3 /* Timer.cpp */; };
 		72C987901C4BD03A008BEFF3 /* testSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C9878F1C4BD03A008BEFF3 /* testSerialization.cpp */; };
+		72C987921C4D738F008BEFF3 /* testHierarchy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987911C4D738F008BEFF3 /* testHierarchy.cpp */; };
+		72C987941C4D7E01008BEFF3 /* unitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987931C4D7E01008BEFF3 /* unitTests.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +49,9 @@
 		72C9878D1C4BC4B9008BEFF3 /* minijson_writer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = minijson_writer.hpp; sourceTree = "<group>"; };
 		72C9878E1C4BC4B9008BEFF3 /* TypeInfo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TypeInfo.hpp; sourceTree = "<group>"; };
 		72C9878F1C4BD03A008BEFF3 /* testSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testSerialization.cpp; sourceTree = "<group>"; };
+		72C987911C4D738F008BEFF3 /* testHierarchy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testHierarchy.cpp; sourceTree = "<group>"; };
+		72C987931C4D7E01008BEFF3 /* unitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unitTests.cpp; sourceTree = "<group>"; };
+		72C987951C4D7E36008BEFF3 /* UnitTest.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = UnitTest.hpp; sourceTree = "<group>"; };
 		72E26FAA1C3072340035E270 /* ComponentSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ComponentSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -99,6 +104,8 @@
 				72C987761C4AEB36008BEFF3 /* main.cpp */,
 				72C987771C4AEB36008BEFF3 /* testReferences.cpp */,
 				72C9878F1C4BD03A008BEFF3 /* testSerialization.cpp */,
+				72C987911C4D738F008BEFF3 /* testHierarchy.cpp */,
+				72C987931C4D7E01008BEFF3 /* unitTests.cpp */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -108,6 +115,7 @@
 			children = (
 				72C987791C4AEB36008BEFF3 /* Timer.cpp */,
 				72C9877A1C4AEB36008BEFF3 /* Timer.hpp */,
+				72C987951C4D7E36008BEFF3 /* UnitTest.hpp */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -209,10 +217,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				72C9877D1C4AEB36008BEFF3 /* testReferences.cpp in Sources */,
+				72C987941C4D7E01008BEFF3 /* unitTests.cpp in Sources */,
 				72C9877C1C4AEB36008BEFF3 /* main.cpp in Sources */,
 				72C9877B1C4AEB36008BEFF3 /* Logic.cpp in Sources */,
 				72C987901C4BD03A008BEFF3 /* testSerialization.cpp in Sources */,
 				72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */,
+				72C987921C4D738F008BEFF3 /* testHierarchy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

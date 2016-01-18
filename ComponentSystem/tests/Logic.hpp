@@ -45,6 +45,16 @@ struct Renderable {
     TYPE_FIELDS_END
 };
 
+struct Touchable {
+	bool clickThrough;
+    //Touchable() { std::cout<<"Renderable ctor"<<std::endl; }
+    //~Touchable() { std::cout<<"Renderable dtor"<<std::endl; }
+    
+    TYPE_FIELDS_BEGIN()
+    TYPE_FIELD(clickThrough)
+    TYPE_FIELDS_END
+};
+
 struct VelocitySystem : GameSystem<Transform, Velocity> {
     VelocitySystem();
     ~VelocitySystem();
@@ -61,11 +71,14 @@ struct RenderSystem : GameSystem<Transform, Renderable> {
     void ObjectAdded(GameObject* object);
     void ObjectRemoved(GameObject* object);
     void Update(float dt);
+    
+    Event<GameObject*> Added;
+    Event<GameObject*> Removed;
 };
 
-struct AccSystem : GameSystem<Velocity, Renderable> {
-    AccSystem();
-    ~AccSystem();
+struct TouchSystem : GameSystem<Transform, Touchable> {
+    TouchSystem();
+    ~TouchSystem();
     void Initialize(GameWorld& world);
     void ObjectAdded(GameObject* object);
     void ObjectRemoved(GameObject* object);
@@ -73,5 +86,5 @@ struct AccSystem : GameSystem<Velocity, Renderable> {
     void Render();
 };
 
-struct GameWorldSettings : GameSettings<VelocitySystem, RenderSystem, AccSystem> {};
+struct GameWorldSettings : GameSettings<VelocitySystem, RenderSystem, TouchSystem> {};
 #include "GameWorld.hpp"
