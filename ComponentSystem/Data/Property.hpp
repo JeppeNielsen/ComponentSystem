@@ -16,12 +16,16 @@ private:
     
     void Set(const Value& newValue) {
         if (value==newValue) return;
+        previousValue = value;
         value = newValue;
         Changed(value);
     }
+    static Value previousValue;
 public:
     Event<Value> Changed;
-
+    
+    Value& PreviousValue() const;
+    
     const Value& operator() () const { return value; }
     void operator = (const Value& v) { Set(v); }
     void operator = (const Property<Value>& v) { Set(v.value); }
@@ -67,3 +71,12 @@ public:
         return value / property.value;
     }
 };
+
+template<class Value>
+Value Property<Value>::previousValue;
+
+template<class Value>
+Value& Property<Value>::PreviousValue() const {
+    return previousValue;
+}
+
