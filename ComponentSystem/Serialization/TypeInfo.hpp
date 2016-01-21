@@ -206,7 +206,7 @@ public:
 template<typename T>
 struct JsonSerializer<T, typename std::enable_if_t< meta::HasGetTypeFunction::apply<T>::value >> {
     static void Serialize(std::string& key, const T& value, minijson::object_writer& writer) {
-        auto type = value.GetType();
+        auto type = ((T&)value).GetType();
         minijson::object_writer object = writer.nested_object(key.c_str());
         type.Serialize(object);
         object.close();
