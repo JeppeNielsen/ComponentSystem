@@ -13,7 +13,7 @@
 
 
 
-int main() {
+int main_unittest() {
 
     UnitTest::Run("CreateObject" , [] () {
         GameWorld world;

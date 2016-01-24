@@ -29,9 +29,20 @@ struct Velocity {
     //Velocity() { std::cout<<"Velocity ctor"<<std::endl; }
     //~Velocity() { std::cout<<"Velocity dtor"<<std::endl; }
     
+    struct Info {
+        int TestVar;
+        
+        TYPE_FIELDS_BEGIN()
+        TYPE_FIELD(TestVar)
+        TYPE_FIELDS_END
+    };
+    
+    Info info;
+    
     TYPE_FIELDS_BEGIN()
     TYPE_FIELD(x)
     TYPE_FIELD(y)
+    TYPE_FIELD(info)
     TYPE_FIELDS_END
 };
 
