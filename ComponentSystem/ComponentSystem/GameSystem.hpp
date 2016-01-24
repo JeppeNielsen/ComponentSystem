@@ -17,6 +17,7 @@ template<typename... T>
 class GameSystem {
 public:
     using Components = meta::list<T...>;
+    virtual ~GameSystem() {};
 private:
     using ObjectCollection = std::vector<GameObject*>;
     ObjectCollection objects;
