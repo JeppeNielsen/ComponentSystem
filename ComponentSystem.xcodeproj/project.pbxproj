@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7279EDEE1C5570860026F8C5 /* engine.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 7279EDED1C5570860026F8C5 /* engine.so */; settings = {ATTRIBUTES = (Required, ); }; };
+		7279EDF21C56BC060026F8C5 /* ScriptEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7279EDF01C56BC060026F8C5 /* ScriptEngine.cpp */; };
+		7279EDF41C56BE770026F8C5 /* testScripting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7279EDF31C56BE770026F8C5 /* testScripting.cpp */; };
+		7279EE211C5E76A20026F8C5 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7279EE201C5E76A20026F8C5 /* libclang.dylib */; };
+		7279EE2E1C5E82E90026F8C5 /* ClangUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7279EE2C1C5E82E90026F8C5 /* ClangUtil.cpp */; };
+		7279EE381C5EA47E0026F8C5 /* ScriptParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7279EE361C5EA47E0026F8C5 /* ScriptParser.cpp */; };
+		7279EE3B1C5EA5020026F8C5 /* ScriptClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7279EE391C5EA5020026F8C5 /* ScriptClass.cpp */; };
+		7279EE3D1C5EAA310026F8C5 /* testScriptParsing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7279EE3C1C5EAA310026F8C5 /* testScriptParsing.cpp */; };
 		72C9877B1C4AEB36008BEFF3 /* Logic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987741C4AEB36008BEFF3 /* Logic.cpp */; };
 		72C9877C1C4AEB36008BEFF3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987761C4AEB36008BEFF3 /* main.cpp */; };
 		72C9877D1C4AEB36008BEFF3 /* testReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987771C4AEB36008BEFF3 /* testReferences.cpp */; };
@@ -14,6 +22,7 @@
 		72C987901C4BD03A008BEFF3 /* testSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C9878F1C4BD03A008BEFF3 /* testSerialization.cpp */; };
 		72C987921C4D738F008BEFF3 /* testHierarchy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987911C4D738F008BEFF3 /* testHierarchy.cpp */; };
 		72C987941C4D7E01008BEFF3 /* unitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987931C4D7E01008BEFF3 /* unitTests.cpp */; };
+		72C987971C55137C008BEFF3 /* testLibLoading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987961C55137C008BEFF3 /* testLibLoading.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +38,27 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7279EDEC1C556F200026F8C5 /* Vector2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Vector2.hpp; path = testLibrary/testLibrary/Vector2.hpp; sourceTree = SOURCE_ROOT; };
+		7279EDED1C5570860026F8C5 /* engine.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = engine.so; path = Build/Build/Products/Debug/engine.so; sourceTree = SOURCE_ROOT; };
+		7279EDF01C56BC060026F8C5 /* ScriptEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptEngine.cpp; sourceTree = "<group>"; };
+		7279EDF11C56BC060026F8C5 /* ScriptEngine.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ScriptEngine.hpp; sourceTree = "<group>"; };
+		7279EDF31C56BE770026F8C5 /* testScripting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testScripting.cpp; sourceTree = "<group>"; };
+		7279EDFC1C5C407A0026F8C5 /* libCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libCode.h; sourceTree = "<group>"; };
+		7279EDFF1C5CCE8D0026F8C5 /* libGameObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libGameObject.h; sourceTree = "<group>"; };
+		7279EE201C5E76A20026F8C5 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
+		7279EE2C1C5E82E90026F8C5 /* ClangUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClangUtil.cpp; sourceTree = "<group>"; };
+		7279EE2D1C5E82E90026F8C5 /* ClangUtil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ClangUtil.hpp; sourceTree = "<group>"; };
+		7279EE301C5E84430026F8C5 /* ScriptVelocitySystem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ScriptVelocitySystem.hpp; sourceTree = "<group>"; };
+		7279EE311C5E849D0026F8C5 /* testLibClang.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testLibClang.cpp; sourceTree = "<group>"; };
+		7279EE321C5E908E0026F8C5 /* libGameSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libGameSystem.h; sourceTree = "<group>"; };
+		7279EE361C5EA47E0026F8C5 /* ScriptParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptParser.cpp; sourceTree = "<group>"; };
+		7279EE371C5EA47E0026F8C5 /* ScriptParser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ScriptParser.hpp; sourceTree = "<group>"; };
+		7279EE391C5EA5020026F8C5 /* ScriptClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptClass.cpp; sourceTree = "<group>"; };
+		7279EE3A1C5EA5020026F8C5 /* ScriptClass.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ScriptClass.hpp; sourceTree = "<group>"; };
+		7279EE3C1C5EAA310026F8C5 /* testScriptParsing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testScriptParsing.cpp; sourceTree = "<group>"; };
+		7279EE3F1C5EB40B0026F8C5 /* IScriptSystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IScriptSystem.hpp; sourceTree = "<group>"; };
+		7279EE461C662E2A0026F8C5 /* ScriptEngine_autoGenerated.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptEngine_autoGenerated.cpp; sourceTree = "<group>"; };
+		7279EE481C663EFF0026F8C5 /* ScriptTest.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ScriptTest.hpp; sourceTree = "<group>"; };
 		72C987681C4AEB36008BEFF3 /* Container.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Container.hpp; sourceTree = "<group>"; };
 		72C987691C4AEB36008BEFF3 /* GameSettings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSettings.hpp; sourceTree = "<group>"; };
 		72C9876A1C4AEB36008BEFF3 /* GameSystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSystem.hpp; sourceTree = "<group>"; };
@@ -52,6 +82,7 @@
 		72C987911C4D738F008BEFF3 /* testHierarchy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testHierarchy.cpp; sourceTree = "<group>"; };
 		72C987931C4D7E01008BEFF3 /* unitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unitTests.cpp; sourceTree = "<group>"; };
 		72C987951C4D7E36008BEFF3 /* UnitTest.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = UnitTest.hpp; sourceTree = "<group>"; };
+		72C987961C55137C008BEFF3 /* testLibLoading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testLibLoading.cpp; sourceTree = "<group>"; };
 		72E26FAA1C3072340035E270 /* ComponentSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ComponentSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -60,12 +91,41 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7279EE211C5E76A20026F8C5 /* libclang.dylib in Frameworks */,
+				7279EDEE1C5570860026F8C5 /* engine.so in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7279EDEF1C56BAC70026F8C5 /* Scripting */ = {
+			isa = PBXGroup;
+			children = (
+				7279EE3F1C5EB40B0026F8C5 /* IScriptSystem.hpp */,
+				7279EDF01C56BC060026F8C5 /* ScriptEngine.cpp */,
+				7279EDF11C56BC060026F8C5 /* ScriptEngine.hpp */,
+				7279EE361C5EA47E0026F8C5 /* ScriptParser.cpp */,
+				7279EE371C5EA47E0026F8C5 /* ScriptParser.hpp */,
+				7279EE391C5EA5020026F8C5 /* ScriptClass.cpp */,
+				7279EE3A1C5EA5020026F8C5 /* ScriptClass.hpp */,
+			);
+			path = Scripting;
+			sourceTree = "<group>";
+		};
+		7279EDF91C5C3B400026F8C5 /* LibCode */ = {
+			isa = PBXGroup;
+			children = (
+				7279EE461C662E2A0026F8C5 /* ScriptEngine_autoGenerated.cpp */,
+				7279EE301C5E84430026F8C5 /* ScriptVelocitySystem.hpp */,
+				7279EDFF1C5CCE8D0026F8C5 /* libGameObject.h */,
+				7279EDFC1C5C407A0026F8C5 /* libCode.h */,
+				7279EE321C5E908E0026F8C5 /* libGameSystem.h */,
+				7279EE481C663EFF0026F8C5 /* ScriptTest.hpp */,
+			);
+			path = LibCode;
+			sourceTree = "<group>";
+		};
 		72C987671C4AEB36008BEFF3 /* ComponentSystem */ = {
 			isa = PBXGroup;
 			children = (
@@ -99,6 +159,8 @@
 		72C987731C4AEB36008BEFF3 /* tests */ = {
 			isa = PBXGroup;
 			children = (
+				7279EE311C5E849D0026F8C5 /* testLibClang.cpp */,
+				7279EDEC1C556F200026F8C5 /* Vector2.hpp */,
 				72C987741C4AEB36008BEFF3 /* Logic.cpp */,
 				72C987751C4AEB36008BEFF3 /* Logic.hpp */,
 				72C987761C4AEB36008BEFF3 /* main.cpp */,
@@ -106,6 +168,9 @@
 				72C9878F1C4BD03A008BEFF3 /* testSerialization.cpp */,
 				72C987911C4D738F008BEFF3 /* testHierarchy.cpp */,
 				72C987931C4D7E01008BEFF3 /* unitTests.cpp */,
+				72C987961C55137C008BEFF3 /* testLibLoading.cpp */,
+				7279EDF31C56BE770026F8C5 /* testScripting.cpp */,
+				7279EE3C1C5EAA310026F8C5 /* testScriptParsing.cpp */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -116,6 +181,8 @@
 				72C987791C4AEB36008BEFF3 /* Timer.cpp */,
 				72C9877A1C4AEB36008BEFF3 /* Timer.hpp */,
 				72C987951C4D7E36008BEFF3 /* UnitTest.hpp */,
+				7279EE2C1C5E82E90026F8C5 /* ClangUtil.cpp */,
+				7279EE2D1C5E82E90026F8C5 /* ClangUtil.hpp */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -150,9 +217,13 @@
 		72E26FAC1C3072340035E270 /* ComponentSystem */ = {
 			isa = PBXGroup;
 			children = (
+				7279EE201C5E76A20026F8C5 /* libclang.dylib */,
+				7279EDF91C5C3B400026F8C5 /* LibCode */,
 				72C987671C4AEB36008BEFF3 /* ComponentSystem */,
 				72C9876C1C4AEB36008BEFF3 /* Data */,
+				7279EDED1C5570860026F8C5 /* engine.so */,
 				72C9876F1C4AEB36008BEFF3 /* meta */,
+				7279EDEF1C56BAC70026F8C5 /* Scripting */,
 				72C9878A1C4BC4B9008BEFF3 /* Serialization */,
 				72C987731C4AEB36008BEFF3 /* tests */,
 				72C987781C4AEB36008BEFF3 /* utils */,
@@ -216,13 +287,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72C987971C55137C008BEFF3 /* testLibLoading.cpp in Sources */,
+				7279EE381C5EA47E0026F8C5 /* ScriptParser.cpp in Sources */,
 				72C9877D1C4AEB36008BEFF3 /* testReferences.cpp in Sources */,
+				7279EDF21C56BC060026F8C5 /* ScriptEngine.cpp in Sources */,
 				72C987941C4D7E01008BEFF3 /* unitTests.cpp in Sources */,
 				72C9877C1C4AEB36008BEFF3 /* main.cpp in Sources */,
 				72C9877B1C4AEB36008BEFF3 /* Logic.cpp in Sources */,
+				7279EE2E1C5E82E90026F8C5 /* ClangUtil.cpp in Sources */,
 				72C987901C4BD03A008BEFF3 /* testSerialization.cpp in Sources */,
+				7279EE3B1C5EA5020026F8C5 /* ScriptClass.cpp in Sources */,
 				72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */,
 				72C987921C4D738F008BEFF3 /* testHierarchy.cpp in Sources */,
+				7279EDF41C56BE770026F8C5 /* testScripting.cpp in Sources */,
+				7279EE3D1C5EAA310026F8C5 /* testScriptParsing.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,6 +390,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				HEADER_SEARCH_PATHS = "/Users/Jeppe/Downloads/clang+llvm-3.7.0-x86_64-apple-darwin/include";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/Build/Products/Debug",
+					"/Users/Jeppe/Downloads/clang+llvm-3.7.0-x86_64-apple-darwin/lib",
+					"$(PROJECT_DIR)/ComponentSystem",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -320,6 +405,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				HEADER_SEARCH_PATHS = "/Users/Jeppe/Downloads/clang+llvm-3.7.0-x86_64-apple-darwin/include";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/Build/Products/Debug",
+					"/Users/Jeppe/Downloads/clang+llvm-3.7.0-x86_64-apple-darwin/lib",
+					"$(PROJECT_DIR)/ComponentSystem",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

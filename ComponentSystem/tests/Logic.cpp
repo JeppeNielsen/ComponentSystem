@@ -8,10 +8,9 @@
 
 #include "Logic.hpp"
 #include <iostream>
-#include "GameWorld.hpp"
 
 VelocitySystem::VelocitySystem() {
-    //std::cout << "VelocitySystem ctor"<<std::endl;
+    std::cout << "VelocitySystem ctor"<<std::endl;
 }
 
 VelocitySystem::~VelocitySystem() {
@@ -23,11 +22,11 @@ void VelocitySystem::Initialize(GameWorld &world) {
 }
 
 void VelocitySystem::ObjectAdded(GameObject *object) {
-    //std::cout << "VelocitySystem::ObjectAdded"<<std::endl;
+    std::cout << "VelocitySystem::ObjectAdded"<<std::endl;
 }
 
 void VelocitySystem::ObjectRemoved(GameObject *object) {
-    //std::cout << "VelocitySystem::ObjectRemoved"<<std::endl;
+    std::cout << "VelocitySystem::ObjectRemoved"<<std::endl;
 }
 
 void VelocitySystem::Update(float dt) {

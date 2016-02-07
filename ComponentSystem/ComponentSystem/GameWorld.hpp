@@ -136,6 +136,10 @@ public:
     int ObjectCount() {
         return objects.Size();
     }
+    
+    GameObject* GetObject(int index) {
+        return objects.Get(index);
+    }
 
     template<typename T>
     void Clear();
@@ -143,10 +147,22 @@ public:
     ~GameWorld() {
         Clear<void>();
     }
+    
+    void EnumerateComponentClasses(std::function<void(std::string, int)> callback) {
+        meta::for_each_in_tuple(serializableComponents, [this, callback] (auto componentPointer) {
+            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
+            callback(componentNames[Settings::GetComponentID<ComponentType>()], Settings::GetComponentID<ComponentType>());
+        });
+    }
    
 };
 
-class GameObject {
+struct IGameObject {
+    virtual void* GetComponent(int componentID) = 0;
+    virtual void* AddComponent(int componentID) = 0;
+};
+
+class GameObject : public IGameObject {
 private:
     
     using Settings = GameWorldSettings;
@@ -288,6 +304,17 @@ public:
         writer.close();
     }
     
+    std::vector<TypeInfo> GetComponentTypeInfos() {
+        std::vector<TypeInfo> infos;
+        meta::for_each_in_tuple(world->serializableComponents, [this, &infos] (auto componentPointer) {
+            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
+            if (HasComponent<ComponentType>()) {
+                infos.push_back(GetComponentTypeInfo<ComponentType>());
+            }
+        });
+        return infos;
+    }
+    
 private:
     template<typename Component>
     void SetComponent(typename Container<Component>::ObjectInstance* instance) {
@@ -385,6 +412,29 @@ private:
         if (!addedAny) {
             minijson::ignore(context);
         }
+    }
+    
+    template<typename Component>
+    TypeInfo GetComponentTypeInfo() {
+        Component* component = GetComponent<Component>();
+        return component->GetType();
+    }
+
+    void* GetComponent(int componentID) override {
+        return components[componentID];
+    }
+    
+    void* AddComponent(int componentID) override {
+        int counter = 0;
+        
+        meta::for_each_in_tuple(world->components, [this, &counter, componentID] (auto& component) {
+            if (counter == componentID) {
+                using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
+                AddComponent<ComponentType>();
+            }
+            counter++;
+        });
+        return GetComponent(componentID);
     }
 };
 

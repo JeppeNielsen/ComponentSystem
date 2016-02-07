@@ -9,6 +9,7 @@
 #pragma once
 #include <iostream>
 #include "GameSettings.hpp"
+#include "Event.hpp"
 
 struct Transform {
 	int x;
