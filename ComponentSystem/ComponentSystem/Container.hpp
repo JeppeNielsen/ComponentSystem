@@ -51,7 +51,7 @@ public:
     void Clear() {
         for (int i=0; i<capacity; ++i) {
             if (objects[i]->references==0) {
-                delete objects[i];
+                DeleteInstance(objects[i]);
             } else {
                 objects[i]->owner = 0;
             }
@@ -71,7 +71,7 @@ private:
     void Grow(int newCapacity) {
         objects.resize(newCapacity);
         for (int i=size; i<newCapacity; ++i) {
-            objects[i] = new ObjectInstance();
+            objects[i] = CreateInstance();
             objects[i]->references = 0;
             objects[i]->owner = this;
         }
@@ -84,9 +84,27 @@ private:
     int size;
     int capacity;
     
+    ObjectInstance* CreateInstance() {
+        return new ObjectInstance();
+    }
+    
+    void DeleteInstance(ObjectInstance* instance) {
+        delete instance;
+    }
+    
 public:
     Container() : size(0), capacity(0) {}
     ~Container() {
         Clear();
     }
+    
+    void* createContext;
+    void* deleteContext;
+    int contextIndex;
 };
+
+
+
+
+
+

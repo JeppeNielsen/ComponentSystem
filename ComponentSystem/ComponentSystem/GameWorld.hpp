@@ -20,6 +20,8 @@
 class GameObject;
 struct GameWorldSettings;
 
+struct IScriptSystem;
+
 class GameWorld {
 private:
     friend class GameObject;
@@ -154,12 +156,22 @@ public:
             callback(componentNames[Settings::GetComponentID<ComponentType>()], Settings::GetComponentID<ComponentType>());
         });
     }
-   
+    
+    //Scripting
+    
+    using ScriptSystems = std::vector<IScriptSystem*>;
+    ScriptSystems scriptSystems;
+    
+    using ScriptComponents = std::vector<Container<void*>>;
+    ScriptComponents scriptComponents;
+    
 };
 
 struct IGameObject {
     virtual void* GetComponent(int componentID) = 0;
     virtual void* AddComponent(int componentID) = 0;
+    virtual void* GetScriptComponent(int componentID) = 0;
+    virtual void* AddScriptComponent(int componentID) = 0;
 };
 
 class GameObject : public IGameObject {
@@ -203,6 +215,17 @@ private:
                 value->children.push_back(this);
             }
         });
+        world = 0;
+    }
+    
+    void SetWorld(GameWorld* w) {
+        if (world) return;
+        world = w;
+        std::size_t numScriptComponents = world->scriptComponents.size();
+        scriptComponents = new ScriptComponent[numScriptComponents];
+        for (int i=0; i<numScriptComponents; i++) {
+            scriptComponents[i]=0;
+        }
     }
     
 public:
@@ -421,7 +444,8 @@ private:
     }
 
     void* GetComponent(int componentID) override {
-        return components[componentID];
+        //&((typename Container<Component>::ObjectInstance*)components[componentID])->object;
+        return components[componentID]; // this works since "object" is first in ObjectInstance;
     }
     
     void* AddComponent(int componentID) override {
@@ -436,13 +460,28 @@ private:
         });
         return GetComponent(componentID);
     }
+    
+    using ScriptComponent = void*;
+    ScriptComponent* scriptComponents;
+    
+    void* GetScriptComponent(int componentID) override {
+        return scriptComponents[componentID];
+    }
+    
+    void* AddScriptComponent(int componentID) override {
+        if (scriptComponents[componentID]) {
+            return scriptComponents[componentID];
+        }
+        scriptComponents[componentID] = world->scriptComponents[componentID].CreateObject();
+        return scriptComponents[componentID];
+    }
 };
 
 template<typename T = void>
 GameObject* GameWorld::CreateObject() {
     auto object = objects.CreateObject();
     object->object.instance = object;
-    object->object.world = this;
+    object->object.SetWorld(this);
     object->object.Reset();
     return &object->object;
 }

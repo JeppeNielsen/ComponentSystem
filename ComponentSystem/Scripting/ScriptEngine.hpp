@@ -9,6 +9,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "ScriptClass.hpp"
 
 class ScriptEngine {    
 public:
@@ -20,7 +21,7 @@ public:
     
     bool Run();
     
-    
-    
-    
+private:
+    ScriptClass scriptWorld;
+
 };

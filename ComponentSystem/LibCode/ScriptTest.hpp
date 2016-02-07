@@ -22,12 +22,16 @@ struct ButtonSystem : public GameSystem<Button> {
         object->AddComponent<Velocity>();
         
         std::cout <<"Object added"<< std::endl;
+        
+        object->AddComponent<Button>()->name = "Jeppe Nielsen";
+        
+        std::cout <<"object->GetComponent<Button>()->name = "<< object->GetComponent<Button>()->name << std::endl;
     }
     
 
     void Update(float dt) {
     
-    
+        
     
         std::cout <<"Main"<< std::endl;
     

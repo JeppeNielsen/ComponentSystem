@@ -175,8 +175,37 @@ bool ScriptParser::ParseCode(ScriptClass& root, std::string cppFile, std::vector
     return true;
 }
 
+ScriptClass ScriptParser::ExtractSystemsAndComponents(const ScriptClass &root) {
+    ScriptClass world;
+    
+    ScriptClass& systemsRoot = world.children["Systems"];
+    auto& systems = systemsRoot.children;
+    for (auto klass : root.children) {
+        if (klass.second.baseClass == "GameSystem") {
+            systems[klass.second.name] = klass.second;
+        }
+    }
+    ScriptClass& componentsRoot = world.children["Components"];
+    auto& components = componentsRoot.children;
+    for (auto& system : systems) {
+        for (auto& componentName : system.second.templateArguments) {
+            auto it = components.find(componentName);
+            if (it!=components.end()) {
+                continue; // component already added to list, ignore
+            }
+            auto componentIt = root.children.find(componentName);
+            if (componentIt == root.children.end()) {
+                std::cout << componentName <<" not found in script world"<< std::endl;
+                continue;
+            }
+            components[componentName] = componentIt->second;
+        }
+    }
+    return world;
+}
 
-bool ScriptParser::CreateScriptHeader(ScriptClass &root, const std::string& path) {
+bool ScriptParser::CreateScriptHeader(const ScriptClass &world, const std::string& path) {
+    /*
     std::vector<ScriptClass> systems;
     for (auto klass : root.children) {
         if (klass.second.baseClass == "GameSystem") {
@@ -198,10 +227,14 @@ bool ScriptParser::CreateScriptHeader(ScriptClass &root, const std::string& path
             components[componentName] = componentIt->second;
         }
     }
+    */
+    
+    auto& systems = world.children.find("Systems")->second.children;
+    auto& components = world.children.find("Components")->second.children;
     
     std::set<std::string> uniqueIncludes;
     for(auto& system : systems) {
-        uniqueIncludes.insert(system.sourceFile);
+        uniqueIncludes.insert(system.second.sourceFile);
     }
     
     std::ofstream file;
@@ -263,7 +296,7 @@ bool ScriptParser::CreateScriptHeader(ScriptClass &root, const std::string& path
                 file << "   switch (systemID) { " << std::endl;
                     int index = 0;
                     for(auto& system : systems) {
-                        file<<"      case "<<index <<":"<<" return new "<<system.name<<"();"<<std::endl;
+                        file<<"      case "<<index <<":"<<" return new "<<system.second.name<<"();"<<std::endl;
                         index++;
                     }
             file<<"      default: return 0;"<<std::endl;
