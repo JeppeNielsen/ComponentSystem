@@ -5,11 +5,13 @@ struct Renderable;
 struct Velocity;
 struct Button;
 
-struct GameObject {
+class GameObject {
+private:
     virtual void* GetComponent(int componentID) = 0;
     virtual void* AddComponent(int componentID) = 0;
     virtual void* GetScriptComponent(int componentID) = 0; 
     virtual void* AddScriptComponent(int componentID) = 0; 
+public:
     template<typename T> T* GetComponent() { return (T*)0; }
     template<typename T> T* AddComponent() { return (T*)0; }
 };

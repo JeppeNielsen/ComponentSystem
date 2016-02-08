@@ -37,7 +37,6 @@ vector<string> ScriptEngine::Compile(const string &cmd) {
 bool ScriptEngine::BuildDir(const std::string &dir) {
     
     {
-    
         ScriptClass scriptClasses;
         scriptClasses.name = "Root";
 
@@ -111,11 +110,13 @@ void ScriptEngine::WriteComponentIDsHeader(const std::string &path) {
     
     file << std::endl;
     
-    file << "struct GameObject {"<<std::endl;
+    file << "class GameObject {"<<std::endl;
+    file << "private:"<<std::endl;
     file << "    virtual void* GetComponent(int componentID) = 0;"<<std::endl;
     file << "    virtual void* AddComponent(int componentID) = 0;"<<std::endl;
     file << "    virtual void* GetScriptComponent(int componentID) = 0; "<< std::endl;
     file << "    virtual void* AddScriptComponent(int componentID) = 0; "<< std::endl;
+    file << "public:" << std::endl;
     file << "    template<typename T> T* GetComponent() { return (T*)0; }"<<std::endl;
     file << "    template<typename T> T* AddComponent() { return (T*)0; }"<<std::endl;
     file << "};"<<std::endl;
@@ -258,6 +259,7 @@ bool ScriptEngine::Run() {
             IScriptSystem* system = createSystem(i);
             
             system->ObjectAdded(object);
+            
             world.Update(1.0f);
             system->Update(1.0f);
             

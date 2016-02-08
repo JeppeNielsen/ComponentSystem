@@ -11,7 +11,7 @@
 #include "ScriptEngine.hpp"
 #include "Timer.hpp"
 
-int main() {
+int main_parsing() {
 
     /*
     ScriptClass scriptClasses;
