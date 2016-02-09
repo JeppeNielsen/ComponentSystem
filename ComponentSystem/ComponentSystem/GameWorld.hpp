@@ -601,9 +601,9 @@ private:
             }
             if (!match) continue;
             system->ObjectRemoved(this);
-            int index = scriptSystemIndices[i];
+            int index = scriptSystemIndices[systemIndex];
             GameObject* last = system->RemoveObject(index);
-            last->scriptSystemIndices[i] = scriptSystemIndices[i];
+            last->scriptSystemIndices[systemIndex] = index;
         }
     }
     
