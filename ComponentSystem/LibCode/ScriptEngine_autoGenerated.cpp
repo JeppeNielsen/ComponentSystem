@@ -16,12 +16,14 @@ extern "C" void DeleteComponent(int componentID, void* component) {
    }
 }
 
-extern "C" int CountSystem() {
-   return 1;
+extern "C" int CountSystems() {
+   return 3;
 }
 extern "C" IScriptSystem* CreateSystem(int systemID) {
    switch (systemID) { 
       case 0: return new ButtonSystem();
+      case 1: return new TesterSystem();
+      case 2: return new VelocitySystem();
       default: return 0;
    }
 }

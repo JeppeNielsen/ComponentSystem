@@ -114,11 +114,14 @@ void ScriptEngine::WriteComponentIDsHeader(const std::string &path) {
     file << "private:"<<std::endl;
     file << "    virtual void* GetComponent(int componentID) = 0;"<<std::endl;
     file << "    virtual void* AddComponent(int componentID) = 0;"<<std::endl;
+    file << "    virtual void RemoveComponent(int componentID) = 0;"<<std::endl;
     file << "    virtual void* GetScriptComponent(int componentID) = 0; "<< std::endl;
     file << "    virtual void* AddScriptComponent(int componentID) = 0; "<< std::endl;
+    file << "    virtual void RemoveScriptComponent(int componentID) = 0; "<< std::endl;
     file << "public:" << std::endl;
     file << "    template<typename T> T* GetComponent() { return (T*)0; }"<<std::endl;
     file << "    template<typename T> T* AddComponent() { return (T*)0; }"<<std::endl;
+    file << "    template<typename T> void RemoveComponent() { }"<<std::endl;
     file << "};"<<std::endl;
     
     world.EnumerateComponentClasses([&file] (std::string name, int index) {
@@ -129,7 +132,9 @@ void ScriptEngine::WriteComponentIDsHeader(const std::string &path) {
         file<<"template<> " << name  << "* GameObject::AddComponent<"<< name << ">() { return ("<< name <<"*) AddComponent("<<index<<"); }"<<std::endl;
     });
     
-    //auto& scriptSystems = scriptWorld.children.find("Systems")->second.children;
+    world.EnumerateComponentClasses([&file] (std::string name, int index) {
+        file<<"template<> void GameObject::RemoveComponent<"<< name << ">() { RemoveComponent("<<index<<"); }"<<std::endl;
+    });
     
     int index = 0;
     for (auto it : scriptComponents) {
@@ -137,6 +142,8 @@ void ScriptEngine::WriteComponentIDsHeader(const std::string &path) {
         file<<"template<> " << component.name  << "* GameObject::GetComponent<"<< component.name << ">() { return ("<< component.name <<"*) GetScriptComponent("<<index<<"); }"<<std::endl;
         
         file<<"template<> " << component.name  << "* GameObject::AddComponent<"<< component.name << ">() { return ("<< component.name <<"*) AddScriptComponent("<<index<<"); }"<<std::endl;
+        
+        file<<"template<> void GameObject::RemoveComponent<"<< component.name << ">() { RemoveScriptComponent("<<index<<"); }"<<std::endl;
         index++;
     }
     
@@ -176,7 +183,7 @@ bool ScriptEngine::Run() {
     
     
     typedef IScriptSystem* (*CreateSystem)(int);
-    typedef int (*CountSystem)();
+    typedef int (*CountSystems)();
     typedef void (*DeleteSystem)(IScriptSystem*);
     
     dlerror();
@@ -188,10 +195,10 @@ bool ScriptEngine::Run() {
         return false;
     }
     
-    CountSystem countSystem = (CountSystem) dlsym(handle, "CountSystem");
+    CountSystems countSystems = (CountSystems) dlsym(handle, "CountSystems");
     dlsym_error = dlerror();
     if (dlsym_error) {
-        cerr << "Cannot load symbol 'CountSystem': " << dlsym_error << '\n';
+        cerr << "Cannot load symbol 'CountSystems': " << dlsym_error << '\n';
         dlclose(handle);
         return false;
     }
@@ -232,16 +239,44 @@ bool ScriptEngine::Run() {
         return false;
     }
     
-    int numberOfSystems = countSystem();
+    int numberOfSystems = countSystems();
     int numberOfComponents = countComponents();
+    
+    std::vector<IScriptSystem*> scriptSystems;
+    
+    for (int i=0; i<numberOfSystems; ++i) {
+        scriptSystems.push_back(createSystem(i));
+    }
     
     {
         GameWorld world;
         
-        world.scriptSystems.resize(numberOfSystems);
-        for (int i=0; i<numberOfSystems; i++) {
-            world.scriptSystems[i] = createSystem(i);
+        world.dynamicScriptSystemComponents.resize(numberOfComponents);
+        world.scriptSystems = scriptSystems;
+        {
+            auto& scriptSystems = scriptWorld.children["Systems"].children;
+            
+            int index = 0;
+            for (auto& scriptSystem : scriptSystems) {
+                GameWorld::ScriptSystemData data;
+                for (auto& component : scriptSystem.second.templateArguments) {
+                    int componentIndex;
+                    bool staticComponent;
+                    if (FindComponentIndex(component, staticComponent, componentIndex)) {
+                        if (staticComponent) {
+                            world.staticScriptSystemComponents[componentIndex].push_back(index);
+                            data.staticComponents[componentIndex] = true;
+                        } else {
+                            world.dynamicScriptSystemComponents[componentIndex].push_back(index);
+                            data.scriptComponents.push_back(componentIndex);
+                        }
+                    }
+                }
+                world.scriptSystemsData.push_back(data);
+                index++;
+            }
         }
+        
         
         world.scriptComponents.resize(numberOfComponents);
         for (int i=0; i<numberOfComponents; i++) {
@@ -252,9 +287,28 @@ bool ScriptEngine::Run() {
         }
         
         GameObject* object = world.CreateObject();
-        //
         
-        for (int i=0; i<countSystem(); i++) {
+        //object->AddScriptComponent(0);
+        object->AddComponent<Transform>()->x = 20;
+        object->AddComponent<Velocity>()->x = 100;
+        
+        
+        
+        world.Update(0.01);
+        
+        std::cout << " x: "<< object->GetComponent<Transform>()->x << std::endl;
+        
+        
+        /*
+        object->RemoveScriptComponent(0);
+        object->RemoveComponent<Transform>();
+        
+        
+        world.Update(0.01);
+        */
+        
+        /*
+        for (int i=0; i<numberOfSystems; i++) {
             
             IScriptSystem* system = createSystem(i);
             
@@ -267,11 +321,13 @@ bool ScriptEngine::Run() {
             
             std::cout << " Transform::x = "<< transform->x<< std::endl;
         }
+        */
         
-        world.scriptSystems.resize(numberOfSystems);
-        for (int i=0; i<numberOfSystems; i++) {
-            deleteSystem(world.scriptSystems[i]);
-        }
+        
+    }
+    
+    for(auto scriptSystem : scriptSystems) {
+        deleteSystem(scriptSystem);
     }
     
     // close the library
@@ -279,4 +335,34 @@ bool ScriptEngine::Run() {
     dlclose(handle);
 
     return true;
+}
+
+bool ScriptEngine::FindComponentIndex(std::string componentName, bool &staticComponent, int& index) {
+    auto& scriptComponents = scriptWorld.children["Components"].children;
+    {
+        index = 0;
+        for(auto& scriptComponent : scriptComponents) {
+            if (scriptComponent.second.name == componentName) {
+                staticComponent = false;
+                return true;
+            }
+            index++;
+        }
+    }
+    
+    GameWorld world;
+    
+    index = -1;
+    world.EnumerateComponentClasses([&index, componentName] (std::string name, int componentIndex) {
+        if (name == componentName) {
+            index = componentIndex;
+        }
+    });
+    
+    if (index>=0) {
+        staticComponent = true;
+        return true;
+    }
+    
+    return false;
 }

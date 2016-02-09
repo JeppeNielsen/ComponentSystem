@@ -14,13 +14,12 @@
 #include <type_traits>
 #include <assert.h>
 #include "Property.hpp"
+#include "IScriptSystem.hpp"
 
 #define FWD(x) (::std::forward<decltype(x)>(x))
 
 class GameObject;
 struct GameWorldSettings;
-
-struct IScriptSystem;
 
 class GameWorld {
 private:
@@ -116,6 +115,10 @@ public:
                     >()
                 >(systems).Update(dt);
         });
+        
+        for(auto scriptSystem : scriptSystems) {
+            scriptSystem->Update(dt);
+        }
     }
     
     void Render() {
@@ -159,19 +162,35 @@ public:
     
     //Scripting
     
-    using ScriptSystems = std::vector<IScriptSystem*>;
-    ScriptSystems scriptSystems;
+    
+    std::array<std::vector<short>, Settings::UniqueComponents{}.size()> staticScriptSystemComponents;
+    using ScriptSystemComponents = std::vector<std::vector<short>>;
+    ScriptSystemComponents dynamicScriptSystemComponents;
     
     using ScriptComponents = std::vector<Container<void*>>;
     ScriptComponents scriptComponents;
     
+    using ScriptBitset = std::vector<bool>;
+    
+    struct ScriptSystemData {
+        Settings::Bitset staticComponents;
+        std::vector<short> scriptComponents;
+    };
+    
+    using ScriptSystems = std::vector<IScriptSystem*>;
+    ScriptSystems scriptSystems;
+    
+    using ScriptSystemsData = std::vector<ScriptSystemData>;
+    ScriptSystemsData scriptSystemsData;
 };
 
 struct IGameObject {
     virtual void* GetComponent(int componentID) = 0;
     virtual void* AddComponent(int componentID) = 0;
+    virtual void RemoveComponent(int componentID) = 0;
     virtual void* GetScriptComponent(int componentID) = 0;
     virtual void* AddScriptComponent(int componentID) = 0;
+    virtual void RemoveScriptComponent(int componentID) = 0;
 };
 
 class GameObject : public IGameObject {
@@ -199,6 +218,11 @@ private:
         isRemoved = false;
         activeComponents.reset();
         removedComponents.reset();
+        
+        for(int i=0; i<activeScriptComponents.size(); ++i) {
+            activeScriptComponents[i]=false;
+            removedScriptComponents[i]=false;
+        }
     }
     
     GameObject() {
@@ -226,6 +250,9 @@ private:
         for (int i=0; i<numScriptComponents; i++) {
             scriptComponents[i]=0;
         }
+        scriptSystemIndices = new int[world->scriptSystems.size()];
+        activeScriptComponents.resize(numScriptComponents);
+        removedScriptComponents.resize(numScriptComponents);
     }
     
 public:
@@ -275,9 +302,10 @@ public:
         
         world->removeActions.emplace_back([this]() {
             auto activeComponentsBefore = activeComponents;
+            auto activeScriptComponentsBefore = activeScriptComponents;
             activeComponents[Settings::template GetComponentID<Component>()] = false;
             removedComponents[Settings::template GetComponentID<Component>()] = false;
-            meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [activeComponentsBefore, this] (auto systemPointer) {
+            meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [this, activeComponentsBefore, activeScriptComponentsBefore] (auto systemPointer) {
                 auto& system = std::get< Settings::template GetSystemID< std::remove_pointer_t<decltype(systemPointer)> >() >(world->systems);
                 auto& bitSet = world->systemBitsets[Settings::template GetSystemID<std::remove_reference_t<decltype(system)> >()];
                 bool wasInterest = (activeComponentsBefore & bitSet) == bitSet;
@@ -291,6 +319,8 @@ public:
                     system.objects.pop_back();
                 }
             });
+            
+            CheckForScriptSystemsRemoval(world->staticScriptSystemComponents[Settings::template GetComponentID<Component>()], activeComponentsBefore, activeScriptComponentsBefore);
             
             typename Container<Component>::ObjectInstance* instance = (typename Container<Component>::ObjectInstance*)components[Settings::template GetComponentID<Component>()];
             auto& container = std::get<Settings::template GetComponentID<Component>()>(world->components);
@@ -344,7 +374,8 @@ private:
         activeComponents[Settings::template GetComponentID<Component>()] = true;
         components[Settings::template GetComponentID<Component>()] = instance;
         auto activeComponentsBefore = activeComponents;
-        world->createActions.emplace_back([activeComponentsBefore, this]() {
+        auto activeScriptComponentsBefore = activeScriptComponents;
+        world->createActions.emplace_back([this, activeComponentsBefore, activeScriptComponentsBefore]() {
             meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [this, activeComponentsBefore] (auto systemPointer) {
                 auto& system = std::get< Settings::template GetSystemID< std::remove_pointer_t<decltype(systemPointer)> >() >(world->systems);
                 auto& bitSet = world->systemBitsets[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()];
@@ -355,6 +386,8 @@ private:
                     system.ObjectAdded(this);
                 }
             });
+            
+            CheckForScriptSystemsAddition(world->staticScriptSystemComponents[Settings::template GetComponentID<Component>()], activeComponentsBefore, activeScriptComponentsBefore);
         });
     }
     
@@ -442,7 +475,17 @@ private:
         Component* component = GetComponent<Component>();
         return component->GetType();
     }
-
+    
+    //Scripting
+    
+    using ScriptComponent = void*;
+    ScriptComponent* scriptComponents;
+    
+    int* scriptSystemIndices;
+    
+    GameWorld::ScriptBitset activeScriptComponents;
+    GameWorld::ScriptBitset removedScriptComponents;
+    
     void* GetComponent(int componentID) override {
         //&((typename Container<Component>::ObjectInstance*)components[componentID])->object;
         return components[componentID]; // this works since "object" is first in ObjectInstance;
@@ -461,20 +504,109 @@ private:
         return GetComponent(componentID);
     }
     
-    using ScriptComponent = void*;
-    ScriptComponent* scriptComponents;
+    void RemoveComponent(int componentID) override {
+        int counter = 0;
+        meta::for_each_in_tuple(world->components, [this, &counter, componentID] (auto& component) {
+            if (counter == componentID) {
+                using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
+                RemoveComponent<ComponentType>();
+            }
+            counter++;
+        });
+    }
     
     void* GetScriptComponent(int componentID) override {
+        if (!activeScriptComponents[componentID]) return 0;
         return scriptComponents[componentID];
     }
     
+public:
+
     void* AddScriptComponent(int componentID) override {
-        if (scriptComponents[componentID]) {
+        if (activeScriptComponents[componentID]) {
             return scriptComponents[componentID];
         }
+        
+        activeScriptComponents[componentID] = true;
         scriptComponents[componentID] = world->scriptComponents[componentID].CreateObject();
+        
+        auto activeComponentsBefore = activeComponents;
+        auto activeScriptComponentsBefore = activeScriptComponents;
+        world->createActions.emplace_back([this, componentID, activeComponentsBefore, activeScriptComponentsBefore]() {
+            CheckForScriptSystemsAddition(world->dynamicScriptSystemComponents[componentID], activeComponentsBefore, activeScriptComponentsBefore);
+        });
+        
         return scriptComponents[componentID];
     }
+
+    void RemoveScriptComponent(int componentID) override {
+        if (!activeScriptComponents[componentID]) return;
+        
+        if (removedScriptComponents[componentID]) return;
+        removedScriptComponents[componentID] = true;
+        
+        world->removeActions.emplace_back([this, componentID]() {
+            
+            auto activeScriptComponentsBefore = activeScriptComponents;
+            
+            activeScriptComponents[componentID] = false;
+            removedScriptComponents[componentID] = false;
+            
+            CheckForScriptSystemsRemoval(world->dynamicScriptSystemComponents[componentID], activeComponents, activeScriptComponentsBefore);
+            
+            typename Container<void*>::ObjectInstance* instance = (typename Container<void*>::ObjectInstance*)scriptComponents[componentID];
+            world->scriptComponents[componentID].RemoveObject(instance);
+        });
+    }
+
+private:
+    void CheckForScriptSystemsAddition(const std::vector<short>& systems, const Settings::Bitset& activeComponentsBefore, const GameWorld::ScriptBitset& activeScriptComponentsBefore) {
+        for(int i = 0; i<systems.size(); ++i) {
+            short systemIndex = systems[i];
+            IScriptSystem* system = world->scriptSystems[systemIndex];
+            auto& systemData = world->scriptSystemsData[systemIndex];
+            if (systemData.staticComponents!=0 && !((activeComponentsBefore & systemData.staticComponents) == systemData.staticComponents)) {
+                continue;
+            }
+            std::size_t componentCount = systemData.scriptComponents.size();
+            bool match = true;
+            for(int j=0; j<componentCount; ++j) {
+                if (!activeScriptComponentsBefore[systemData.scriptComponents[j]]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (!match) continue;
+            scriptSystemIndices[i] = system->AddObject(this);
+            system->ObjectAdded(this);
+        }
+    }
+    
+    void CheckForScriptSystemsRemoval(const std::vector<short>& systems, const Settings::Bitset& activeComponentsBefore, const GameWorld::ScriptBitset& activeScriptComponentsBefore) {
+    
+        for(int i = 0; i<systems.size(); ++i) {
+            short systemIndex = systems[i];
+            IScriptSystem* system = world->scriptSystems[systemIndex];
+            auto& systemData = world->scriptSystemsData[systemIndex];
+            if (systemData.staticComponents!=0 && !((activeComponentsBefore & systemData.staticComponents) == systemData.staticComponents)) {
+                continue;
+            }
+            std::size_t componentCount = systemData.scriptComponents.size();
+            bool match = true;
+            for(int j=0; j<componentCount; ++j) {
+                if (!activeScriptComponentsBefore[systemData.scriptComponents[j]]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (!match) continue;
+            system->ObjectRemoved(this);
+            int index = scriptSystemIndices[i];
+            GameObject* last = system->RemoveObject(index);
+            last->scriptSystemIndices[i] = scriptSystemIndices[i];
+        }
+    }
+    
 };
 
 template<typename T = void>

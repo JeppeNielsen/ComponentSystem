@@ -286,7 +286,7 @@ bool ScriptParser::CreateScriptHeader(const ScriptClass &world, const std::strin
     //systems
     {
         {
-           file<<"extern \"C\" int CountSystem() {"<<std::endl;
+           file<<"extern \"C\" int CountSystems() {"<<std::endl;
            file<<"   return "<< systems.size() <<";"<<std::endl;
            file<<"}"<<std::endl;
         }

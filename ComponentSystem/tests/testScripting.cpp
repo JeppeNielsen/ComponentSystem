@@ -10,7 +10,7 @@
 #include "ScriptEngine.hpp"
 #include "Timer.hpp"
 
-int main_scripting() {
+int main() {
 
     ScriptEngine engine;
     
@@ -22,10 +22,5 @@ int main_scripting() {
     
     engine.Run();
     
-
-
-
-
-
     return 0;
 }

@@ -22,6 +22,9 @@ public:
     bool Run();
     
 private:
+
+    bool FindComponentIndex(std::string componentName, bool& staticComponent, int& index);
+
     ScriptClass scriptWorld;
 
 };

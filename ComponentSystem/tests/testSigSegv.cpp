@@ -22,7 +22,7 @@ struct GameObject {
     int number;
 };
 
-int main() {
+int main_sigSegv() {
 
     signal(SIGSEGV, ErrorDetected);
         
