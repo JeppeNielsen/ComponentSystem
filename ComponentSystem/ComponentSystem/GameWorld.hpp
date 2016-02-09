@@ -577,7 +577,7 @@ private:
                 }
             }
             if (!match) continue;
-            scriptSystemIndices[i] = system->AddObject(this);
+            scriptSystemIndices[systemIndex] = system->AddObject(this);
             system->ObjectAdded(this);
         }
     }
