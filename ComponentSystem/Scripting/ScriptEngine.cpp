@@ -151,6 +151,7 @@ void ScriptEngine::WriteComponentIDsHeader(const std::string &path) {
     file.close();
 }
 
+/*
 template<>
 Container<void*>::ObjectInstance* Container<void*>::CreateInstance() {
     typedef void* (*CreateComponent)(int);
@@ -168,6 +169,7 @@ void Container<void*>::DeleteInstance(Container<void *>::ObjectInstance *instanc
     DeleteComponent func = (*(deleteComponent));
     instance->object = func(contextIndex, instance->object);
 }
+*/
 
 bool ScriptEngine::Run() {
     

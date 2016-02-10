@@ -12,7 +12,6 @@
 #include <type_traits>
 #include "JsonSerializer.hpp"
 #include "metaLib.hpp"
-#include "FieldInfoIndexer.hpp"
 
 template<class T>
 class FieldInfo;
@@ -176,7 +175,7 @@ public:
         FieldInfo<T>* serializedField = new FieldInfo<T>();
         serializedField->name = name;
         serializedField->field = &field;
-        serializedField->type = FieldInfoIndexer<T>::Index();
+        serializedField->type = 0;
         fields.push_back(serializedField);
     }
     

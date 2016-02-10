@@ -84,7 +84,7 @@ CXChildVisitResult visitor(CXCursor cursor, CXCursor parent, CXClientData client
                 string typeSpelling = toStdString(type);
                 string cursorKind = toStdString(cursors[idx].kind);
                 
-                if (currentClass->baseClass=="" && (cursorKind == "StructDecl" || cursorKind == "TemplateRef")) {
+                if (currentClass->baseClass=="" && ((cursorKind == "StructDecl" || cursorKind == "ClassDecl") || cursorKind == "TemplateRef")) {
                     if (!baseClassParsingStarted) {
                         if (tokenSpelling == ":") {
                             baseClassParsingStarted = true;
@@ -103,7 +103,7 @@ CXChildVisitResult visitor(CXCursor cursor, CXCursor parent, CXClientData client
                     templateArgumentsStarted = false;
                 }
                 
-                if (templateArgumentsStarted && (cursorKind == "TypeRef" || cursorKind == "StructDecl") && tokenSpelling!=",") {
+                if (templateArgumentsStarted && (cursorKind == "TypeRef" || (cursorKind == "StructDecl" || cursorKind == "ClassDecl")) && tokenSpelling!=",") {
                     currentClass->templateArguments.push_back(tokenSpelling);
                 }
                 
