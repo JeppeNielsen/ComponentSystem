@@ -478,7 +478,7 @@ private:
     
     //Scripting
     
-    using ScriptComponent = void*;
+    using ScriptComponent = Container<void*>::ObjectInstance*;
     ScriptComponent* scriptComponents;
     
     int* scriptSystemIndices;
@@ -517,7 +517,8 @@ private:
     
     void* GetScriptComponent(int componentID) override {
         if (!activeScriptComponents[componentID]) return 0;
-        return scriptComponents[componentID];
+        typename Container<void*>::ObjectInstance* instance = (typename Container<void*>::ObjectInstance*)scriptComponents[componentID];
+        return instance->object;
     }
     
 public:
