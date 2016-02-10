@@ -17,6 +17,7 @@ struct Sprite {
 
 struct SpriteSystem : GameSystem<Transform, Sprite> {
     void ObjectAdded(GameObject* object) {
+        object->GetComponent<Sprite>()->width = 0;
         std::cout << "SpriteSystem::ObjectAdded"<<std::endl;
     }
 
@@ -25,6 +26,24 @@ struct SpriteSystem : GameSystem<Transform, Sprite> {
     }
     
     void Update(float dt) {
+        for(auto o : Objects()) {
+            o->GetComponent<Sprite>()->width += o->GetComponent<Transform>()->x;
+            std::cout << "o->GetComponent<Sprite>()->width = "<<o->GetComponent<Sprite>()->width<<std::endl;
+        }
         std::cout << "SpriteSystem::Update"<<std::endl;
     }
+};
+
+struct MoverSystem : GameSystem<Transform> {
+    
+    void ObjectAdded(GameObject* object) {
+        std::cout << "MoverSystem::ObjectAdded"<<std::endl;
+    }
+        
+    void ObjectRemoved(GameObject* object) {
+        std::cout << "MoverSystem::ObjectRemoved"<<std::endl;
+    }
+
+    
+
 };

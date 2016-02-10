@@ -35,7 +35,7 @@ int main() {
     scriptWorld.AddGameWorld(world);
     
     GameObject* go = world.CreateObject();
-    go->AddComponent<Transform>();
+    go->AddComponent<Transform>()->x = 100;
     go->AddScriptComponent(0);
     
     world.Update(0.01f);

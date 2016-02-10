@@ -1,7 +1,3 @@
-#include "TypeInfo.hpp"
-#include "Components.hpp"
-#include "ScriptExample.hpp"
-
 struct Transform;
 struct Touchable;
 struct Renderable;
@@ -36,12 +32,17 @@ template<> void GameObject::RemoveComponent<Velocity>() { RemoveComponent(3); }
 template<> Sprite* GameObject::GetComponent<Sprite>() { return (Sprite*) GetScriptComponent(0); }
 template<> Sprite* GameObject::AddComponent<Sprite>() { return (Sprite*) AddScriptComponent(0); }
 template<> void GameObject::RemoveComponent<Sprite>() { RemoveScriptComponent(0); }
+#include "TypeInfo.hpp"
+#include "Components.hpp"
+#include "ScriptExample.hpp"
+
 extern "C" int CountSystems() {
-   return 1;
+   return 2;
 }
 extern "C" IScriptSystem* CreateSystem(int systemID) {
    switch (systemID) { 
-      case 0: return new SpriteSystem();
+      case 0: return new MoverSystem();
+      case 1: return new SpriteSystem();
       default: return 0;
    }
 }

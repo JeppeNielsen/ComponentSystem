@@ -214,7 +214,7 @@ void ScriptWorld::ExtractScriptClasses() {
         headerPaths
     );
 
-    allClasses.Print();
+    //allClasses.Print();
     scriptClasses = parser.ExtractSystemsAndComponents(allClasses);
 }
 
@@ -222,8 +222,8 @@ void ScriptWorld::WriteMainCppFile(const std::string &path) {
     ofstream file;
     file.open(path);
     
-    WriteMainIncludes(file);
     WriteMainGameObject(file);
+    WriteMainIncludes(file);
     WriteMainSystems(file);
     WriteMainComponents(file);
     WriteMainSerializedComponents(file);

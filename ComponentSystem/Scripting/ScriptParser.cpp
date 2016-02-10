@@ -49,7 +49,7 @@ CXChildVisitResult visitor(CXCursor cursor, CXCursor parent, CXClientData client
         {
             ScriptClass* parent = currentClass;
         
-            cout << "Found class " << cursorSpelling << endl;
+            //cout << "Found class " << cursorSpelling << endl;
             
             currentClass = &currentClass->children[cursorSpelling];
             currentClass->parent = parent;
@@ -65,12 +65,13 @@ CXChildVisitResult visitor(CXCursor cursor, CXCursor parent, CXClientData client
 
             CXCursor cursors[numTokens];
             clang_annotateTokens(tu, tokens, numTokens, cursors);
-    
+            
+            /*
             cout << std::left << setw(28) << "Token" << setw(28) << "Cursor" << setw(35) <<
                 "Cursor Kind"  << setw(34) << "Cursor Type" << endl;
             cout << "=================================================================================" <<
                 endl;
-            
+            */
             bool baseClassParsingStarted = false;
             bool templateArgumentsStarted = false;
             bool fileSet = false;
@@ -129,11 +130,11 @@ CXChildVisitResult visitor(CXCursor cursor, CXCursor parent, CXClientData client
                 }
                 
                 
-                cout << std::left << setw(28) << tokenSpelling << setw(28) << cursorSpelling <<
-                    setw(35) << cursorKind << setw(34) <<  typeSpelling << endl;
+                //cout << std::left << setw(28) << tokenSpelling << setw(28) << cursorSpelling <<
+                  //  setw(35) << cursorKind << setw(34) <<  typeSpelling << endl;
             }
-            if ( numTokens > 0 )
-                cout << endl << endl;
+            //if ( numTokens > 0 )
+                //cout << endl << endl;
             
             currentClass = parent;
         }
@@ -195,7 +196,7 @@ ScriptClass ScriptParser::ExtractSystemsAndComponents(const ScriptClass &root) {
             }
             auto componentIt = root.children.find(componentName);
             if (componentIt == root.children.end()) {
-                std::cout << componentName <<" not found in script world"<< std::endl;
+                //std::cout << componentName <<" not found in script world"<< std::endl;
                 continue;
             }
             components[componentName] = componentIt->second;
@@ -203,156 +204,3 @@ ScriptClass ScriptParser::ExtractSystemsAndComponents(const ScriptClass &root) {
     }
     return world;
 }
-
-bool ScriptParser::CreateScriptHeader(const ScriptClass &world, const std::string& path) {
-    /*
-    std::vector<ScriptClass> systems;
-    for (auto klass : root.children) {
-        if (klass.second.baseClass == "GameSystem") {
-            systems.push_back(klass.second);
-        }
-    }
-    std::map<std::string, ScriptClass> components;
-    for (auto& system : systems) {
-        for (auto& componentName : system.templateArguments) {
-            auto it = components.find(componentName);
-            if (it!=components.end()) {
-                continue; // component already added to list, ignore
-            }
-            auto componentIt = root.children.find(componentName);
-            if (componentIt == root.children.end()) {
-                std::cout << componentName <<" not found in script world"<< std::endl;
-                continue;
-            }
-            components[componentName] = componentIt->second;
-        }
-    }
-    */
-    
-    auto& systems = world.children.find("Systems")->second.children;
-    auto& components = world.children.find("Components")->second.children;
-    
-    std::set<std::string> uniqueIncludes;
-    for(auto& system : systems) {
-        uniqueIncludes.insert(system.second.sourceFile);
-    }
-    
-    std::ofstream file;
-    file.open(path);
-    
-    file<<"#include \"libCode.h\""<<std::endl;
-    
-    for(auto& include : uniqueIncludes) {
-        file << "#include \"" << include << "\""<< std::endl;
-    }
-    file<<std::endl;
-    
-    //components
-    {
-        {
-           file<<"extern \"C\" int CountComponents() {"<<std::endl;
-           file<<"   return "<< components.size() <<";"<<std::endl;
-           file<<"}"<<std::endl;
-        }
-        
-        {
-            file<<"extern \"C\" void* CreateComponent(int componentID) {"<<std::endl;
-                file << "   switch (componentID) { " << std::endl;
-                    int index = 0;
-                    for(auto& component : components) {
-                        file<<"      case "<<index <<":"<<" return new "<<component.second.name<<"();"<<std::endl;
-                        index++;
-                    }
-            file<<"      default: return 0;"<<std::endl;
-            file<<"   }"<<std::endl;
-            file<<"}"<<std::endl;
-        }
-        
-        {
-           file<<"extern \"C\" void DeleteComponent(int componentID, void* component) {"<<std::endl;
-                file << "   switch (componentID) { " << std::endl;
-                    int index = 0;
-                    for(auto& component : components) {
-                        file<<"      case "<<index <<":"<<" { delete (("<<component.second.name<<"*)component); break; }"<<std::endl;
-                        index++;
-                    }
-            file<<"   }"<<std::endl;
-            file<<"}"<<std::endl;
-        }
-    }
-    
-    file<<std::endl;
-    
-    //systems
-    {
-        {
-           file<<"extern \"C\" int CountSystems() {"<<std::endl;
-           file<<"   return "<< systems.size() <<";"<<std::endl;
-           file<<"}"<<std::endl;
-        }
-        
-        {
-            file<<"extern \"C\" IScriptSystem* CreateSystem(int systemID) {"<<std::endl;
-                file << "   switch (systemID) { " << std::endl;
-                    int index = 0;
-                    for(auto& system : systems) {
-                        file<<"      case "<<index <<":"<<" return new "<<system.second.name<<"();"<<std::endl;
-                        index++;
-                    }
-            file<<"      default: return 0;"<<std::endl;
-            file<<"   }"<<std::endl;
-            file<<"}"<<std::endl;
-        }
-        
-        {
-           file<<"extern \"C\" void DeleteSystem(IScriptSystem* scriptSystem) {"<<std::endl;
-           file<<"   delete scriptSystem; "<<std::endl;
-           file<<"}"<<std::endl;
-        }
-    }
-    
-    //serialization
-    {
-        file<<"extern \"C\" TypeInfo* GetTypeInfo(int componentID, void* componentPtr) {"<<std::endl;
-                file << "   switch (componentID) { " << std::endl;
-                    int index = 0;
-                    for(auto& componentIt : components) {
-                        auto& component = componentIt.second;
-                        file<<"      case "<<index <<": {"<<std::endl;
-                        file<<"      "<<component.name<<"* component = ("<<component.name<<"*)componentPtr;"<<std::endl;
-                        file<<"      TypeInfo* info = new TypeInfo();"<<std::endl;
-                        
-                        for(auto& field : component.fields) {
-                            if (field.type == "int" ||
-                                field.type == "string" ||
-                                field.type == "float") {
-                        file<<"      info->AddField(component->"<< field.name <<", \""<<field.name<<"\");"<<std::endl;
-                            }
-                        }
-                        file<<"      return info;"<<std::endl;
-                        
-                        file<<"      break; }"<<std::endl;
-                         // return new "<<system.second.name<<"();"<<std::endl;
-                        index++;
-                    }
-            file<<"      default: return 0;"<<std::endl;
-            file<<"   }"<<std::endl;
-            file<<"}"<<std::endl;
-        
-    
-            
-    
-    
-    
-    
-    }
-    
-
-    file.close();
-    
-    return true;
-}
-
-
-
-

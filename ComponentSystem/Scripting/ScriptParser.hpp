@@ -14,5 +14,4 @@ class ScriptParser {
 public:
     bool ParseCode(ScriptClass& root, std::string cppFile, std::vector<std::string> includePaths);
     ScriptClass ExtractSystemsAndComponents(const ScriptClass& root);
-    bool CreateScriptHeader(const ScriptClass& world, const std::string& path);
 };
