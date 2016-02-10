@@ -330,18 +330,7 @@ bool ScriptEngine::Run() {
             minijson::istream_context context(jsonStream);
             
             typeInfo.Deserialize(context);
-            
-            //std::cout << *field.field << std::endl;
-            
-            //*field.field = "Hello from editor!!";
         }
-        
-        
-        
-        
-        
-        
-        
         
         world.Update(0.01);
         

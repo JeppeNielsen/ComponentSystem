@@ -4,6 +4,7 @@ struct Touchable;
 struct Renderable;
 struct Velocity;
 struct Button;
+struct Sprite;
 
 class GameObject {
 private:
@@ -33,3 +34,6 @@ template<> void GameObject::RemoveComponent<Velocity>() { RemoveComponent(3); }
 template<> Button* GameObject::GetComponent<Button>() { return (Button*) GetScriptComponent(0); }
 template<> Button* GameObject::AddComponent<Button>() { return (Button*) AddScriptComponent(0); }
 template<> void GameObject::RemoveComponent<Button>() { RemoveScriptComponent(0); }
+template<> Sprite* GameObject::GetComponent<Sprite>() { return (Sprite*) GetScriptComponent(1); }
+template<> Sprite* GameObject::AddComponent<Sprite>() { return (Sprite*) AddScriptComponent(1); }
+template<> void GameObject::RemoveComponent<Sprite>() { RemoveScriptComponent(1); }

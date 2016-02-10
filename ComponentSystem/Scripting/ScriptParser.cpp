@@ -326,7 +326,7 @@ bool ScriptParser::CreateScriptHeader(const ScriptClass &world, const std::strin
                             if (field.type == "int" ||
                                 field.type == "string" ||
                                 field.type == "float") {
-                        file<<"      info->AddField(component->"<< field.name <<",\""<<field.name<<"\" );"<<std::endl;
+                        file<<"      info->AddField(component->"<< field.name <<", \""<<field.name<<"\");"<<std::endl;
                             }
                         }
                         file<<"      return info;"<<std::endl;

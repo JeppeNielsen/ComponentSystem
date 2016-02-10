@@ -14,7 +14,7 @@
 struct Button {
     std::string name;
     int clickedImageNo;
-    float height;
+    float ChangedHeight;
 };
 
 struct Sprite {
@@ -28,7 +28,7 @@ struct ButtonSystem : GameSystem<Transform, Button> {
         auto button = object->GetComponent<Button>();
         button->name = "Hi from scripting!";
         button->clickedImageNo = 4;
-        button->height = 0.43f;
+        button->ChangedHeight = 0.43f;
             
         std::cout << "ButtonSystem::ObjectAdded" << std::endl;
         std::cout << "Button::name = "<< object->GetComponent<Button>()->name << std::endl;
@@ -45,7 +45,7 @@ struct ButtonSystem : GameSystem<Transform, Button> {
             auto button = o->GetComponent<Button>();
             std::cout <<" button->name "<< button->name << std::endl;
             std::cout <<" button->clickedImageNo "<< button->clickedImageNo << std::endl;
-            std::cout <<" button->height "<< button->height << std::endl;
+            std::cout <<" button->ChangedHeight "<< button->ChangedHeight << std::endl;
         }
     }
 };
@@ -66,7 +66,7 @@ struct TesterSystem : GameSystem<Transform> {
     
 };
 
-struct VelocitySystem : GameSystem<Transform, Velocity> {
+struct VelocitySystem : GameSystem<Transform, Velocity, Sprite> {
     void ObjectAdded(GameObject* object) {
          std::cout << "VelocitySystem::ObjectAdded_script" << std::endl;  
     }  
@@ -77,7 +77,7 @@ struct VelocitySystem : GameSystem<Transform, Velocity> {
     
     void Update(float dt) {
         for(auto o : Objects()) {
-            o->GetComponent<Transform>()->x += o->GetComponent<Velocity>()->x * dt * 2;
+            o->GetComponent<Transform>()->x += o->GetComponent<Velocity>()->x * dt;
         }
     }  
 };
