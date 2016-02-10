@@ -311,7 +311,41 @@ bool ScriptParser::CreateScriptHeader(const ScriptClass &world, const std::strin
         }
     }
     
+    //serialization
+    {
+        file<<"extern \"C\" TypeInfo* GetTypeInfo(int componentID, void* componentPtr) {"<<std::endl;
+                file << "   switch (componentID) { " << std::endl;
+                    int index = 0;
+                    for(auto& componentIt : components) {
+                        auto& component = componentIt.second;
+                        file<<"      case "<<index <<": {"<<std::endl;
+                        file<<"      "<<component.name<<"* component = ("<<component.name<<"*)componentPtr;"<<std::endl;
+                        file<<"      TypeInfo* info = new TypeInfo();"<<std::endl;
+                        
+                        for(auto& field : component.fields) {
+                            if (field.type == "int" ||
+                                field.type == "string" ||
+                                field.type == "float") {
+                        file<<"      info->AddField(component->"<< field.name <<",\""<<field.name<<"\" );"<<std::endl;
+                            }
+                        }
+                        file<<"      return info;"<<std::endl;
+                        
+                        file<<"      break; }"<<std::endl;
+                         // return new "<<system.second.name<<"();"<<std::endl;
+                        index++;
+                    }
+            file<<"      default: return 0;"<<std::endl;
+            file<<"   }"<<std::endl;
+            file<<"}"<<std::endl;
+        
     
+            
+    
+    
+    
+    
+    }
     
 
     file.close();

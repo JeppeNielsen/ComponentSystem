@@ -8,9 +8,11 @@
 
 #pragma once
 #include <vector>
+#include <iostream>
 #include <type_traits>
 #include "JsonSerializer.hpp"
 #include "metaLib.hpp"
+#include "FieldInfoIndexer.hpp"
 
 template<class T>
 class FieldInfo;
@@ -96,10 +98,14 @@ class IFieldInfo {
 public:
     virtual ~IFieldInfo() { }
     std::string name;
+    int type;
     virtual void Serialize(minijson::object_writer& writer) = 0;
     virtual void Deserialize(minijson::istream_context& context, minijson::value& value) = 0;
     virtual IFieldInfoEditor* CreateEditor(void* context, void* parent) = 0;
     virtual bool HasEditor() = 0;
+    
+    
+    
 };
 
 template<class T>
@@ -143,11 +149,15 @@ public:
     T* field;
 };
 
+
+
 template<class T>
 std::function<IFieldInfoEditor*()> FieldInfo<T>::Editor = 0;
-  
+
 class TypeInfo {
 public:
+
+    
     TypeInfo() { }
     
     ~TypeInfo() {
@@ -166,6 +176,7 @@ public:
         FieldInfo<T>* serializedField = new FieldInfo<T>();
         serializedField->name = name;
         serializedField->field = &field;
+        serializedField->type = FieldInfoIndexer<T>::Index();
         fields.push_back(serializedField);
     }
     
@@ -201,6 +212,22 @@ public:
     using Fields = std::vector<IFieldInfo*>;
     Fields fields;
     std::string name;
+    
+    
+    void UpdateFromPointer(TypeInfo* info) {
+        for(auto field : info->fields) {
+            AddField(field);
+        }
+    }
+    
+    void AddField(IFieldInfo* fieldInfo) {
+        switch (fieldInfo->type) {
+            case 0: AddField(*static_cast<FieldInfo<int>*>(fieldInfo)->field, fieldInfo->name); break;
+            case 1: AddField(*static_cast<FieldInfo<float>*>(fieldInfo)->field, fieldInfo->name); break;
+            case 2: AddField(*static_cast<FieldInfo<double>*>(fieldInfo)->field, fieldInfo->name); break;
+            case 3: AddField(*static_cast<FieldInfo<std::string>*>(fieldInfo)->field, fieldInfo->name); break;
+        }
+    }
 };
 
 template<typename T>

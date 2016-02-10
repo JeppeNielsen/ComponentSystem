@@ -30,3 +30,16 @@ extern "C" IScriptSystem* CreateSystem(int systemID) {
 extern "C" void DeleteSystem(IScriptSystem* scriptSystem) {
    delete scriptSystem; 
 }
+extern "C" TypeInfo* GetTypeInfo(int componentID, void* componentPtr) {
+   switch (componentID) { 
+      case 0: {
+      Button* component = (Button*)componentPtr;
+      TypeInfo* info = new TypeInfo();
+      info->AddField(component->name,"name" );
+      info->AddField(component->clickedImageNo,"clickedImageNo" );
+      info->AddField(component->height,"height" );
+      return info;
+      break; }
+      default: return 0;
+   }
+}

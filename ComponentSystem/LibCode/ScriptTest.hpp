@@ -13,6 +13,8 @@
 
 struct Button {
     std::string name;
+    int clickedImageNo;
+    float height;
 };
 
 struct Sprite {
@@ -22,8 +24,15 @@ struct Sprite {
 struct ButtonSystem : GameSystem<Transform, Button> {
 
     void ObjectAdded(GameObject* object) {
+           
+        auto button = object->GetComponent<Button>();
+        button->name = "Hi from scripting!";
+        button->clickedImageNo = 4;
+        button->height = 0.43f;
+            
         std::cout << "ButtonSystem::ObjectAdded" << std::endl;
-        object->GetComponent<Button>()->name = "Jeppe Nielsen";
+        std::cout << "Button::name = "<< object->GetComponent<Button>()->name << std::endl;
+        
     }
 
     void ObjectRemoved(GameObject* object) {
@@ -33,11 +42,10 @@ struct ButtonSystem : GameSystem<Transform, Button> {
     void Update(float dt) {
         std::cout <<"ButtonSystem::Update"<< std::endl;
         for(auto o : Objects()) {
-            std::cout <<"ButtonSystem::GetComponent<Transform>()->x = "<< o->GetComponent<Transform>()->x  << std::endl; 
-            std::cout <<"ButtonSystem::GetComponent<Button>()->name = "<< o->GetComponent<Button>()->name  << std::endl; 
-            //o->RemoveComponent<Button>();
-           // o->RemoveComponent<Button>();
-           // o->RemoveComponent<Button>();
+            auto button = o->GetComponent<Button>();
+            std::cout <<" button->name "<< button->name << std::endl;
+            std::cout <<" button->clickedImageNo "<< button->clickedImageNo << std::endl;
+            std::cout <<" button->height "<< button->height << std::endl;
         }
     }
 };

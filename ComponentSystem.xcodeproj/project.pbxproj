@@ -65,6 +65,8 @@
 		7279EE491C67F35E0026F8C5 /* testThreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testThreads.cpp; sourceTree = "<group>"; };
 		7279EE511C68C6A60026F8C5 /* testSigSegv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testSigSegv.cpp; sourceTree = "<group>"; };
 		7279EE531C6914B40026F8C5 /* testVectorBool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testVectorBool.cpp; sourceTree = "<group>"; };
+		7279EE551C6A965A0026F8C5 /* ITypeInfo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ITypeInfo.hpp; sourceTree = "<group>"; };
+		7279EE571C6AA0AC0026F8C5 /* FieldInfoIndexer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FieldInfoIndexer.hpp; sourceTree = "<group>"; };
 		72C987681C4AEB36008BEFF3 /* Container.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Container.hpp; sourceTree = "<group>"; };
 		72C987691C4AEB36008BEFF3 /* GameSettings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSettings.hpp; sourceTree = "<group>"; };
 		72C9876A1C4AEB36008BEFF3 /* GameSystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameSystem.hpp; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 		7279EDEF1C56BAC70026F8C5 /* Scripting */ = {
 			isa = PBXGroup;
 			children = (
+				7279EE571C6AA0AC0026F8C5 /* FieldInfoIndexer.hpp */,
 				7279EE3F1C5EB40B0026F8C5 /* IScriptSystem.hpp */,
 				7279EDF01C56BC060026F8C5 /* ScriptEngine.cpp */,
 				7279EDF11C56BC060026F8C5 /* ScriptEngine.hpp */,
@@ -115,6 +118,7 @@
 				7279EE371C5EA47E0026F8C5 /* ScriptParser.hpp */,
 				7279EE391C5EA5020026F8C5 /* ScriptClass.cpp */,
 				7279EE3A1C5EA5020026F8C5 /* ScriptClass.hpp */,
+				7279EE551C6A965A0026F8C5 /* ITypeInfo.hpp */,
 			);
 			path = Scripting;
 			sourceTree = "<group>";

@@ -13,6 +13,7 @@
 #include <fstream>
 #include "IScriptSystem.hpp"
 #include "ScriptParser.hpp"
+#include <sstream>
 
 using namespace std;
 
@@ -239,6 +240,17 @@ bool ScriptEngine::Run() {
         return false;
     }
     
+    typedef TypeInfo* (*GetTypeInfo)(int, void*);
+    GetTypeInfo getTypeInfo = (GetTypeInfo) dlsym(handle, "GetTypeInfo");
+    dlsym_error = dlerror();
+    if (dlsym_error) {
+        cerr << "Cannot load symbol 'GetTypeInfo': " << dlsym_error << '\n';
+        dlclose(handle);
+        return false;
+    }
+    
+    
+    
     int numberOfSystems = countSystems();
     int numberOfComponents = countComponents();
     
@@ -288,9 +300,46 @@ bool ScriptEngine::Run() {
         
         GameObject* object = world.CreateObject();
         
-        //object->AddScriptComponent(0);
+        void* ptr = object->AddScriptComponent(0);
         object->AddComponent<Transform>()->x = 20;
         object->AddComponent<Velocity>()->x = 100;
+        
+        world.Update(0.01f);
+        
+        TypeInfo typeInfo;
+        typeInfo.UpdateFromPointer(getTypeInfo(0, ptr));
+        
+        {
+            
+            
+            minijson::writer_configuration config;
+            config = config.pretty_printing(true);
+            minijson::object_writer writer(std::cout, config);
+            
+            typeInfo.Serialize(writer);
+            
+            //field->Serialize(writer);
+            writer.close();
+            
+            std::stringstream jsonStream;
+            
+            jsonStream<<"{ \"name\": \"Modified From Editor!\","
+                        "\"clickedImageNo\": 6,"
+                        "\"height\": 0.05 }";
+            
+            minijson::istream_context context(jsonStream);
+            
+            typeInfo.Deserialize(context);
+            
+            //std::cout << *field.field << std::endl;
+            
+            //*field.field = "Hello from editor!!";
+        }
+        
+        
+        
+        
+        
         
         
         
