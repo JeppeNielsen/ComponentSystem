@@ -161,9 +161,8 @@ public:
     }
     
     //Scripting
-    
-    
-    std::array<std::vector<short>, Settings::UniqueComponents{}.size()> staticScriptSystemComponents;
+    using StaticScriptSystemComponents = std::array<std::vector<short>, Settings::UniqueComponents{}.size()>;
+    StaticScriptSystemComponents staticScriptSystemComponents;
     using ScriptSystemComponents = std::vector<std::vector<short>>;
     ScriptSystemComponents dynamicScriptSystemComponents;
     
@@ -182,6 +181,20 @@ public:
     
     using ScriptSystemsData = std::vector<ScriptSystemData>;
     ScriptSystemsData scriptSystemsData;
+    
+    template<typename T>
+    void ClearScripingData(std::function<void(IScriptSystem*)> onSystemDeleted);
+    
+    template<typename T>
+    void InitializeScriptData(
+            int numSystems, int numComponents,
+            std::function<IScriptSystem*(int)> onSystemCreate,
+            std::function<void(Container<void*>&, int)> onComponentCreate,
+            std::function<void(
+                        StaticScriptSystemComponents& staticScriptSystemComponents,
+                        ScriptSystemComponents& dynamicScriptSystemComponents,
+                        ScriptSystemsData& scriptSystemsData)> onSystemData
+            );
 };
 
 struct IGameObject {
@@ -209,6 +222,7 @@ private:
     Container<GameObject>::ObjectInstance* instance;
     GameWorld* world;
     ObjectCollection children;
+    
     
     
     friend class GameWorld;
@@ -245,14 +259,7 @@ private:
     void SetWorld(GameWorld* w) {
         if (world) return;
         world = w;
-        std::size_t numScriptComponents = world->scriptComponents.size();
-        scriptComponents = new ScriptComponent[numScriptComponents];
-        for (int i=0; i<numScriptComponents; i++) {
-            scriptComponents[i]=0;
-        }
-        scriptSystemIndices = new int[world->scriptSystems.size()];
-        activeScriptComponents.resize(numScriptComponents);
-        removedScriptComponents.resize(numScriptComponents);
+        InitializeScriptingData();
     }
     
 public:
@@ -280,7 +287,7 @@ public:
             child->Remove();
         }
     }
-       
+    
     template<typename Component>
     bool HasComponent() const {
         return activeComponents[Settings::template GetComponentID<Component>()];
@@ -476,8 +483,9 @@ private:
         return component->GetType();
     }
     
-    //Scripting
+    //Scripting *******************************
     
+    // Scripting Data
     using ScriptComponent = Container<void*>::ObjectInstance*;
     ScriptComponent* scriptComponents;
     
@@ -485,6 +493,7 @@ private:
     
     GameWorld::ScriptBitset activeScriptComponents;
     GameWorld::ScriptBitset removedScriptComponents;
+    // /ScriptingData
     
     void* GetComponent(int componentID) override {
         //&((typename Container<Component>::ObjectInstance*)components[componentID])->object;
@@ -522,6 +531,24 @@ private:
     }
     
 public:
+
+    void ClearScriptingData() {
+        delete[] scriptComponents;
+        delete[] scriptSystemIndices;
+        activeScriptComponents.clear();
+        removedScriptComponents.clear();
+    }
+    
+    void InitializeScriptingData() {
+        std::size_t numScriptComponents = world->scriptComponents.size();
+        scriptComponents = new ScriptComponent[numScriptComponents];
+        for (int i=0; i<numScriptComponents; i++) {
+            scriptComponents[i]=0;
+        }
+        scriptSystemIndices = new int[world->scriptSystems.size()];
+        activeScriptComponents.resize(numScriptComponents);
+        removedScriptComponents.resize(numScriptComponents);
+    }
 
     void* AddScriptComponent(int componentID) override {
         if (activeScriptComponents[componentID]) {
@@ -667,4 +694,58 @@ GameObject* GameWorld::CreateObject(std::istream &jsonStream, std::function<void
     }
     return object;
 }
+
+template<typename T = void>
+void GameWorld::ClearScripingData(std::function<void(IScriptSystem*)> onSystemDeleted) {
+    for(int i=0; i<ObjectCount(); ++i) {
+        GetObject(i)->ClearScriptingData();
+    }
+
+    for(int i=0; i<Settings::UniqueComponents{}.size(); ++i) {
+        staticScriptSystemComponents[i].clear();
+    }
+    dynamicScriptSystemComponents.clear();
+    scriptComponents.clear();
+    for(auto scriptSystem : scriptSystems) {
+        onSystemDeleted(scriptSystem);
+    }
+    scriptSystems.clear();
+    scriptSystemsData.clear();
+}
+
+template<typename T = void>
+void GameWorld::InitializeScriptData(int numSystems, int numComponents,
+            std::function<IScriptSystem*(int)> onSystemCreate,
+            std::function<void(Container<void*>&, int)> onComponentCreate,
+            std::function<void(
+                        StaticScriptSystemComponents& staticScriptSystemComponents,
+                        ScriptSystemComponents& dynamicScriptSystemComponents,
+                        ScriptSystemsData& scriptSystemsData)> onSystemData
+            
+            ) {
+    
+    for(int i=0; i<numSystems; i++) {
+        scriptSystems.push_back(onSystemCreate(i));
+    }
+    
+    scriptComponents.resize(numComponents);
+    for(int i=0; i<numComponents; ++i) {
+        onComponentCreate(scriptComponents[i], i);
+    }
+    
+    dynamicScriptSystemComponents.resize(numComponents);
+    onSystemData(staticScriptSystemComponents, dynamicScriptSystemComponents, scriptSystemsData);
+    
+    for(int i=0; i<ObjectCount(); ++i) {
+        GetObject(i)->InitializeScriptingData();
+    }
+}
+/*
+template<typename T = void>
+void GameWorld::InitializeScripingData(std::function<void(IScriptSystem*)> onSystemDeleted) {
+    for(int i=0; i<ObjectCount(); ++i) {
+        GetObject(i)->InitializeScriptingData();
+    }
+}
+*/
 

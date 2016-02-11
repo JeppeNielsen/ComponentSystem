@@ -48,8 +48,7 @@ struct MoverSystem : GameSystem<Transform> {
     }
 
     void Update(float dt) {
-       // std::cout << Objects()[0]->GetComponent<Sprite>()->width<<std::endl;
-        
+       //std::cout << Objects()[0]->GetComponent<Sprite>()->width<<std::endl;
     }
     
 
