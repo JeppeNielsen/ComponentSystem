@@ -27,6 +27,8 @@ public:
     Value& PreviousValue() const;
     
     const Value& operator() () const { return value; }
+    operator const Value& () const { return value; }
+    
     void operator = (const Value& v) { Set(v); }
     void operator = (const Property<Value>& v) { Set(v.value); }
     Value operator - () const { return -value; }
