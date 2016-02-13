@@ -8,7 +8,6 @@
 
 #include "ScriptWorld.hpp"
 #include <dlfcn.h>
-#include "Logic.hpp"
 #include "ScriptParser.hpp"
 #include <set>
 #include "IScriptSystem.hpp"
@@ -33,21 +32,7 @@ vector<string> Compile(const string &cmd) {
     return out;
 }
 
-ScriptWorld::ScriptWorld() : libHandle(0) {
-    ExtractWorldComponentNames();
-}
-
-void ScriptWorld::ExtractWorldComponentNames() {
-    worldComponentNames.clear();
-    GameWorldSettings::SerializableComponents serializableComponents;
-    
-    meta::for_each_in_tuple(serializableComponents, [this] (auto componentPointer) {
-        using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
-        worldComponentNames.push_back({ ComponentType{}.GetType().name, GameWorldSettings::GetComponentID<ComponentType>() });
-    });
-}
-
-
+ScriptWorld::ScriptWorld() : libHandle(0) { }
 
 string ScriptWorld::ExtractHeaderPath(const std::string &headerFile) {
     size_t lastPath = headerFile.rfind("/");
@@ -214,7 +199,7 @@ void ScriptWorld::ExtractScriptClasses() {
         headerPaths
     );
 
-    //allClasses.Print();
+    allClasses.Print();
     scriptClasses = parser.ExtractSystemsAndComponents(allClasses);
 }
 
@@ -451,51 +436,4 @@ void Container<void*>::DeleteInstance(Container<void *>::ObjectInstance *instanc
     DeleteComponent* deleteComponent = (DeleteComponent*)deleteContext;
     DeleteComponent func = (*(deleteComponent));
     instance->object = func(contextIndex, instance->object);
-}
-
-void ScriptWorld::RemoveGameWorld(GameWorld &world) {
-    world.ClearScripingData([this] (auto scriptSystem){
-        deleteSystem(scriptSystem);
-    });
-}
-
-void ScriptWorld::AddGameWorld(GameWorld &world) {
-    int numberOfSystems = countSystems();
-    int numberOfComponents = countComponents();
-    
-    world.InitializeScriptData(
-        numberOfSystems, numberOfComponents,
-        [this](int index) {
-            return createSystem(index);
-        },
-        [this](auto& scriptContainer, int index) {
-            scriptContainer.createContext = &createComponent;
-            scriptContainer.deleteContext = &deleteComponent;
-            scriptContainer.contextIndex = index;
-        },
-        [this](auto& staticScriptSystemComponents, auto& dynamicScriptSystemComponents, auto& scriptSystemsData) {
-        
-            auto& scriptSystems = scriptClasses.children["Systems"].children;
-        
-            int index = 0;
-            for (auto& scriptSystem : scriptSystems) {
-                GameWorld::ScriptSystemData data;
-                for (auto& component : scriptSystem.second.templateArguments) {
-                    int componentIndex;
-                    bool staticComponent;
-                    if (FindComponentIndex(component, staticComponent, componentIndex)) {
-                        if (staticComponent) {
-                            staticScriptSystemComponents[componentIndex].push_back(index);
-                            data.staticComponents[componentIndex] = true;
-                        } else {
-                            dynamicScriptSystemComponents[componentIndex].push_back(index);
-                            data.scriptComponents.push_back(componentIndex);
-                        }
-                    }
-                }
-                scriptSystemsData.push_back(data);
-                index++;
-            }
-        }
-    );
 }

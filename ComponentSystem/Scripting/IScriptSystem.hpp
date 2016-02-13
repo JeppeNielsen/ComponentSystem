@@ -8,13 +8,13 @@
 
 #pragma once
 #include <vector>
-struct GameObject;
+struct IGameObject;
 
 struct IScriptSystem {
     virtual ~IScriptSystem() {}
-    virtual void ObjectAdded(GameObject* object) = 0;
-    virtual void ObjectRemoved(GameObject* object) = 0;
+    virtual void ObjectAdded(IGameObject* object) = 0;
+    virtual void ObjectRemoved(IGameObject* object) = 0;
     virtual void Update(float dt) = 0;
-    virtual int AddObject(GameObject* object) = 0;
-    virtual GameObject* RemoveObject(int indexToRemove) = 0;
+    virtual int AddObject(IGameObject* object) = 0;
+    virtual IGameObject* RemoveObject(int indexToRemove) = 0;
 };

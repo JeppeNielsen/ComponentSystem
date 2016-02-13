@@ -10,18 +10,26 @@
 #include "metaLib.hpp"
 #include <vector>
 
+template<typename T>
 class GameObject;
+
+template<typename T>
 class GameWorld;
 
-template<typename... T>
+template<typename T, typename... Systems>
 class GameSystem {
 public:
-    using Components = meta::list<T...>;
+    friend class GameObject<T>;
+
+    using GameObject = GameObject<T>;
+    
+    using Components = meta::list<Systems...>;
     virtual ~GameSystem() {};
 private:
     using ObjectCollection = std::vector<GameObject*>;
     ObjectCollection objects;
-    friend class GameObject;
+    
+    
 protected:
     const ObjectCollection& Objects() {
         return objects;

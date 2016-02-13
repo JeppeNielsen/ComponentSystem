@@ -11,7 +11,7 @@
 
 int main_serialization() {
 
-    GameWorld world;
+    World world;
     /*
     auto object = world.CreateObject();
     object->AddComponent<Transform>()->x = 4;
@@ -22,8 +22,8 @@ int main_serialization() {
     object->GetComponent<Velocity>()->info.HejMedDig = 5748;
     
     {
-        object->ToJson(std::cout, [] (GameObject* object, int componentType) {
-            return true;//componentType == GameWorldSettings::GetComponentID<Transform>();
+        object->ToJson(std::cout, [] (Object* object, int componentType) {
+            return true;//componentType == WorldSettings::GetComponentID<Transform>();
         });
     }
     
@@ -31,8 +31,8 @@ int main_serialization() {
     {
         std::ofstream file;
         file.open ("TestObject.json");
-        object->ToJson(file, [] (GameObject* object, int componentType) {
-            return true;//componentType == GameWorldSettings::GetComponentID<Transform>();
+        object->ToJson(file, [] (Object* object, int componentType) {
+            return true;//componentType == WorldSettings::GetComponentID<Transform>();
         });
         file.close();
     }
@@ -42,19 +42,18 @@ int main_serialization() {
     {
         std::ifstream file;
         file.open ("TestObject.json");
-        GameObject* loadedObject = world.CreateObject(file, [] (GameObject* o) {
+        Object* loadedObject = world.CreateObject(file, [] (Object* o) {
         
         });
         file.close();
         
-        loadedObject->ToJson(std::cout, [] (GameObject* object, int componentType) {
-            return true;//componentType == GameWorldSettings::GetComponentID<Transform>();
+        loadedObject->ToJson(std::cout, [] (Object* object, int componentType) {
+            return true;//componentType == WorldSettings::GetComponentID<Transform>();
         });
         
         std::cout << "Has Transform : " << loadedObject->HasComponent<Transform>() << std::endl;
         std::cout << "Has Velocity : " << loadedObject->HasComponent<Velocity>() << std::endl;
         std::cout << "Has Renderable : " << loadedObject->HasComponent<Renderable>() << std::endl;
-        
         
         int testVar = loadedObject->GetComponent<Velocity>()->info.TestVar;
         

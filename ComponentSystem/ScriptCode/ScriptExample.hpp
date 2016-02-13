@@ -27,7 +27,9 @@ struct SpriteSystem : GameSystem<Transform, Sprite> {
     
     void Update(float dt) {
         for(auto o : Objects()) {
-            o->GetComponent<Sprite>()->width += o->GetComponent<Transform>()->x * dt;
+            auto var = o->GetComponent<Transform>();
+        
+            o->GetComponent<Sprite>()->width += dt;
             if (o->GetComponent<Sprite>()->width>10) {
                 o->RemoveComponent<Sprite>();
             }

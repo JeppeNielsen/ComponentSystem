@@ -11,8 +11,8 @@
 #include <vector>
 #include <fstream>
 #include "ScriptClass.hpp"
+#include "GameWorld.hpp"
 
-class GameWorld;
 class IScriptSystem;
 class TypeInfo;
 
@@ -27,16 +27,72 @@ public:
                   const std::vector<std::string>& sourceFiles,
                   const std::vector<std::string>& headerFiles);
     
+    template<typename Settings>
+    void SetComponentNames() {
+        worldComponentNames.clear();
+        typename Settings::SerializableComponents serializableComponents;
+    
+        meta::for_each_in_tuple(serializableComponents, [this] (auto componentPointer) {
+            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
+            worldComponentNames.push_back({ ComponentType{}.GetType().name, Settings::template GetComponentID<ComponentType>() });
+        });
+    }
+    
     bool Build();
     bool LoadLib();
     void UnloadLib();
     
-    void AddGameWorld(GameWorld& world);
-    void RemoveGameWorld(GameWorld& world);
+    template<typename Settings>
+    void AddGameWorld(GameWorld<Settings>& world) {
+        int numberOfSystems = countSystems();
+        int numberOfComponents = countComponents();
+
+        world.InitializeScriptData(
+            numberOfSystems, numberOfComponents,
+            [this](int index) {
+                return createSystem(index);
+            },
+            [this](auto& scriptContainer, int index) {
+                scriptContainer.createContext = &createComponent;
+                scriptContainer.deleteContext = &deleteComponent;
+                scriptContainer.contextIndex = index;
+            },
+            [this](auto& staticScriptSystemComponents, auto& dynamicScriptSystemComponents, auto& scriptSystemsData) {
+            
+                auto& scriptSystems = scriptClasses.children["Systems"].children;
+            
+                int index = 0;
+                for (auto& scriptSystem : scriptSystems) {
+                    typename GameWorld<Settings>::ScriptSystemData data;
+                    for (auto& component : scriptSystem.second.templateArguments) {
+                        int componentIndex;
+                        bool staticComponent;
+                        if (FindComponentIndex(component, staticComponent, componentIndex)) {
+                            if (staticComponent) {
+                                staticScriptSystemComponents[componentIndex].push_back(index);
+                                data.staticComponents[componentIndex] = true;
+                            } else {
+                                dynamicScriptSystemComponents[componentIndex].push_back(index);
+                                data.scriptComponents.push_back(componentIndex);
+                            }
+                        }
+                    }
+                    scriptSystemsData.push_back(data);
+                    index++;
+                }
+            }
+        );
+    }
+    
+    template<typename Settings>
+    void RemoveGameWorld(GameWorld<Settings>& world) {
+        world.ClearScripingData([this] (auto scriptSystem){
+            deleteSystem(scriptSystem);
+        });
+    }
     
 private:
     void ExtractScriptClasses();
-    void ExtractWorldComponentNames();
     void WriteMainIncludes(std::ofstream &file);
     void WriteMainCppFile(const std::string& path);
     void WriteMainGameObject(std::ofstream& file);

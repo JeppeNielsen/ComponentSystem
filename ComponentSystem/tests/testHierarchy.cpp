@@ -8,11 +8,9 @@
 
 #include "Logic.hpp"
 
-
-
 int main_testHierarchy() {
 
-    GameWorld world;
+    GameWorld<Settings> world;
     
     auto parent = world.CreateObject();
     

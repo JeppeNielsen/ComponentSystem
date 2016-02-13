@@ -10,7 +10,7 @@
 #include "meta.hpp"
 #include <tuple>
 
-struct GameWorld;
+//struct GameWorld;
 struct TypeInfo;
 
 namespace meta {
@@ -201,7 +201,7 @@ struct Has ## methodName ## Function {\
     using apply = has_ ## methodName<Args..., signature>;\
 };
 
-HAS_OPTIONAL_METHOD(Initialize, void(GameWorld&));
+HAS_OPTIONAL_METHOD(Initialize, void());
 HAS_OPTIONAL_METHOD(Update, void(float));
 HAS_OPTIONAL_METHOD(Render, void());
 

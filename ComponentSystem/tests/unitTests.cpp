@@ -9,20 +9,16 @@
 #include "Logic.hpp"
 #include "UnitTest.hpp"
 
-
-
-
-
 int main_unittest() {
 
     UnitTest::Run("CreateObject" , [] () {
-        GameWorld world;
+        World world;
         world.CreateObject();
         return world.ObjectCount() == 1;
     });
 
     UnitTest::Run("RemoveObject" , [] () {
-        GameWorld world;
+        World world;
         auto object = world.CreateObject();
         bool wasOne = world.ObjectCount() == 1;
         object->Remove();
@@ -30,8 +26,8 @@ int main_unittest() {
         return wasOne && world.ObjectCount() == 0;
     });
     
-    UnitTest::Run("GameWorld::Clear" , [] () {
-        GameWorld world;
+    UnitTest::Run("World::Clear" , [] () {
+        World world;
         world.CreateObject();
         bool wasOne = world.ObjectCount() == 1;
         world.Clear();
@@ -39,7 +35,7 @@ int main_unittest() {
     });
 
     UnitTest::Run("Parenting" , [] () {
-        GameWorld world;
+        World world;
         auto parent = world.CreateObject();
         auto child = world.CreateObject();
         child->Parent = parent;
@@ -47,7 +43,7 @@ int main_unittest() {
     });
 
     UnitTest::Run("Unparenting" , [] () {
-        GameWorld world;
+        World world;
         auto parent = world.CreateObject();
         auto child = world.CreateObject();
         child->Parent = parent;
@@ -57,10 +53,10 @@ int main_unittest() {
     });
 
     UnitTest::Run("System AddedObject" , [] () {
-        GameWorld world;
+        World world;
         int objectsAddedToRenderSystem = 0;
         auto& renderSystem = world.GetSystem<RenderSystem>();
-        renderSystem.Added.Bind([&](GameObject* o){ objectsAddedToRenderSystem++; });
+        renderSystem.Added.Bind([&](Object* o){ objectsAddedToRenderSystem++; });
         
         auto object = world.CreateObject();
         object->AddComponent<Transform>();
@@ -71,10 +67,10 @@ int main_unittest() {
     });
     
     UnitTest::Run("System AddedObject 2" , [] () {
-        GameWorld world;
+        World world;
         int objectsAddedToRenderSystem = 0;
         auto& renderSystem = world.GetSystem<RenderSystem>();
-        renderSystem.Added.Bind([&](GameObject* o){ objectsAddedToRenderSystem++; });
+        renderSystem.Added.Bind([&](Object* o){ objectsAddedToRenderSystem++; });
         
         auto object = world.CreateObject();
         object->AddComponent<Transform>();
@@ -89,11 +85,11 @@ int main_unittest() {
     });
     
     UnitTest::Run("System RemovedObject" , [] () {
-        GameWorld world;
+        World world;
         int objectsAddedToRenderSystem = 0;
         auto& renderSystem = world.GetSystem<RenderSystem>();
-        renderSystem.Added.Bind([&](GameObject* o){ objectsAddedToRenderSystem++; });
-        renderSystem.Removed.Bind([&](GameObject* o){ objectsAddedToRenderSystem--; });
+        renderSystem.Added.Bind([&](Object* o){ objectsAddedToRenderSystem++; });
+        renderSystem.Removed.Bind([&](Object* o){ objectsAddedToRenderSystem--; });
         
         auto object = world.CreateObject();
         object->AddComponent<Transform>();

@@ -13,17 +13,17 @@
 
 int main_nono() {
 
-    GameWorld world;
+    World world;
     world.Initialize();
     
     Timer timer;
     
     timer.Begin();
     
-    GameObject* sourceTransform = world.CreateObject();
+    Object* sourceTransform = world.CreateObject();
     sourceTransform->AddComponent<Transform>()->x = 123;
     
-    GameObject* object;
+    Object* object;
     for(int i=0; i<10; i++) {
         auto instance = world.CreateObject();
         instance->AddComponent<Transform>(sourceTransform);

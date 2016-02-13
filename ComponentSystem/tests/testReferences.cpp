@@ -11,13 +11,13 @@
 
 int main_nonol() {
 
-    GameWorld world;
+    World world;
     world.Initialize();
     
-    GameObject* test = 0;
+    Object* test = 0;
     {
-        GameWorld content;
-        GameObject* expensiveTransform = content.CreateObject();
+        World content;
+        Object* expensiveTransform = content.CreateObject();
         expensiveTransform->AddComponent<Transform>()->x = 123456;
         content.Update(0);
         

@@ -68,15 +68,16 @@ int main() {
     
     Timer timer;
     timer.Begin();
+    scriptWorld.SetComponentNames<Settings>();
     scriptWorld.Build();
     double buildTime = timer.End();
     std::cout << "Build complete, time = " << buildTime <<"s"<< std::endl;
     
     {
-        GameWorld world;
+        World world;
         scriptWorld.AddGameWorld(world);
         
-        GameObject* go = world.CreateObject();
+        Object* go = world.CreateObject();
         go->AddComponent<Transform>()->x = 100;
         go->AddScriptComponent(0);
 //        world.Update(0);

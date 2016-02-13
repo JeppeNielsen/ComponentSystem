@@ -11,37 +11,79 @@
 #include "GameSettings.hpp"
 #include "Event.hpp"
 #include "Components.hpp"
+#include "GameWorld.hpp"
 
-struct VelocitySystem : GameSystem<Transform, Velocity> {
-    VelocitySystem();
-    ~VelocitySystem();
-    void Initialize(GameWorld& world);
-    void ObjectAdded(GameObject* object);
-    void ObjectRemoved(GameObject* object);
-    void Update(float dt);
+
+template<typename Settings>
+struct VelocitySystem : GameSystem<Settings, Transform, Velocity> {
+    VelocitySystem() {
+    
+    }
+    ~VelocitySystem() {
+    
+    }
+    void Initialize() {
+    
+    }
+    void ObjectAdded(GameObject* object) {
+        object->GetComponent<Transform>();
+    }
+    void ObjectRemoved(GameObject* object) {
+    
+    }
+    void Update(float dt) {
+    
+    }
 };
 
-struct RenderSystem : GameSystem<Transform, Renderable> {
-    RenderSystem();
-    ~RenderSystem();
-    void Initialize(GameWorld& world);
-    void ObjectAdded(GameObject* object);
-    void ObjectRemoved(GameObject* object);
-    void Update(float dt);
+template<typename Settings>
+struct RenderSystem : GameSystem<Settings, Transform, Renderable> {
+    RenderSystem() {
+    
+    }
+    ~RenderSystem() {
+    
+    }
+    void Initialize() {
+    
+    }
+    void ObjectAdded(GameObject* object) {
+    
+    }
+    void ObjectRemoved(GameObject* object) {
+    
+    }
+    void Update(float dt) {
+    
+    }
     
     Event<GameObject*> Added;
     Event<GameObject*> Removed;
 };
 
-struct TouchSystem : GameSystem<Transform, Touchable> {
-    TouchSystem();
-    ~TouchSystem();
-    void Initialize(GameWorld& world);
-    void ObjectAdded(GameObject* object);
-    void ObjectRemoved(GameObject* object);
-    void Update(float dt);
-    void Render();
+template<typename Settings>
+struct TouchSystem : GameSystem<Settings, Transform, Touchable> {
+    TouchSystem() {
+    
+    }
+    ~TouchSystem() {
+    
+    }
+    void Initialize() {
+    
+    }
+    void ObjectAdded(GameObject* object) {
+    
+    }
+    void ObjectRemoved(GameObject* object) {
+    
+    }
+    void Update(float dt) {
+    
+    }
 };
 
-struct GameWorldSettings : GameSettings<VelocitySystem, RenderSystem, TouchSystem> {};
-#include "GameWorld.hpp"
+
+using World = GameWorld<Settings>;
+
+using Object = GameObject<Settings>;
