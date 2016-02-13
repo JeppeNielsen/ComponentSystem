@@ -73,10 +73,7 @@ private:
     }
     
     void InitializeComponentNames() {
-        meta::for_each_in_tuple(serializableComponents, [this] (auto componentPointer) {
-            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
-            componentNames[Settings::template GetComponentID<ComponentType>()] = ComponentType{}.GetType().name;
-        });
+        componentNames = Settings::GetComponentNames();
     }
 public:
 

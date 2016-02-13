@@ -59,4 +59,23 @@ struct GameSettings {
         static_assert(meta::find_index<UniqueComponents, Component> {} != meta::npos{}, "Component is not valid");
         return meta::find_index<UniqueComponents, Component> {};
     }
+    
+    template<typename Class>
+    static std::string GetClassName() {
+        std::string functionName = __PRETTY_FUNCTION__;
+        const std::string token = "Class = ";
+        size_t equal = functionName.find(token) + token.size();
+        return functionName.substr(equal, functionName.size() - equal - 1);
+    }
+    
+    static ComponentNames GetComponentNames() {
+        using Components = meta::mp_rename<UniqueComponents, TupleOfPointers>;
+        Components components;
+        ComponentNames componentNames;
+        meta::for_each_in_tuple(components, [&componentNames] (auto component) {
+            using ComponentType = std::remove_pointer_t<decltype(component)>;
+            componentNames[GetComponentID<ComponentType>()] = GetClassName<ComponentType>();;
+        });
+        return componentNames;
+    }
 };

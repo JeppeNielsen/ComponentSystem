@@ -53,16 +53,20 @@ struct RenderSystem : GameSystem<T, Transform, Renderable> {
     }
 };
 
-struct SpecifyGameSettings : GameSettings<
-        MoverSystem<SpecifyGameSettings>,
-        RenderSystem<SpecifyGameSettings>
+struct SpecificGameSettings : GameSettings<
+        MoverSystem<SpecificGameSettings>,
+        RenderSystem<SpecificGameSettings>
         >
 { };
+
+
+
+
 
 int main() {
 
     ScriptWorld scriptWorld;
-    scriptWorld.SetComponentNames<SpecifyGameSettings>();
+    scriptWorld.SetWorldType<SpecificGameSettings>();
     scriptWorld.SetFiles(
     "ScriptExample.so",
     "/Projects/ComponentSystem/ComponentSystem/ScriptInclude",
@@ -77,7 +81,7 @@ int main() {
 
     scriptWorld.Build();
 
-    GameWorld<SpecifyGameSettings> world;
+    GameWorld<SpecificGameSettings> world;
     
     scriptWorld.AddGameWorld(world);
     

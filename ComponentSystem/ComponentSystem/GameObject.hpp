@@ -311,13 +311,12 @@ private:
     
     typename GameWorld::ScriptBitset activeScriptComponents;
     typename GameWorld::ScriptBitset removedScriptComponents;
-    // /ScriptingData
-    
+
     void* GetComponent(int componentID) override {
         //&((typename Container<Component>::ObjectInstance*)components[componentID])->object;
         return components[componentID]; // this works since "object" is first in ObjectInstance;
     }
-    
+    private:
     void* AddComponent(int componentID) override {
         int counter = 0;
         
@@ -347,8 +346,6 @@ private:
         typename Container<void*>::ObjectInstance* instance = (typename Container<void*>::ObjectInstance*)scriptComponents[componentID];
         return instance->object;
     }
-    
-public:
 
     void ClearScriptingData() {
         delete[] scriptComponents;
@@ -367,7 +364,7 @@ public:
         activeScriptComponents.resize(numScriptComponents);
         removedScriptComponents.resize(numScriptComponents);
     }
-
+public:
     void* AddScriptComponent(int componentID) override {
         if (activeScriptComponents[componentID]) {
             return scriptComponents[componentID];

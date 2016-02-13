@@ -199,7 +199,7 @@ void ScriptWorld::ExtractScriptClasses() {
         headerPaths
     );
 
-    allClasses.Print();
+    //allClasses.Print();
     scriptClasses = parser.ExtractSystemsAndComponents(allClasses);
 }
 

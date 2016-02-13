@@ -27,15 +27,13 @@ public:
                   const std::vector<std::string>& sourceFiles,
                   const std::vector<std::string>& headerFiles);
     
-    template<typename Settings>
-    void SetComponentNames() {
+    template<typename T>
+    void SetWorldType() {
+        auto componentNames = T::GetComponentNames();
         worldComponentNames.clear();
-        typename Settings::SerializableComponents serializableComponents;
-    
-        meta::for_each_in_tuple(serializableComponents, [this] (auto componentPointer) {
-            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
-            worldComponentNames.push_back({ ComponentType{}.GetType().name, Settings::template GetComponentID<ComponentType>() });
-        });
+        for(int i=0; i<componentNames.size(); ++i) {
+            worldComponentNames.push_back({ componentNames[i], i });
+        }
     }
     
     bool Build();

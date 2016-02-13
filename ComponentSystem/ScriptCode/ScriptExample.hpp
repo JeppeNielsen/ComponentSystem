@@ -29,7 +29,7 @@ struct SpriteSystem : GameSystem<Transform, Sprite> {
         for(auto o : Objects()) {
             auto var = o->GetComponent<Transform>();
         
-            o->GetComponent<Sprite>()->width += dt;
+            o->GetComponent<Sprite>()->width += o->GetComponent<Transform>()->x * dt;
             if (o->GetComponent<Sprite>()->width>10) {
                 o->RemoveComponent<Sprite>();
             }
