@@ -450,7 +450,4 @@ private:
             lastGameObject->scriptSystemIndices[systemIndex] = index;
         }
     }
-    
 };
-
-

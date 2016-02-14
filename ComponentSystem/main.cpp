@@ -19,7 +19,7 @@ struct MoverSystem : GameSystem<T, Transform, Velocity> {
 
     using GameObject = GameObject<T>;
 
-    void ObjectAdded(typename MoverSystem::GameObject* object) {
+    void ObjectAdded(GameObject* object) {
         std::cout << "Object added: " << object->template GetComponent<Transform>()->x << std::endl;
     }
     
@@ -58,10 +58,6 @@ struct SpecificGameSettings : GameSettings<
         RenderSystem<SpecificGameSettings>
         >
 { };
-
-
-
-
 
 int main() {
 
