@@ -1,6 +1,6 @@
+struct Velocity;
 struct Transform;
 struct Renderable;
-struct Velocity;
 struct Sprite;
 
 class GameObject {
@@ -16,15 +16,15 @@ public:
     template<typename T> T* AddComponent() { return (T*)0; }
     template<typename T> void RemoveComponent() { }
 };
-template<> Transform* GameObject::GetComponent<Transform>() { return (Transform*) GetComponent(0); }
-template<> Renderable* GameObject::GetComponent<Renderable>() { return (Renderable*) GetComponent(1); }
-template<> Velocity* GameObject::GetComponent<Velocity>() { return (Velocity*) GetComponent(2); }
-template<> Transform* GameObject::AddComponent<Transform>() { return (Transform*) AddComponent(0); }
-template<> Renderable* GameObject::AddComponent<Renderable>() { return (Renderable*) AddComponent(1); }
-template<> Velocity* GameObject::AddComponent<Velocity>() { return (Velocity*) AddComponent(2); }
-template<> void GameObject::RemoveComponent<Transform>() { RemoveComponent(0); }
-template<> void GameObject::RemoveComponent<Renderable>() { RemoveComponent(1); }
-template<> void GameObject::RemoveComponent<Velocity>() { RemoveComponent(2); }
+template<> Velocity* GameObject::GetComponent<Velocity>() { return (Velocity*) GetComponent(0); }
+template<> Transform* GameObject::GetComponent<Transform>() { return (Transform*) GetComponent(1); }
+template<> Renderable* GameObject::GetComponent<Renderable>() { return (Renderable*) GetComponent(2); }
+template<> Velocity* GameObject::AddComponent<Velocity>() { return (Velocity*) AddComponent(0); }
+template<> Transform* GameObject::AddComponent<Transform>() { return (Transform*) AddComponent(1); }
+template<> Renderable* GameObject::AddComponent<Renderable>() { return (Renderable*) AddComponent(2); }
+template<> void GameObject::RemoveComponent<Velocity>() { RemoveComponent(0); }
+template<> void GameObject::RemoveComponent<Transform>() { RemoveComponent(1); }
+template<> void GameObject::RemoveComponent<Renderable>() { RemoveComponent(2); }
 template<> Sprite* GameObject::GetComponent<Sprite>() { return (Sprite*) GetScriptComponent(0); }
 template<> Sprite* GameObject::AddComponent<Sprite>() { return (Sprite*) AddScriptComponent(0); }
 template<> void GameObject::RemoveComponent<Sprite>() { RemoveScriptComponent(0); }

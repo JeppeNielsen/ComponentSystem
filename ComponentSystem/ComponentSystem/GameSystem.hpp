@@ -16,22 +16,31 @@ class GameObject;
 template<typename T>
 class GameWorld;
 
-template<typename T, typename... Systems>
+template<typename T, typename... ComponentList>
 class GameSystem {
 public:
     friend class GameObject<T>;
+    friend class GameWorld<T>;
 
     using GameObject = GameObject<T>;
     
-    using Components = meta::list<Systems...>;
+    using Components = meta::list<ComponentList...>;
     virtual ~GameSystem() {};
+    
+    using Systems = meta::list<>;
+
 private:
     using ObjectCollection = std::vector<GameObject*>;
     ObjectCollection objects;
     
+    GameWorld<T>* world;
     
-protected:
+public:
     const ObjectCollection& Objects() {
         return objects;
+    }
+
+    GameWorld<T>& World() {
+        return *world;
     }
 };

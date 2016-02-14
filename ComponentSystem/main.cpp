@@ -17,20 +17,72 @@
 template<typename T>
 struct MoverSystem : GameSystem<T, Transform, Velocity> {
 
-    using GameObject = GameObject<T>;
+    
 
-    void ObjectAdded(GameObject* object) {
+    struct TransformSystem : GameSystem<T, Transform> {
+    
+        
+        struct OtherSystem : GameSystem<T, Velocity> {
+        
+            void ObjectAdded(GameObject<T>* object) {
+                
+            }
+            
+            void ObjectRemoved(GameObject<T>* object) {
+            
+            }
+            
+        };
+        
+        using Systems = meta::list<OtherSystem>;
+        
+        void ObjectAdded(GameObject<T>* object) {
+            auto& t = this->World().template GetSystem<OtherSystem>();
+            
+            int bla = 4;
+            bla++;
+            
+        }
+        
+        void ObjectRemoved(GameObject<T>* object) {
+        
+        }
+        
+    };
+    
+    using Systems = meta::list<TransformSystem, typename TransformSystem::OtherSystem>;
+
+    TransformSystem* transformSystem;
+    
+    void Initialize() {
+        transformSystem = &this->World().template GetSystem<TransformSystem>();
+        
+        
+        
+        int hej = 3;
+        hej++;
+        
+        std::cout << "MoverSystem"<<std::endl;
+        
+    }
+
+    void ObjectAdded(GameObject<T>* object) {
+    
+    
         std::cout << "Object added: " << object->template GetComponent<Transform>()->x << std::endl;
     }
     
-    void ObjectRemoved(GameObject* object) {
+    void ObjectRemoved(GameObject<T>* object) {
         std::cout << "Object removed: " << object->template GetComponent<Transform>()->x << std::endl;
+        
     }
     
     void Update(float dt) {
         for(auto o : this->Objects()) {
             o->template GetComponent<Transform>()->x += o->template GetComponent<Velocity>()->x * dt;
         }
+        
+        std::cout <<" TransformSystem::Count = " << transformSystem->template Objects().size()<< std::endl;
     }
 };
 
@@ -78,6 +130,7 @@ int main() {
     scriptWorld.Build();
 
     GameWorld<SpecificGameSettings> world;
+    world.Initialize();
     
     scriptWorld.AddGameWorld(world);
     

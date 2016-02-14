@@ -69,6 +69,7 @@ private:
                 systemBitsets[Settings::template GetSystemID<SystemType>()]
                              [Settings::template GetComponentID<std::remove_pointer_t< decltype(component) >>()] = true;
             });
+            std::get<SystemType>(systems).world = this;
         });
     }
     

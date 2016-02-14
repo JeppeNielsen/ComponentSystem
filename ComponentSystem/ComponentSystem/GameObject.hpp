@@ -79,6 +79,8 @@ private:
         InitializeScriptingData();
     }
     
+    GameObject(const GameObject& other) = default;
+    
 public:
 
     Property<GameObject*> Parent;

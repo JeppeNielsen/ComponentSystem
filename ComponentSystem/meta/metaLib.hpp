@@ -87,6 +87,27 @@ struct FindComponents<meta::list<TOther, Ts...>>
 
 //---------------------------------------------
 
+template <typename>
+struct FindSystems;
+
+template <typename... Ts>
+struct FindSystems<meta::list<Ts...>>
+{
+    constexpr auto Iterate() const {
+        return std::tuple<>{};
+    }
+};
+
+template <typename TOther, typename... Ts>
+struct FindSystems<meta::list<TOther, Ts...>>
+{
+	constexpr auto Iterate() const {
+	    return std::tuple_cat(FindSystems<meta::list<Ts...>>{}.Iterate(), Iterator<typename TOther::Systems>{}.Iterate());
+	}
+};
+
+//---------------------------------------------
+
 template<class F, class...Ts, std::size_t...Is>
 constexpr void for_each_in_tuple(const std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...>){
     using expander = int[];

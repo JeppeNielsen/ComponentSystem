@@ -18,7 +18,9 @@
 template<typename...T>
 struct GameSettings {
 
-    using Systems = meta::list<T...>;
+    using SystemsInList = meta::list<T...>;
+    
+    using Systems = meta::concat<SystemsInList, meta::as_list<decltype(meta::FindSystems<SystemsInList>{}.Iterate())>>;
     
     constexpr static size_t NumberOfSystems = Systems{}.size();
     
