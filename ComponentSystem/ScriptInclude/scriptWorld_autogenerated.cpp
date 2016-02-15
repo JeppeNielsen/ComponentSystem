@@ -72,3 +72,6 @@ extern "C" TypeInfo* GetTypeInfo(int componentID, void* componentPtr) {
       default: return 0;
    }
 }
+extern "C" void DeleteTypeInfo(TypeInfo* typeInfo) {
+delete typeInfo;
+}

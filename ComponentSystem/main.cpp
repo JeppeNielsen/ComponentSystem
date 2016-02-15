@@ -17,8 +17,6 @@
 template<typename T>
 struct MoverSystem : GameSystem<T, Transform, Velocity> {
 
-    
-
     struct TransformSystem : GameSystem<T, Transform> {
     
         
@@ -140,6 +138,9 @@ int main() {
     object->AddComponent<Renderable>();
     object->AddScriptComponent(0);
     
+    auto obj2 = world.CreateObject();
+    obj2->AddComponent<Transform>();
+    
     world.Update(0.01f);
     
     object->RemoveComponent<Renderable>();
@@ -147,6 +148,11 @@ int main() {
     world.Update(0.01f);
     world.Update(0.01f);
     
-
+    TypeInfo typeInfo = scriptWorld.GetTypeInfo(*object, 0);
+    
+    minijson::object_writer w(std::cout);
+    typeInfo.Serialize(w);
+    w.close();
+    
     return 0;
 }

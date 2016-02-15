@@ -88,6 +88,15 @@ public:
             deleteSystem(scriptSystem);
         });
     }
+
+    template<typename T>
+    TypeInfo GetTypeInfo(GameObject<T>& object, int index) {
+        TypeInfo* info = getTypeInfo(index, (void*)&object);
+        TypeInfo t;
+        t.UpdateFromPointer(info);
+        deleteTypeInfo(info);
+        return t;
+    }
     
 private:
     void ExtractScriptClasses();
@@ -129,7 +138,8 @@ private:
     typedef int (*CountComponents)();
     typedef void (*DeleteComponent)(int, void*);
     
-    typedef TypeInfo* (*GetTypeInfo)(int, void*);
+    typedef TypeInfo* (*GetTypeInfoFunction)(int, void*);
+    typedef void (*DeleteTypeInfo)(TypeInfo*);
     
     CreateSystem createSystem;
     CountSystems countSystems;
@@ -138,5 +148,6 @@ private:
     CreateComponent createComponent;
     CountComponents countComponents;
     DeleteComponent deleteComponent;
-    GetTypeInfo getTypeInfo;
+    GetTypeInfoFunction getTypeInfo;
+    DeleteTypeInfo deleteTypeInfo;
 };

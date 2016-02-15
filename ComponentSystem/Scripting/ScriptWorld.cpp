@@ -173,10 +173,18 @@ bool ScriptWorld::LoadLib() {
         return false;
     }
     
-    getTypeInfo = (GetTypeInfo) dlsym(libHandle, "GetTypeInfo");
+    getTypeInfo = (GetTypeInfoFunction) dlsym(libHandle, "GetTypeInfo");
     dlsym_error = dlerror();
     if (dlsym_error) {
         cerr << "Cannot load symbol 'GetTypeInfo': " << dlsym_error << '\n';
+        dlclose(libHandle);
+        return false;
+    }
+    
+    deleteTypeInfo = (DeleteTypeInfo) dlsym(libHandle, "DeleteTypeInfo");
+    dlsym_error = dlerror();
+    if (dlsym_error) {
+        cerr << "Cannot load symbol 'DeleteTypeInfo': " << dlsym_error << '\n';
         dlclose(libHandle);
         return false;
     }
@@ -388,6 +396,9 @@ void ScriptWorld::WriteMainSerializedComponents(std::ofstream &file) {
     file<<"   }"<<std::endl;
     file<<"}"<<std::endl;
 
+    file<<"extern \"C\" void DeleteTypeInfo(TypeInfo* typeInfo) {"<<std::endl;
+    file << "delete typeInfo;"<<std::endl;
+    file<<"}"<<std::endl;
 }
 
 bool ScriptWorld::FindComponentIndex(std::string componentName, bool &staticComponent, int& index) {
