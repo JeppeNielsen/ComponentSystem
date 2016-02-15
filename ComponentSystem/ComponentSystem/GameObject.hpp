@@ -11,6 +11,8 @@
 template<typename Settings>
 class GameWorld;
 
+#ifdef SCRIPTING_ENABLED
+
 struct IGameObject {
     virtual void* GetComponent(int componentID) = 0;
     virtual void* AddComponent(int componentID) = 0;
@@ -20,8 +22,14 @@ struct IGameObject {
     virtual void RemoveScriptComponent(int componentID) = 0;
 };
 
+#endif
+
 template<typename Settings>
-class GameObject : public IGameObject {
+class GameObject
+#ifdef SCRIPTING_ENABLED
+: public IGameObject
+#endif
+{
 private:
     friend class GameWorld<Settings>;
     
@@ -49,11 +57,12 @@ private:
         isRemoved = false;
         activeComponents.reset();
         removedComponents.reset();
-        
+#ifdef SCRIPTING_ENABLED
         for(int i=0; i<activeScriptComponents.size(); ++i) {
             activeScriptComponents[i]=false;
             removedScriptComponents[i]=false;
         }
+#endif
     }
     
     GameObject() {
@@ -76,7 +85,9 @@ private:
     void SetWorld(GameWorld* w) {
         if (world) return;
         world = w;
+#ifdef SCRIPTING_ENABLED
         InitializeScriptingData();
+#endif
     }
     
     GameObject(const GameObject& other) = default;
@@ -128,8 +139,8 @@ public:
         
         world->removeActions.emplace_back([this]() {
             auto activeComponentsBefore = activeComponents;
-            auto activeScriptComponentsBefore = activeScriptComponents;
-            meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [this, activeComponentsBefore, activeScriptComponentsBefore] (auto systemPointer) {
+            
+            meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [this, activeComponentsBefore] (auto systemPointer) {
                 auto& system = std::get< Settings::template GetSystemID< std::remove_pointer_t<decltype(systemPointer)> >() >(world->systems);
                 auto& bitSet = world->systemBitsets[Settings::template GetSystemID<std::remove_reference_t<decltype(system)> >()];
                 bool wasInterest = (activeComponentsBefore & bitSet) == bitSet;
@@ -144,7 +155,10 @@ public:
                 }
             });
             
+#ifdef SCRIPTING_ENABLED
+            auto activeScriptComponentsBefore = activeScriptComponents;
             CheckForScriptSystemsRemoval(world->staticScriptSystemComponents[Settings::template GetComponentID<Component>()], activeComponentsBefore, activeScriptComponentsBefore);
+#endif
             
             activeComponents[Settings::template GetComponentID<Component>()] = false;
             removedComponents[Settings::template GetComponentID<Component>()] = false;
@@ -201,8 +215,14 @@ private:
         activeComponents[Settings::template GetComponentID<Component>()] = true;
         components[Settings::template GetComponentID<Component>()] = instance;
         auto activeComponentsBefore = activeComponents;
+#ifdef SCRIPTING_ENABLED
         auto activeScriptComponentsBefore = activeScriptComponents;
-        world->createActions.emplace_back([this, activeComponentsBefore, activeScriptComponentsBefore]() {
+#endif
+        world->createActions.emplace_back([this, activeComponentsBefore
+#ifdef SCRIPTING_ENABLED
+        , activeScriptComponentsBefore
+#endif
+        ]() {
             meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [this, activeComponentsBefore] (auto systemPointer) {
                 auto& system = std::get< Settings::template GetSystemID< std::remove_pointer_t<decltype(systemPointer)> >() >(world->systems);
                 auto& bitSet = world->systemBitsets[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()];
@@ -213,8 +233,9 @@ private:
                     system.ObjectAdded(this);
                 }
             });
-            
+#ifdef SCRIPTING_ENABLED
             CheckForScriptSystemsAddition(world->staticScriptSystemComponents[Settings::template GetComponentID<Component>()], activeComponentsBefore, activeScriptComponentsBefore);
+#endif
         });
     }
     
@@ -303,6 +324,7 @@ private:
         return component->GetType();
     }
     
+#ifdef SCRIPTING_ENABLED
     //Scripting *******************************
     
     // Scripting Data
@@ -452,4 +474,5 @@ private:
             lastGameObject->scriptSystemIndices[systemIndex] = index;
         }
     }
+#endif
 };

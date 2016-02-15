@@ -6,6 +6,8 @@
 //  Copyright © 2016 Jeppe Nielsen. All rights reserved.
 //
 
+#define SCRIPTING_ENABLED
+
 #include "GameSettings.hpp"
 #include "GameSystem.hpp"
 #include "GameWorld.hpp"
@@ -150,7 +152,10 @@ int main() {
     
     TypeInfo typeInfo = scriptWorld.GetTypeInfo(*object, 0);
     
-    minijson::object_writer w(std::cout);
+    minijson::writer_configuration config;
+    config.pretty_printing(true);
+    minijson::object_writer w(std::cout, config);
+    
     typeInfo.Serialize(w);
     w.close();
     

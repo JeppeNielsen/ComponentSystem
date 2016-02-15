@@ -14,10 +14,10 @@
 #include <type_traits>
 #include <assert.h>
 #include "Property.hpp"
+#ifdef SCRIPTING_ENABLED
 #include "IScriptSystem.hpp"
+#endif
 #include "GameObject.hpp"
-
-#define FWD(x) (::std::forward<decltype(x)>(x))
 
 template<typename Settings>
 class GameWorld {
@@ -156,9 +156,11 @@ public:
                 >(systems).Update(dt);
         });
         
+#ifdef SCRIPTING_ENABLED
         for(auto scriptSystem : scriptSystems) {
             scriptSystem->Update(dt);
         }
+#endif
     }
     
     void Render() {
@@ -205,6 +207,7 @@ public:
         });
     }
     
+#ifdef SCRIPTING_ENABLED
     //Scripting
     using StaticScriptSystemComponents = std::array<std::vector<short>, typename Settings::UniqueComponents{}.size()>;
     StaticScriptSystemComponents staticScriptSystemComponents;
@@ -270,4 +273,5 @@ public:
             GetObject(i)->InitializeScriptingData();
         }
     }
+#endif
 };
