@@ -169,8 +169,8 @@ public:
         });
     }
     
-    template<typename Component, typename... TArgs>
-    Component* AddComponent(TArgs&&... mXs) {
+    template<typename Component>
+    Component* AddComponent() {
         assert(!HasComponent<Component>());
         auto& container = std::get<Settings::template GetComponentID<Component>()>(world->components);
         SetComponent<Component>(container.CreateObject());
@@ -365,11 +365,7 @@ private:
         });
     }
     
-    void* GetScriptComponent(int componentID) override {
-        if (!activeScriptComponents[componentID]) return 0;
-        typename Container<void*>::ObjectInstance* instance = (typename Container<void*>::ObjectInstance*)scriptComponents[componentID];
-        return instance->object;
-    }
+    
 
     void ClearScriptingData() {
         delete[] scriptComponents;
@@ -389,6 +385,13 @@ private:
         removedScriptComponents.resize(numScriptComponents);
     }
 public:
+    
+    void* GetScriptComponent(int componentID) override {
+        if (!activeScriptComponents[componentID]) return 0;
+        typename Container<void*>::ObjectInstance* instance = (typename Container<void*>::ObjectInstance*)scriptComponents[componentID];
+        return instance->object;
+    }
+
     void* AddScriptComponent(int componentID) override {
         if (activeScriptComponents[componentID]) {
             return scriptComponents[componentID];

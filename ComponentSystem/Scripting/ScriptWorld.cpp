@@ -173,6 +173,14 @@ bool ScriptWorld::LoadLib() {
         return false;
     }
     
+    resetComponent = (ResetComponent) dlsym(libHandle, "ResetComponent");
+    dlsym_error = dlerror();
+    if (dlsym_error) {
+        cerr << "Cannot load symbol 'ResetComponent': " << dlsym_error << '\n';
+        dlclose(libHandle);
+        return false;
+    }
+    
     getTypeInfo = (GetTypeInfoFunction) dlsym(libHandle, "GetTypeInfo");
     dlsym_error = dlerror();
     if (dlsym_error) {
@@ -362,6 +370,20 @@ void ScriptWorld::WriteMainComponents(std::ofstream &file) {
         file<<"   }"<<std::endl;
         file<<"}"<<std::endl;
     }
+    
+    {
+       file<<"extern \"C\" void ResetComponent(int componentID, void* c, void* s) {"<<std::endl;
+            file << "   switch (componentID) { " << std::endl;
+                int index = 0;
+                for(auto& component : components) {
+                    file<<"      case "<<index <<":"<<" { "<<component.second.name<<"* co = ("<<component.second.name<<"*)c; "<<std::endl;
+                    file<<"      "<<component.second.name<<"* so = (("<<component.second.name<<"*)s);"<<std::endl;
+                    file<<"        co->operator=(*so);             break; }"<<std::endl;
+                    index++;
+                }
+        file<<"   }"<<std::endl;
+        file<<"}"<<std::endl;
+    }
 
     file<<std::endl;
 }
@@ -447,4 +469,12 @@ void Container<void*>::DeleteInstance(Container<void *>::ObjectInstance *instanc
     DeleteComponent* deleteComponent = (DeleteComponent*)deleteContext;
     DeleteComponent func = (*(deleteComponent));
     instance->object = func(contextIndex, instance->object);
+}
+
+template<>
+void Container<void*>::ResetInstance(Container<void *>::ObjectInstance *instance) {
+    typedef void (*ResetComponent)(int, void*, void*);
+    ResetComponent* resetComponent = (ResetComponent*)resetContext;
+    ResetComponent func = (*(resetComponent));
+    func(contextIndex, instance->object, defaultObject->object);
 }

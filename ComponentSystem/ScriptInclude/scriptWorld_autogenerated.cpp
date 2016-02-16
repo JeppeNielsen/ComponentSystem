@@ -1,6 +1,7 @@
 struct Velocity;
 struct Transform;
 struct Renderable;
+struct Jumpable;
 struct Sprite;
 
 class GameObject {
@@ -25,20 +26,24 @@ template<> Renderable* GameObject::AddComponent<Renderable>() { return (Renderab
 template<> void GameObject::RemoveComponent<Velocity>() { RemoveComponent(0); }
 template<> void GameObject::RemoveComponent<Transform>() { RemoveComponent(1); }
 template<> void GameObject::RemoveComponent<Renderable>() { RemoveComponent(2); }
-template<> Sprite* GameObject::GetComponent<Sprite>() { return (Sprite*) GetScriptComponent(0); }
-template<> Sprite* GameObject::AddComponent<Sprite>() { return (Sprite*) AddScriptComponent(0); }
-template<> void GameObject::RemoveComponent<Sprite>() { RemoveScriptComponent(0); }
+template<> Jumpable* GameObject::GetComponent<Jumpable>() { return (Jumpable*) GetScriptComponent(0); }
+template<> Jumpable* GameObject::AddComponent<Jumpable>() { return (Jumpable*) AddScriptComponent(0); }
+template<> void GameObject::RemoveComponent<Jumpable>() { RemoveScriptComponent(0); }
+template<> Sprite* GameObject::GetComponent<Sprite>() { return (Sprite*) GetScriptComponent(1); }
+template<> Sprite* GameObject::AddComponent<Sprite>() { return (Sprite*) AddScriptComponent(1); }
+template<> void GameObject::RemoveComponent<Sprite>() { RemoveScriptComponent(1); }
 #include "TypeInfo.hpp"
 #include "Components.hpp"
 #include "ScriptExample.hpp"
 
 extern "C" int CountSystems() {
-   return 2;
+   return 3;
 }
 extern "C" IScriptSystem* CreateSystem(int systemID) {
    switch (systemID) { 
-      case 0: return new MoverSystem();
-      case 1: return new SpriteSystem();
+      case 0: return new JumpSystem();
+      case 1: return new MoverSystem();
+      case 2: return new SpriteSystem();
       default: return 0;
    }
 }
@@ -46,23 +51,41 @@ extern "C" void DeleteSystem(IScriptSystem* scriptSystem) {
    delete scriptSystem; 
 }
 extern "C" int CountComponents() {
-   return 1;
+   return 2;
 }
 extern "C" void* CreateComponent(int componentID) {
    switch (componentID) { 
-      case 0: return new Sprite();
+      case 0: return new Jumpable();
+      case 1: return new Sprite();
       default: return 0;
    }
 }
 extern "C" void DeleteComponent(int componentID, void* component) {
    switch (componentID) { 
-      case 0: { delete ((Sprite*)component); break; }
+      case 0: { delete ((Jumpable*)component); break; }
+      case 1: { delete ((Sprite*)component); break; }
+   }
+}
+extern "C" void ResetComponent(int componentID, void* c, void* s) {
+   switch (componentID) { 
+      case 0: { Jumpable* co = (Jumpable*)c; 
+      Jumpable* so = ((Jumpable*)s);
+        co->operator=(*so);             break; }
+      case 1: { Sprite* co = (Sprite*)c; 
+      Sprite* so = ((Sprite*)s);
+        co->operator=(*so);             break; }
    }
 }
 
 extern "C" TypeInfo* GetTypeInfo(int componentID, void* componentPtr) {
    switch (componentID) { 
       case 0: {
+      Jumpable* component = (Jumpable*)componentPtr;
+      TypeInfo* info = new TypeInfo();
+      info->AddField(component->JumpHeight, "JumpHeight");
+      return info;
+      break; }
+      case 1: {
       Sprite* component = (Sprite*)componentPtr;
       TypeInfo* info = new TypeInfo();
       info->AddField(component->width, "width");

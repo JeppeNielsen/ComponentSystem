@@ -53,7 +53,9 @@ public:
             [this](auto& scriptContainer, int index) {
                 scriptContainer.createContext = &createComponent;
                 scriptContainer.deleteContext = &deleteComponent;
+                scriptContainer.resetContext = &resetComponent;
                 scriptContainer.contextIndex = index;
+                scriptContainer.Initialize();
             },
             [this](auto& staticScriptSystemComponents, auto& dynamicScriptSystemComponents, auto& scriptSystemsData) {
             
@@ -91,7 +93,11 @@ public:
 
     template<typename T>
     TypeInfo GetTypeInfo(GameObject<T>& object, int index) {
-        TypeInfo* info = getTypeInfo(index, (void*)&object);
+        void* component = object.GetScriptComponent(index);
+        if (!component) {
+            return TypeInfo();
+        }
+        TypeInfo* info = getTypeInfo(index, component);
         TypeInfo t;
         t.UpdateFromPointer(info);
         deleteTypeInfo(info);
@@ -137,6 +143,7 @@ private:
     typedef void* (*CreateComponent)(int);
     typedef int (*CountComponents)();
     typedef void (*DeleteComponent)(int, void*);
+    typedef void (*ResetComponent)(int, void*, void*);
     
     typedef TypeInfo* (*GetTypeInfoFunction)(int, void*);
     typedef void (*DeleteTypeInfo)(TypeInfo*);
@@ -148,6 +155,8 @@ private:
     CreateComponent createComponent;
     CountComponents countComponents;
     DeleteComponent deleteComponent;
+    ResetComponent resetComponent;
+    
     GetTypeInfoFunction getTypeInfo;
     DeleteTypeInfo deleteTypeInfo;
 };

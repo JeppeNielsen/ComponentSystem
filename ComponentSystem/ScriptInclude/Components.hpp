@@ -9,6 +9,8 @@
 #pragma once
 
 struct Transform {
+    Transform() : x(0), y(0) {}
+
     float x;
     float y;
 };
