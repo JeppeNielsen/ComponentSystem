@@ -111,7 +111,7 @@ struct SpecificGameSettings : GameSettings<
         >
 { };
 
-int main() {
+int main_TestScriptWorld() {
 
     ScriptWorld scriptWorld;
     scriptWorld.SetWorldType<SpecificGameSettings>();

@@ -6,20 +6,42 @@
 //  Copyright © 2016 Jeppe Nielsen. All rights reserved.
 //
 
-#include "Logic.hpp"
-#include <fstream>
+#include "GameSystem.hpp"
+#include "GameWorld.hpp"
+#include "ScriptWorld.hpp"
+#include "Systems.hpp"
 
-int main_serialization() {
+struct SpecificGameSettings : GameSettings<
+        MoverSystem<SpecificGameSettings>,
+        RenderSystem<SpecificGameSettings>
+        >
+{ };
+
+using World = GameWorld<SpecificGameSettings>;
+using Object = GameObject<SpecificGameSettings>;
+
+int main() {
 
     World world;
-    /*
+    
+    world.Initialize();
+   
     auto object = world.CreateObject();
+    
     object->AddComponent<Transform>()->x = 4;
     object->GetComponent<Transform>()->y = 12;
     object->AddComponent<Renderable>();
     object->AddComponent<Velocity>()->x = 34234;
+    object->GetComponent<Velocity>()->info.TestVar = 5748;
     
-    object->GetComponent<Velocity>()->info.HejMedDig = 5748;
+    {
+        auto child = world.CreateObject();
+        child->AddComponent<Transform>()->x = 1337;
+    }
+    
+    
+    
+    world.Update(0.01f);
     
     {
         object->ToJson(std::cout, [] (Object* object, int componentType) {
@@ -36,7 +58,7 @@ int main_serialization() {
         });
         file.close();
     }
-    */
+    
     
     //if (false)
     {
@@ -60,7 +82,6 @@ int main_serialization() {
         std::cout << testVar<< std::endl;
         
         world.Update(0);
-    
     }
     
     
