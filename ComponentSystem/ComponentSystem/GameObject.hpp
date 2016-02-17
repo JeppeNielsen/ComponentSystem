@@ -48,9 +48,6 @@ private:
     GameWorld* world;
     ObjectCollection children;
     
-    
-    
-    
     friend class Container<GameObject>::ObjectInstance;
     
     void Reset() {
@@ -254,7 +251,7 @@ private:
         });
 
         components.close();
-        /*
+        
         if (!children.empty()) {
             minijson::array_writer children_object = gameObject.nested_array("Children");
             for(auto child : children) {
@@ -267,7 +264,7 @@ private:
             }
             children_object.close();
         }
-        */
+        
         gameObject.close();
     }
     

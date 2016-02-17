@@ -37,16 +37,7 @@ int main() {
     {
         auto child = world.CreateObject();
         child->AddComponent<Transform>()->x = 1337;
-    }
-    
-    
-    
-    world.Update(0.01f);
-    
-    {
-        object->ToJson(std::cout, [] (Object* object, int componentType) {
-            return true;//componentType == WorldSettings::GetComponentID<Transform>();
-        });
+        child->Parent = object;
     }
     
     if (false)
@@ -60,7 +51,24 @@ int main() {
     }
     
     
-    //if (false)
+    if (false)
+    {
+        object->ToJson(std::cout, [] (Object* object, int componentType) {
+            return true;//componentType == WorldSettings::GetComponentID<Transform>();
+        });
+    }
+    
+    {
+        std::cout << " loaded from stream "<<std::endl;
+    
+        
+    }
+    
+    
+    
+    
+    
+    
     {
         std::ifstream file;
         file.open ("TestObject.json");
