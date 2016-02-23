@@ -13,7 +13,8 @@
 template<typename T>
 struct MoverSystem : GameSystem<T, Transform, Velocity> {
 
-    struct TransformSystem : GameSystem<T, Transform> {
+
+    struct MoverInnerSystem : GameSystem<T, Transform> {
     
         
         struct OtherSystem : GameSystem<T, Velocity> {
@@ -31,10 +32,10 @@ struct MoverSystem : GameSystem<T, Transform, Velocity> {
         using Systems = meta::list<OtherSystem>;
         
         void ObjectAdded(GameObject<T>* object) {
-            auto& t = this->World().template GetSystem<OtherSystem>();
+          //  auto& t = this->World().template GetSystem<OtherSystem>();
             
-            int bla = 4;
-            bla++;
+          //  int bla = 4;
+          //  bla++;
             
         }
         
@@ -44,22 +45,18 @@ struct MoverSystem : GameSystem<T, Transform, Velocity> {
         
     };
     
-    using Systems = meta::list<TransformSystem, typename TransformSystem::OtherSystem>;
+    using Systems = meta::list<MoverInnerSystem>;
 
-    TransformSystem* transformSystem;
+    //TransformSystem* transformSystem;
     
-    void Initialize() {
+    /*void Initialize() {
         transformSystem = &this->World().template GetSystem<TransformSystem>();
-        
-        
-        
         int hej = 3;
         hej++;
-        
         std::cout << "MoverSystem"<<std::endl;
-        
     }
-
+    */
+    
     void ObjectAdded(GameObject<T>* object) {
     
     
@@ -76,7 +73,7 @@ struct MoverSystem : GameSystem<T, Transform, Velocity> {
             o->template GetComponent<Transform>()->x += o->template GetComponent<Velocity>()->x * dt;
         }
         
-        std::cout <<" TransformSystem::Count = " << transformSystem->template Objects().size()<< std::endl;
+        //std::cout <<" TransformSystem::Count = " << transformSystem->template Objects().size()<< std::endl;
     }
 };
 
@@ -98,3 +95,20 @@ struct RenderSystem : GameSystem<T, Transform, Renderable> {
         }
     }
 };
+
+
+template<typename T>
+struct Gui : GameConcept<T> {
+
+    using Systems = meta::list<RenderSystem<T>, MoverSystem<T>>;
+
+    //void ObjectAdded(GameObject<T>* object) {}
+    //void ObjectRemoved(GameObject<T>* object) {}
+    
+    GameObject<T>* CreateGadget(float position) {
+        auto object = this->World().CreateObject();
+        return object;
+    }
+    
+};
+

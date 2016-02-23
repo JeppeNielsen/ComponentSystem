@@ -44,3 +44,7 @@ public:
         return *world;
     }
 };
+
+template<typename T>
+class GameConcept : public GameSystem<T> {
+};

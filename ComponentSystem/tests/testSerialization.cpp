@@ -13,18 +13,29 @@
 
 struct SpecificGameSettings : GameSettings<
         MoverSystem<SpecificGameSettings>,
-        RenderSystem<SpecificGameSettings>
+        RenderSystem<SpecificGameSettings>,
+        Gui<SpecificGameSettings>
         >
 { };
+
+//template<typename T>
+//struct Debug;
 
 using World = GameWorld<SpecificGameSettings>;
 using Object = GameObject<SpecificGameSettings>;
 
 int main() {
 
+  //  Debug<SpecificGameSettings::Systems> hej;
+
     World world;
     
     world.Initialize();
+    
+    auto& gui = world.GetSystem<Gui<SpecificGameSettings>>();
+    
+    auto bla = gui.CreateGadget(10);
+    
    
     auto object = world.CreateObject();
     
@@ -91,8 +102,6 @@ int main() {
         
         world.Update(0);
     }
-    
-    
     
     
     return 0;
