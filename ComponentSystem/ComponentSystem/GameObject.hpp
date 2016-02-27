@@ -64,16 +64,16 @@ private:
     
     GameObject() {
         Parent = 0;
-        Parent.Changed.Bind([this](GameObject* value) {
-            assert(value!=this);
+        Parent.Changed.Bind([this]() {
+            assert(Parent!=this);
             GameObject* prevParent = Parent.PreviousValue();
             if (prevParent) {
                 auto& children = prevParent->children;
                 children.erase(std::find(children.begin(), children.end(), this));
             }
             
-            if (value) {
-                value->children.push_back(this);
+            if (Parent) {
+                Parent()->children.push_back(this);
             }
         });
         world = 0;
