@@ -7,6 +7,7 @@
 //
 
 #pragma once
+#include "GameObjectBase.hpp"
 
 template<typename Settings>
 class GameWorld;
@@ -29,6 +30,7 @@ class GameObject
 #ifdef SCRIPTING_ENABLED
 : public IGameObject
 #endif
+: public GameObjectBase
 {
 private:
     friend class GameWorld<Settings>;
@@ -40,7 +42,6 @@ private:
     typename Settings::Bitset activeComponents;
     typename Settings::Bitset removedComponents;
     
-    std::array<void*, typename Settings::UniqueComponents{}.size()> components;
     std::array<int, typename Settings::Systems{}.size()> indexInSystem;
     
     bool isRemoved;
@@ -82,6 +83,7 @@ private:
     void SetWorld(GameWorld* w) {
         if (world) return;
         world = w;
+        addComponents = &world->addComponents;
 #ifdef SCRIPTING_ENABLED
         InitializeScriptingData();
 #endif
@@ -125,7 +127,7 @@ public:
         if (!HasComponent<Component>()) {
             return 0;
         }
-        return &((typename Container<Component>::ObjectInstance*)components[Settings::template GetComponentID<Component>()])->object;
+        return &((typename Container<Component>::ObjectInstance*)components[GameComponent::GetComponentID<Component>()])->object;
     }
     
     template<typename Component>
@@ -145,7 +147,7 @@ public:
                     system.ObjectRemoved(this);
                     int objectIndexInSystem = indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()];
                     int lastIndex = (int)system.objects.size() - 1;
-                    GameObject* lastObject = system.objects[lastIndex];
+                    GameObject* lastObject = (GameObject*)system.objects[lastIndex];
                     lastObject->indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()]=objectIndexInSystem;
                     system.objects[objectIndexInSystem]=lastObject;
                     system.objects.pop_back();
@@ -160,7 +162,7 @@ public:
             activeComponents[Settings::template GetComponentID<Component>()] = false;
             removedComponents[Settings::template GetComponentID<Component>()] = false;
             
-            typename Container<Component>::ObjectInstance* instance = (typename Container<Component>::ObjectInstance*)components[Settings::template GetComponentID<Component>()];
+            typename Container<Component>::ObjectInstance* instance = (typename Container<Component>::ObjectInstance*)components[GameComponent::GetComponentID<Component>()];
             auto& container = std::get<Settings::template GetComponentID<Component>()>(world->components);
             container.RemoveObject(instance);
         });
@@ -210,7 +212,7 @@ private:
     template<typename Component>
     void SetComponent(typename Container<Component>::ObjectInstance* instance) {
         activeComponents[Settings::template GetComponentID<Component>()] = true;
-        components[Settings::template GetComponentID<Component>()] = instance;
+        components[GameComponent::GetComponentID<Component>()] = instance;
         auto activeComponentsBefore = activeComponents;
 #ifdef SCRIPTING_ENABLED
         auto activeScriptComponentsBefore = activeScriptComponents;

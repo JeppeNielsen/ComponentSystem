@@ -7,6 +7,7 @@
 //
 
 #pragma once
+#include "GameWorldBase.hpp"
 #include "GameSettings.hpp"
 #include "Container.hpp"
 #include "minijson_writer.hpp"
@@ -18,9 +19,10 @@
 #include "IScriptSystem.hpp"
 #endif
 #include "GameObject.hpp"
+#include "GameComponent.hpp"
 
 template<typename Settings>
-class GameWorld {
+class GameWorld : public GameWorldBase {
 private:
 
     friend class GameObject<Settings>;
@@ -62,6 +64,7 @@ private:
     Actions createActions;
     Actions removeActions;
     
+    
     void InitializeSystemBitsets() {
         meta::for_each_in_tuple(systems, [&](auto& system) {
             using SystemType = std::remove_const_t<std::remove_reference_t<decltype(system)>>;
@@ -69,12 +72,25 @@ private:
                 systemBitsets[Settings::template GetSystemID<SystemType>()]
                              [Settings::template GetComponentID<std::remove_pointer_t< decltype(component) >>()] = true;
             });
-            std::get<SystemType>(systems).world = this;
         });
     }
     
     void InitializeComponentNames() {
         componentNames = Settings::GetComponentNames();
+    }
+    
+    void InitializeCallers() {
+        meta::for_each_in_tuple(components, [this] (auto& component) {
+            using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
+            int componentIndex = GameComponent::GetComponentID<ComponentType>();
+            if (componentIndex>=addComponents.size()) {
+                addComponents.resize(componentIndex+1);
+            }
+            addComponents[componentIndex] = [](void* gameObjectPtr) {
+              GameObject* go = (GameObject*)gameObjectPtr;
+              return go->template AddComponent<ComponentType>();
+            };
+        });
     }
     
     GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObject*)>& onCreated) {
@@ -118,7 +134,7 @@ public:
         return std::get<Settings::template GetSystemID<System>()>(systems);
     }
 
-    GameObject* CreateObject() {
+    GameObjectBase* CreateObject() {
         auto object = objects.CreateObjectNoReset();
         object->object.instance = object;
         object->object.SetWorld(this);
@@ -140,6 +156,7 @@ public:
     GameWorld() {
         InitializeSystemBitsets();
         InitializeComponentNames();
+        InitializeCallers();
         meta::for_each_in_tuple_non_const(components, [](auto& container) {
             container.Initialize();
         });
@@ -151,7 +168,7 @@ public:
                 Settings::template GetSystemID<
                     std::remove_pointer_t<decltype(system)>
                 >()
-            >(systems).Initialize();//*this);
+            >(systems).Initialize(this);
         });
     }
 

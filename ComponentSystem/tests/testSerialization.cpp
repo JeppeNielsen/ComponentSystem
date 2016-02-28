@@ -6,39 +6,50 @@
 //  Copyright © 2016 Jeppe Nielsen. All rights reserved.
 //
 
+#include <iostream>
 #include "GameSystem.hpp"
 #include "GameWorld.hpp"
 #include "ScriptWorld.hpp"
 #include "Systems.hpp"
 
-struct SpecificGameSettings : GameSettings<
-        MoverSystem<SpecificGameSettings>,
-        RenderSystem<SpecificGameSettings>,
-        Gui<SpecificGameSettings>
-        >
-{ };
+using Settings = GameSettings<MoverSystem, RenderSystem, Gui>;
+
+
+
+
 
 //template<typename T>
 //struct Debug;
 
-using World = GameWorld<SpecificGameSettings>;
-using Object = GameObject<SpecificGameSettings>;
-
 int main() {
+
 
   //  Debug<SpecificGameSettings::Systems> hej;
 
-    World world;
+    //std::cout << GameComponent::GetComponentID<OtherComponent>()<<std::endl;
+    
+    GameWorld<Settings> world;
     
     world.Initialize();
     
-    auto& gui = world.GetSystem<Gui<SpecificGameSettings>>();
-    
-    auto bla = gui.CreateGadget(10);
-    
-   
     auto object = world.CreateObject();
     
+    Transform* t = object->AddComponent<Transform>();
+    object->AddComponent<Velocity>();
+    
+    t->x = 4;
+    
+    {
+        t->x++;
+    }
+    
+    t->x += 5;
+    
+    t->x += 5;
+    
+    
+    
+    /*
     object->AddComponent<Transform>()->x = 4;
     object->GetComponent<Transform>()->y = 12;
     object->AddComponent<Renderable>();
@@ -102,7 +113,7 @@ int main() {
         
         world.Update(0);
     }
-    
+    */
     
     return 0;
 }

@@ -8,43 +8,33 @@
 
 #pragma once
 #include "metaLib.hpp"
+#include "GameWorldBase.hpp"
+#include "GameObjectBase.hpp"
 #include <vector>
-
-template<typename T>
-class GameObject;
 
 template<typename T>
 class GameWorld;
 
-template<typename T, typename... ComponentList>
+template<typename... ComponentList>
 class GameSystem {
 public:
-    friend class GameObject<T>;
-    friend class GameWorld<T>;
+    friend class GameWorldBase;
 
-    using GameObject = GameObject<T>;
-    
     using Components = meta::list<ComponentList...>;
     virtual ~GameSystem() {};
     
     using Systems = meta::list<>;
 
-private:
-    using ObjectCollection = std::vector<GameObject*>;
+public:
+    using ObjectCollection = std::vector<GameObjectBase*>;
     ObjectCollection objects;
-    
-    GameWorld<T>* world;
-    
+
 public:
     const ObjectCollection& Objects() {
         return objects;
     }
-
-    GameWorld<T>& World() {
-        return *world;
-    }
 };
 
-template<typename T>
-class GameConcept : public GameSystem<T> {
+class GameConcept : public GameSystem<> {
+
 };
