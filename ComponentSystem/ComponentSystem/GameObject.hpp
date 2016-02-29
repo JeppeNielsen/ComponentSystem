@@ -161,10 +161,11 @@ public:
             
             activeComponents[Settings::template GetComponentID<Component>()] = false;
             removedComponents[Settings::template GetComponentID<Component>()] = false;
-            
-            typename Container<Component>::ObjectInstance* instance = (typename Container<Component>::ObjectInstance*)components[GameComponent::GetComponentID<Component>()];
+            int componentID = GameComponent::GetComponentID<Component>();
+            typename Container<Component>::ObjectInstance* instance = (typename Container<Component>::ObjectInstance*)components[componentID];
             auto& container = std::get<Settings::template GetComponentID<Component>()>(world->components);
             container.RemoveObject(instance);
+            components[componentID] = 0;
         });
     }
     
