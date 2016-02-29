@@ -83,7 +83,7 @@ private:
     void SetWorld(GameWorld* w) {
         if (world) return;
         world = w;
-        addComponents = &world->addComponents;
+        commands = &world->commands;
 #ifdef SCRIPTING_ENABLED
         InitializeScriptingData();
 #endif

@@ -79,16 +79,21 @@ private:
         componentNames = Settings::GetComponentNames();
     }
     
-    void InitializeCallers() {
+    void InitializeCommands() {
         meta::for_each_in_tuple(components, [this] (auto& component) {
             using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
             int componentIndex = GameComponent::GetComponentID<ComponentType>();
-            if (componentIndex>=addComponents.size()) {
-                addComponents.resize(componentIndex+1);
+            if (componentIndex>=commands.size()) {
+                commands.resize(componentIndex+1);
             }
-            addComponents[componentIndex] = [](void* gameObjectPtr) {
+            commands[componentIndex][0] = [](void* gameObjectPtr) {
               GameObject* go = (GameObject*)gameObjectPtr;
               return go->template AddComponent<ComponentType>();
+            };
+            commands[componentIndex][1] = [](void* gameObjectPtr) -> void* {
+              GameObject* go = (GameObject*)gameObjectPtr;
+              go->template RemoveComponent<ComponentType>();
+              return 0;
             };
         });
     }
@@ -156,7 +161,7 @@ public:
     GameWorld() {
         InitializeSystemBitsets();
         InitializeComponentNames();
-        InitializeCallers();
+        InitializeCommands();
         meta::for_each_in_tuple_non_const(components, [](auto& container) {
             container.Initialize();
         });

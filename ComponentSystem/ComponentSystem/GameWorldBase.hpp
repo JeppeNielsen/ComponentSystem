@@ -12,5 +12,5 @@
 
 class GameWorldBase {
 public:
-    std::vector<std::function<void*(void*)>> addComponents;
+    std::vector<std::array<std::function<void*(void*)>,2>> commands;
 };

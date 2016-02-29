@@ -21,5 +21,4 @@ public:
         static int componentID = componentCounter++;
         return componentID;
     }
-
 };

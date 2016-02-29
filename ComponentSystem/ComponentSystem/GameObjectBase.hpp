@@ -10,25 +10,34 @@
 #include "GameComponent.hpp"
 
 class GameObjectBase {
-public:
+protected:
     using Component = void*;
     Component* components;
 
     GameObjectBase() {
-        components = new Component[GameComponent::NumberOfComponents()];
+        int numberOfComponents = GameComponent::NumberOfComponents();
+        components = new Component[numberOfComponents];
+        for(int i=0; i<numberOfComponents; ++i) {
+            components[i] = 0;
+        }
     }
     virtual ~GameObjectBase() { delete[] components; }
-
-    template<typename T>
-    T* AddComponent() {
-        return (T*)addComponents->operator[](GameComponent::GetComponentID<T>())(this);
-    }
     
+    std::vector<std::array<std::function<void*(void*)>,2>>* commands;
+
+public:
     template<typename T>
     T* GetComponent() {
         return (T*)components[GameComponent::GetComponentID<T>()];
     }
+
+    template<typename T>
+    T* AddComponent() {
+        return (T*)commands->operator[](GameComponent::GetComponentID<T>())[0](this);
+    }
     
-protected:
-    std::vector<std::function<void*(void*)>>* addComponents;
+    template<typename T>
+    void RemoveComponent() {
+        commands->operator[](GameComponent::GetComponentID<T>())[1](this);
+    }
 };

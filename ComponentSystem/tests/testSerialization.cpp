@@ -47,7 +47,9 @@ int main() {
     
     t->x += 5;
     
-    
+    world.Update(0);
+    object->RemoveComponent<Transform>();
+    world.Update(0);
     
     /*
     object->AddComponent<Transform>()->x = 4;
