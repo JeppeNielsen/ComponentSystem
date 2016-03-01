@@ -256,7 +256,7 @@ private:
         meta::for_each_in_tuple(world->serializableComponents, [this, &components, &predicate] (auto componentPointer) {
             using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
             if (HasComponent<ComponentType>()) {
-                if (!(predicate && !predicate(this, Settings::template GetComponentID<ComponentType>()))) {
+                if (!(predicate && !predicate(this, GameComponent::GetComponentID<ComponentType>()))) {
                     SerializeComponent<ComponentType>(components, false, 0);
                 }
             }

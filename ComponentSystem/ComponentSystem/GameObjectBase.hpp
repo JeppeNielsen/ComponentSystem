@@ -43,7 +43,7 @@ public:
     
     virtual void Remove() = 0;
     
-    using SerializePredicate = std::function<bool(GameObjectBase*, size_t)>;
+    using SerializePredicate = std::function<bool(GameObjectBase*, int)>;
     
-    virtual void ToJson(std::ostream& stream, SerializePredicate predicate) = 0;
+    virtual void ToJson(std::ostream& stream, SerializePredicate predicate = 0) = 0;
 };
