@@ -32,7 +32,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7212B3561C6E59DC009C29F7 /* GameObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameObject.hpp; sourceTree = "<group>"; };
+		7212B3561C6E59DC009C29F7 /* GameObjectSpecific.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameObjectSpecific.hpp; sourceTree = "<group>"; };
 		7212B35B1C6EC59D009C29F7 /* Components.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Components.hpp; sourceTree = "<group>"; };
 		7279EDED1C5570860026F8C5 /* engine.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = engine.so; path = Build/Build/Products/Debug/engine.so; sourceTree = SOURCE_ROOT; };
 		7279EE201C5E76A20026F8C5 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libclang.dylib; sourceTree = "<group>"; };
@@ -122,7 +122,7 @@
 				72C987681C4AEB36008BEFF3 /* Container.hpp */,
 				72F5CFC71C81C21600C970EC /* IDHelper.cpp */,
 				72F5CFC61C81C1D900C970EC /* IDHelper.hpp */,
-				7212B3561C6E59DC009C29F7 /* GameObject.hpp */,
+				7212B3561C6E59DC009C29F7 /* GameObjectSpecific.hpp */,
 				72F5CFC41C81C16D00C970EC /* GameObjectBase.hpp */,
 				72C987691C4AEB36008BEFF3 /* GameSettings.hpp */,
 				72C9876A1C4AEB36008BEFF3 /* GameSystem.hpp */,

@@ -1,5 +1,5 @@
 //
-//  GameObject.hpp
+//  GameObjectSpecific.hpp
 //  ComponentSystem
 //
 //  Created by Jeppe Nielsen on 12/02/16.
@@ -26,7 +26,7 @@ struct IGameObject {
 #endif
 
 template<typename Settings>
-class GameObject
+class GameObjectSpecific
 #ifdef SCRIPTING_ENABLED
 : public IGameObject
 #endif
@@ -37,7 +37,7 @@ private:
     
     using GameWorld = GameWorld<Settings>;
     
-    using ObjectCollection = std::vector<GameObject*>;
+    using ObjectCollection = std::vector<GameObjectSpecific*>;
     
     typename Settings::Bitset activeComponents;
     typename Settings::Bitset removedComponents;
@@ -45,11 +45,11 @@ private:
     std::array<int, typename Settings::Systems{}.size()> indexInSystem;
     
     bool isRemoved;
-    typename Container<GameObject>::ObjectInstance* instance;
+    typename Container<GameObjectSpecific>::ObjectInstance* instance;
     GameWorld* world;
     ObjectCollection children;
     
-    friend class Container<GameObject>::ObjectInstance;
+    friend class Container<GameObjectSpecific>::ObjectInstance;
     
     void Reset() {
         isRemoved = false;
@@ -63,11 +63,11 @@ private:
 #endif
     }
     
-    GameObject() {
+    GameObjectSpecific() {
         Parent = 0;
         Parent.Changed.Bind([this]() {
             assert(Parent!=this);
-            GameObject* prevParent = Parent.PreviousValue();
+            GameObjectSpecific* prevParent = Parent.PreviousValue();
             if (prevParent) {
                 auto& children = prevParent->children;
                 children.erase(std::find(children.begin(), children.end(), this));
@@ -89,11 +89,11 @@ private:
 #endif
     }
     
-    GameObject(const GameObject& other) = default;
+    GameObjectSpecific(const GameObjectSpecific& other) = default;
     
 public:
 
-    Property<GameObject*> Parent;
+    Property<GameObjectSpecific*> Parent;
     const ObjectCollection& Children() { return children; }
     
     void Remove() override {
@@ -154,7 +154,7 @@ public:
                 
                     int objectIndexInSystem = indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()];
                     int lastIndex = (int)system.objects.size() - 1;
-                    GameObject* lastObject = (GameObject*)system.objects[lastIndex];
+                    GameObjectSpecific* lastObject = (GameObjectSpecific*)system.objects[lastIndex];
                     lastObject->indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()]=objectIndexInSystem;
                     system.objects[objectIndexInSystem]=lastObject;
                     system.objects.pop_back();
@@ -185,7 +185,7 @@ public:
     }
     
     template<typename Component>
-    Component* AddComponent(GameObject* source) {
+    Component* AddComponent(GameObjectSpecific* source) {
         assert(source);
         assert(!HasComponent<Component>());
         assert(source->HasComponent<Component>());
@@ -250,8 +250,8 @@ private:
     
     void WriteJson(minijson::object_writer& writer, SerializePredicate predicate) {
 
-        minijson::object_writer gameObject = writer.nested_object("GameObject");
-        minijson::array_writer components = gameObject.nested_array("Components");
+        minijson::object_writer GameObjectSpecific = writer.nested_object("GameObjectSpecific");
+        minijson::array_writer components = GameObjectSpecific.nested_array("Components");
         
         meta::for_each_in_tuple(world->serializableComponents, [this, &components, &predicate] (auto componentPointer) {
             using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
@@ -265,7 +265,7 @@ private:
         components.close();
         
         if (!children.empty()) {
-            minijson::array_writer children_object = gameObject.nested_array("Children");
+            minijson::array_writer children_object = GameObjectSpecific.nested_array("Children");
             for(auto child : children) {
                 if (predicate && !predicate(child, -1)) {
                     continue;
@@ -277,7 +277,7 @@ private:
             children_object.close();
         }
         
-        gameObject.close();
+        GameObjectSpecific.close();
     }
     
     template<typename Component>
@@ -482,7 +482,7 @@ private:
             system->ObjectRemoved(this);
             int index = scriptSystemIndices[systemIndex];
             auto* last = system->RemoveObject(index);
-            GameObject* lastGameObject = (GameObject*)last;
+            GameObjectSpecific* lastGameObject = (GameObjectSpecific*)last;
             lastGameObject->scriptSystemIndices[systemIndex] = index;
         }
     }

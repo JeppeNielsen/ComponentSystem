@@ -92,7 +92,7 @@ public:
     }
 
     template<typename T>
-    TypeInfo GetTypeInfo(GameObject<T>& object, int index) {
+    TypeInfo GetTypeInfo(GameObjectSpecific<T>& object, int index) {
         void* component = object.GetScriptComponent(index);
         if (!component) {
             return TypeInfo();

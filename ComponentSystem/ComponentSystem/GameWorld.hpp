@@ -17,18 +17,18 @@
 #ifdef SCRIPTING_ENABLED
 #include "IScriptSystem.hpp"
 #endif
-#include "GameObject.hpp"
+#include "GameObjectSpecific.hpp"
 #include "IDHelper.hpp"
 
 template<typename Settings>
 class GameWorld : public IGameWorld {
 private:
 
-    friend class GameObject<Settings>;
+    friend class GameObjectSpecific<Settings>;
     
-    using GameObject = GameObject<Settings>;
+    using GameObjectSpecific = GameObjectSpecific<Settings>;
     
-    using Objects = Container<GameObject>;
+    using Objects = Container<GameObjectSpecific>;
     
     using Systems = typename Settings::SystemsTuple;
     using InitializeSystems = typename Settings::InitializeSystems;
@@ -90,11 +90,11 @@ private:
                 commands.resize(componentIndex+1);
             }
             commands[componentIndex][0] = [](void* gameObjectPtr) {
-              GameObject* go = (GameObject*)gameObjectPtr;
+              GameObjectSpecific* go = (GameObjectSpecific*)gameObjectPtr;
               return go->template AddComponent<ComponentType>();
             };
             commands[componentIndex][1] = [](void* gameObjectPtr) -> void* {
-              GameObject* go = (GameObject*)gameObjectPtr;
+              GameObjectSpecific* go = (GameObjectSpecific*)gameObjectPtr;
               go->template RemoveComponent<ComponentType>();
               return 0;
             };
@@ -113,12 +113,12 @@ private:
         });
     }
     
-    GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObjectBase*)>& onCreated) {
-        GameObject* object = 0;
+    GameObjectSpecific* LoadObject(minijson::istream_context &context, std::function<void(GameObjectBase*)>& onCreated) {
+        GameObjectSpecific* object = 0;
          minijson::parse_object(context, [&] (const char* n, minijson::value v) {
             std::string name = n;
-            if (name == "GameObject" && v.type() == minijson::Object) {
-                object = (GameObject*)CreateObject();
+            if (name == "GameObjectSpecific" && v.type() == minijson::Object) {
+                object = (GameObjectSpecific*)CreateObject();
                 minijson::parse_object(context, [&] (const char* n, minijson::value v) {
                     std::string name = n;
                     if (name == "Components" && v.type() == minijson::Array && object) {
@@ -131,7 +131,7 @@ private:
                         });
                     } else if (name == "Children" && v.type() == minijson::Array && object) {
                         minijson::parse_array(context, [&] (minijson::value v) {
-                            GameObject* child = LoadObject(context, onCreated);
+                            GameObjectSpecific* child = LoadObject(context, onCreated);
                             if (child) {
                                 child->Parent = object;
                             }
@@ -164,7 +164,7 @@ public:
     
     GameObjectBase* CreateObject(std::istream &jsonStream, std::function<void(GameObjectBase*)> onCreated) override {
         minijson::istream_context context(jsonStream);
-        GameObject* object = 0;
+        GameObjectSpecific* object = 0;
         try {
             object = LoadObject(context, onCreated);
         } catch (std::exception e) {
@@ -231,7 +231,7 @@ public:
         return objects.Size();
     }
     
-    GameObject* GetObject(int index) {
+    GameObjectSpecific* GetObject(int index) {
         return objects.Get(index);
     }
 
