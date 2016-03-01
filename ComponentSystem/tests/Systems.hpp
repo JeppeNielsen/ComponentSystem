@@ -14,12 +14,12 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
     
     
     struct InnerSystem : GameSystem<Transform> {
-        void ObjectAdded(GameObjectBase* object) {
+        void ObjectAdded(GameObject* object) {
             std::cout << "InnerSystem added: " << object->GetComponent<Transform>()->x << std::endl;
         
         }
         
-        void ObjectRemoved(GameObjectBase* object) {
+        void ObjectRemoved(GameObject* object) {
             std::cout << "InnerSystem removed: " << object-> GetComponent<Transform>()->x << std::endl;
         
         }
@@ -34,12 +34,12 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
         innerSystem = &world->GetSystem<InnerSystem>();
     }
     
-    void ObjectAdded(GameObjectBase* object) {
+    void ObjectAdded(GameObject* object) {
         std::cout << "MoverSystem added: " << object->GetComponent<Transform>()->x << std::endl;
         //std::cout << "Mover System :: Object Added"<<std::endl;
     }
     
-    void ObjectRemoved(GameObjectBase* object) {
+    void ObjectRemoved(GameObject* object) {
         std::cout << "MoverSystem removed: " << object-> GetComponent<Transform>()->x << std::endl;
         //std::cout << "Mover System :: Object Removed"<<std::endl;
     }
@@ -53,11 +53,11 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
 
 struct RenderSystem : GameSystem<Transform, Renderable> {
 
-    //void ObjectAdded(GameObjectBase* object) {
+    //void ObjectAdded(GameObject* object) {
     //    std::cout << "RenderSystem::ObjectAdded"<<std::endl;
     //}
 
-    //void ObjectRemoved(GameObjectBase* object) {
+    //void ObjectRemoved(GameObject* object) {
     //    std::cout << "RenderSystem::ObjectRemoved"<<std::endl;
     //}
     
@@ -83,7 +83,7 @@ struct Gui : GameConcept {
         this->world = world;
     }
     
-    GameObjectBase* CreateGadget(float position) {
+    GameObject* CreateGadget(float position) {
         auto object = world->CreateObject();
         object->AddComponent<Transform>();
         object->AddComponent<Renderable>();

@@ -9,7 +9,7 @@
 #pragma once
 #include "metaLib.hpp"
 #include "IGameWorld.hpp"
-#include "GameObjectBase.hpp"
+#include "GameObject.hpp"
 #include <vector>
 
 template<typename... ComponentList>
@@ -22,7 +22,7 @@ public:
     using Systems = meta::list<>;
 
 public:
-    using ObjectCollection = std::vector<GameObjectBase*>;
+    using ObjectCollection = std::vector<GameObject*>;
     ObjectCollection objects;
 
 public:

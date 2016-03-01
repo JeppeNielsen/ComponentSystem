@@ -7,7 +7,7 @@
 //
 
 #pragma once
-#include "GameObjectBase.hpp"
+#include "GameObject.hpp"
 
 template<typename Settings>
 class GameWorld;
@@ -30,7 +30,7 @@ class GameObjectSpecific
 #ifdef SCRIPTING_ENABLED
 : public IGameObject
 #endif
-: public GameObjectBase
+: public GameObject
 {
 private:
     friend class GameWorld<Settings>;

@@ -15,7 +15,7 @@
 		7279EE5E1C6B9D830026F8C5 /* ScriptWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7279EE5C1C6B9D830026F8C5 /* ScriptWorld.cpp */; };
 		72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987791C4AEB36008BEFF3 /* Timer.cpp */; };
 		72E3CF9F1C7514FA002DA95E /* testSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72E3CF921C7514FA002DA95E /* testSerialization.cpp */; };
-		72F5CFC51C81C16D00C970EC /* GameObjectBase.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 72F5CFC41C81C16D00C970EC /* GameObjectBase.hpp */; };
+		72F5CFC51C81C16D00C970EC /* GameObject.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 72F5CFC41C81C16D00C970EC /* GameObject.hpp */; };
 		72F5CFC81C81C21600C970EC /* IDHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72F5CFC71C81C21600C970EC /* IDHelper.cpp */; };
 /* End PBXBuildFile section */
 
@@ -66,7 +66,7 @@
 		72E26FAA1C3072340035E270 /* ComponentSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ComponentSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 		72E3CF921C7514FA002DA95E /* testSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testSerialization.cpp; sourceTree = "<group>"; };
 		72E3CFA61C7515DB002DA95E /* Systems.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Systems.hpp; sourceTree = "<group>"; };
-		72F5CFC41C81C16D00C970EC /* GameObjectBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameObjectBase.hpp; sourceTree = "<group>"; };
+		72F5CFC41C81C16D00C970EC /* GameObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameObject.hpp; sourceTree = "<group>"; };
 		72F5CFC61C81C1D900C970EC /* IDHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IDHelper.hpp; sourceTree = "<group>"; };
 		72F5CFC71C81C21600C970EC /* IDHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDHelper.cpp; sourceTree = "<group>"; };
 		72F5CFCA1C8344BB00C970EC /* IGameWorld.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IGameWorld.hpp; sourceTree = "<group>"; };
@@ -123,7 +123,7 @@
 				72F5CFC71C81C21600C970EC /* IDHelper.cpp */,
 				72F5CFC61C81C1D900C970EC /* IDHelper.hpp */,
 				7212B3561C6E59DC009C29F7 /* GameObjectSpecific.hpp */,
-				72F5CFC41C81C16D00C970EC /* GameObjectBase.hpp */,
+				72F5CFC41C81C16D00C970EC /* GameObject.hpp */,
 				72C987691C4AEB36008BEFF3 /* GameSettings.hpp */,
 				72C9876A1C4AEB36008BEFF3 /* GameSystem.hpp */,
 				72C9876B1C4AEB36008BEFF3 /* GameWorld.hpp */,
@@ -274,7 +274,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7279EE381C5EA47E0026F8C5 /* ScriptParser.cpp in Sources */,
-				72F5CFC51C81C16D00C970EC /* GameObjectBase.hpp in Sources */,
+				72F5CFC51C81C16D00C970EC /* GameObject.hpp in Sources */,
 				7279EE5E1C6B9D830026F8C5 /* ScriptWorld.cpp in Sources */,
 				7279EE2E1C5E82E90026F8C5 /* ClangUtil.cpp in Sources */,
 				72E3CF9F1C7514FA002DA95E /* testSerialization.cpp in Sources */,

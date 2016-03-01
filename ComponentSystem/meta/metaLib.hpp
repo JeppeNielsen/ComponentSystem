@@ -11,7 +11,7 @@
 #include <tuple>
 
 struct IGameWorld;
-struct GameObjectBase;
+struct GameObject;
 struct TypeInfo;
 
 namespace meta {
@@ -247,8 +247,8 @@ HAS_OPTIONAL_METHOD(Initialize, void(IGameWorld*));
 HAS_OPTIONAL_METHOD(Update, void(float));
 HAS_OPTIONAL_METHOD(Render, void());
 HAS_OPTIONAL_METHOD(GetType, TypeInfo());
-HAS_OPTIONAL_METHOD(ObjectAdded, void(GameObjectBase*));
-HAS_OPTIONAL_METHOD(ObjectRemoved, void(GameObjectBase*));
+HAS_OPTIONAL_METHOD(ObjectAdded, void(GameObject*));
+HAS_OPTIONAL_METHOD(ObjectRemoved, void(GameObject*));
 
 
 namespace static_if_detail {

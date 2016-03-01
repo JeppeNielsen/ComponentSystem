@@ -113,7 +113,7 @@ private:
         });
     }
     
-    GameObjectSpecific* LoadObject(minijson::istream_context &context, std::function<void(GameObjectBase*)>& onCreated) {
+    GameObjectSpecific* LoadObject(minijson::istream_context &context, std::function<void(GameObject*)>& onCreated) {
         GameObjectSpecific* object = 0;
          minijson::parse_object(context, [&] (const char* n, minijson::value v) {
             std::string name = n;
@@ -154,7 +154,7 @@ public:
         return std::get<Settings::template GetSystemID<System>()>(systems);
     }
 
-    GameObjectBase* CreateObject() override {
+    GameObject* CreateObject() override {
         auto object = objects.CreateObjectNoReset();
         object->object.instance = object;
         object->object.SetWorld(this);
@@ -162,7 +162,7 @@ public:
         return &object->object;
     }
     
-    GameObjectBase* CreateObject(std::istream &jsonStream, std::function<void(GameObjectBase*)> onCreated) override {
+    GameObject* CreateObject(std::istream &jsonStream, std::function<void(GameObject*)> onCreated) override {
         minijson::istream_context context(jsonStream);
         GameObjectSpecific* object = 0;
         try {

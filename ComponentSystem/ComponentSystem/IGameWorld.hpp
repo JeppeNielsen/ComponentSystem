@@ -10,7 +10,7 @@
 #include <vector>
 #include <functional>
 #include <iostream>
-#include "GameObjectBase.hpp"
+#include "GameObject.hpp"
 #include "IDHelper.hpp"
 
 class IGameWorld {
@@ -20,8 +20,8 @@ protected:
     std::vector<std::array<std::function<void*(void*)>,2>> commands;
     std::vector<std::function<void*()>> getSystemCommands;
 public:
-    virtual GameObjectBase* CreateObject() = 0;
-    virtual GameObjectBase* CreateObject(std::istream &jsonStream, std::function<void(GameObjectBase*)> onCreated) = 0;
+    virtual GameObject* CreateObject() = 0;
+    virtual GameObject* CreateObject(std::istream &jsonStream, std::function<void(GameObject*)> onCreated) = 0;
 
     template<typename System>
     System& GetSystem() {

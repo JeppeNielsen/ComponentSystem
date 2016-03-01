@@ -1,5 +1,5 @@
 //
-//  GameObjectBase.cpp
+//  GameObject.cpp
 //  ComponentSystem
 //
 //  Created by Jeppe Nielsen on 27/02/16.
@@ -9,19 +9,19 @@
 #pragma once
 #include "IDHelper.hpp"
 
-class GameObjectBase {
+class GameObject {
 protected:
     using Component = void*;
     Component* components;
 
-    GameObjectBase() {
+    GameObject() {
         int numberOfComponents = IDHelper::NumberOfComponents();
         components = new Component[numberOfComponents];
         for(int i=0; i<numberOfComponents; ++i) {
             components[i] = 0;
         }
     }
-    virtual ~GameObjectBase() { delete[] components; }
+    virtual ~GameObject() { delete[] components; }
     
     std::vector<std::array<std::function<void*(void*)>,2>>* commands;
 
@@ -43,7 +43,7 @@ public:
     
     virtual void Remove() = 0;
     
-    using SerializePredicate = std::function<bool(GameObjectBase*, int)>;
+    using SerializePredicate = std::function<bool(GameObject*, int)>;
     
     virtual void ToJson(std::ostream& stream, SerializePredicate predicate = 0) = 0;
 };
