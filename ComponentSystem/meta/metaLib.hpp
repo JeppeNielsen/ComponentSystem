@@ -253,33 +253,18 @@ HAS_OPTIONAL_METHOD(ObjectRemoved, void(GameObjectBase*));
 
 namespace static_if_detail {
 
-struct identity {
-    template<typename T>
-    T operator()(T&& x) const {
-        return std::forward<T>(x);
-    }
-};
-
 template<typename Param, bool Cond>
 struct statement {
     template<typename F>
     void then(Param param, const F& f){
         f(param);
     }
-
-    template<typename F>
-    void else_(const F&){}
 };
 
 template<typename Param>
 struct statement<Param, false> {
     template<typename F>
     void then(Param param, const F&){}
-
-    template<typename F>
-    void else_(const F& f){
-        f(identity());
-    }
 };
 
 } //end of namespace static_if_detail
@@ -290,7 +275,5 @@ static_if_detail::statement<Param, Cond> static_if(Param param, F const& f){
     if_.then(param, f);
     return if_;
 }
-
-
 
 }
