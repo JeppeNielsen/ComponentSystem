@@ -40,4 +40,6 @@ public:
     void RemoveComponent() {
         commands->operator[](GameComponent::GetComponentID<T>())[1](this);
     }
+    
+    virtual void Remove() = 0;
 };

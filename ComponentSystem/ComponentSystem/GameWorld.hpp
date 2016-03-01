@@ -35,6 +35,9 @@ private:
     using InitializeSystems = typename Settings::InitializeSystems;
     using UpdateSystems = typename Settings::UpdateSystems;
     using RenderSystems = typename Settings::RenderSystems;
+    using ObjectAddedSystems = typename Settings::ObjectAddedSystems;
+    using ObjectRemovedSystems = typename Settings::ObjectRemovedSystems;
+    
     
     using ComponentSystems = typename Settings::ComponentSystemsTuple;
     
@@ -52,6 +55,8 @@ private:
     InitializeSystems initializeSystems;
     UpdateSystems updateSystems;
     RenderSystems renderSystems;
+    ObjectAddedSystems objectAddedSystems;
+    ObjectRemovedSystems objectRemovedSystems;
     
     ComponentSystems componentSystems;
     
@@ -96,14 +101,26 @@ private:
               return 0;
             };
         });
+        
+        meta::for_each_in_tuple(systems, [&](auto& system) {
+            using SystemType = std::remove_const_t<std::remove_reference_t<decltype(system)>>;
+            
+            int systemIndex = GameComponent::GetSystemID<SystemType>();
+            if (systemIndex>=getSystemCommands.size()) {
+                getSystemCommands.resize(systemIndex+1);
+            }
+            getSystemCommands[systemIndex] = [this]() -> void* {
+                return &GetSystem<SystemType>();
+            };
+        });
     }
     
-    GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObject*)>& onCreated) {
+    GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObjectBase*)>& onCreated) {
         GameObject* object = 0;
          minijson::parse_object(context, [&] (const char* n, minijson::value v) {
             std::string name = n;
             if (name == "GameObject" && v.type() == minijson::Object) {
-                object = CreateObject();
+                object = (GameObject*)CreateObject();
                 minijson::parse_object(context, [&] (const char* n, minijson::value v) {
                     std::string name = n;
                     if (name == "Components" && v.type() == minijson::Array && object) {
@@ -139,7 +156,7 @@ public:
         return std::get<Settings::template GetSystemID<System>()>(systems);
     }
 
-    GameObjectBase* CreateObject() {
+    GameObjectBase* CreateObject() override {
         auto object = objects.CreateObjectNoReset();
         object->object.instance = object;
         object->object.SetWorld(this);
@@ -147,7 +164,7 @@ public:
         return &object->object;
     }
     
-    GameObject* CreateObject(std::istream &jsonStream, std::function<void(GameObject*)> onCreated) {
+    GameObjectBase* CreateObject(std::istream &jsonStream, std::function<void(GameObjectBase*)> onCreated) override {
         minijson::istream_context context(jsonStream);
         GameObject* object = 0;
         try {

@@ -11,6 +11,7 @@
 class GameComponent {
 private:
     static int componentCounter;
+    static int systemCounter;
 public:
     const static int NumberOfComponents() {
         return componentCounter;
@@ -20,5 +21,15 @@ public:
     static int GetComponentID() {
         static int componentID = componentCounter++;
         return componentID;
+    }
+    
+    const static int NumberOfSystems() {
+        return systemCounter;
+    }
+    
+    template<typename T>
+    static int GetSystemID() {
+        static int systemID = systemCounter++;
+        return systemID;
     }
 };

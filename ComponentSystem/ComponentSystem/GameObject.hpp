@@ -96,7 +96,7 @@ public:
     Property<GameObject*> Parent;
     const ObjectCollection& Children() { return children; }
     
-    void Remove() {
+    void Remove() override {
         if (isRemoved) return;
         isRemoved = true;
         
@@ -140,11 +140,18 @@ public:
             auto activeComponentsBefore = activeComponents;
             
             meta::for_each_in_tuple(std::get< Settings::template GetComponentID<Component>() >(world->componentSystems), [this, activeComponentsBefore] (auto systemPointer) {
-                auto& system = std::get< Settings::template GetSystemID< std::remove_pointer_t<decltype(systemPointer)> >() >(world->systems);
+                using SystemType = std::remove_const_t<std::remove_pointer_t<decltype(systemPointer)>>;
+                auto& system = std::get< Settings::template GetSystemID< SystemType >() >(world->systems);
                 auto& bitSet = world->systemBitsets[Settings::template GetSystemID<std::remove_reference_t<decltype(system)> >()];
                 bool wasInterest = (activeComponentsBefore & bitSet) == bitSet;
                 if (wasInterest) {
-                    system.ObjectRemoved(this);
+                
+                    meta::static_if<meta::find_index<meta::as_list<decltype(world->objectRemovedSystems)>, decltype(systemPointer)> {} != meta::npos{}>(systemPointer, [this](auto ptr) {
+                        using RemovedObjectSystemType = std::remove_const_t<std::remove_pointer_t<decltype(ptr)>>;
+                        auto& removedObjectSystem = std::get< Settings::template GetSystemID< RemovedObjectSystemType >() >(world->systems);
+                        removedObjectSystem.ObjectRemoved(this);
+                    });
+                
                     int objectIndexInSystem = indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()];
                     int lastIndex = (int)system.objects.size() - 1;
                     GameObject* lastObject = (GameObject*)system.objects[lastIndex];
@@ -230,7 +237,11 @@ private:
                 if (isInterest) {
                     indexInSystem[Settings::template GetSystemID< std::remove_reference_t<decltype(system)> >()]=(int)system.objects.size();
                     system.objects.push_back(this);
-                    system.ObjectAdded(this);
+                    meta::static_if<meta::find_index<meta::as_list<decltype(world->objectAddedSystems)>, decltype(systemPointer)> {} != meta::npos{}>(systemPointer, [this](auto ptr) {
+                        using AddedObjectSystemType = std::remove_const_t<std::remove_pointer_t<decltype(ptr)>>;
+                        auto& addedObjectSystem = std::get< Settings::template GetSystemID< AddedObjectSystemType >() >(world->systems);
+                        addedObjectSystem.ObjectAdded(this);
+                    });
                 }
             });
 #ifdef SCRIPTING_ENABLED

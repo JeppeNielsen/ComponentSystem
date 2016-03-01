@@ -15,7 +15,7 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
     
     struct InnerSystem : GameSystem<Transform> {
         void ObjectAdded(GameObjectBase* object) {
-        std::cout << "InnerSystem added: " << object->GetComponent<Transform>()->x << std::endl;
+            std::cout << "InnerSystem added: " << object->GetComponent<Transform>()->x << std::endl;
         
         }
         
@@ -23,11 +23,16 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
             std::cout << "InnerSystem removed: " << object-> GetComponent<Transform>()->x << std::endl;
         
         }
-        
-        
     };
 
     using Systems = meta::list<InnerSystem>;
+    
+    
+    InnerSystem* innerSystem;
+    
+    void Initialize(GameWorldBase* world) {
+        innerSystem = &world->GetSystem<InnerSystem>();
+    }
     
     void ObjectAdded(GameObjectBase* object) {
         std::cout << "MoverSystem added: " << object->GetComponent<Transform>()->x << std::endl;
@@ -49,34 +54,40 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
 struct RenderSystem : GameSystem<Transform, Renderable> {
 
     void ObjectAdded(GameObjectBase* object) {
-        //std::cout << "RenderSystem::ObjectAdded"<<std::endl;
+        std::cout << "RenderSystem::ObjectAdded"<<std::endl;
     }
 
     void ObjectRemoved(GameObjectBase* object) {
-        //std::cout << "RenderSystem::ObjectRemoved"<<std::endl;
+        std::cout << "RenderSystem::ObjectRemoved"<<std::endl;
     }
     
     void Update(float dt) {
-        //int index = 0;
-        //for(auto o : this->Objects()) {
-        //    std::cout << "Rendered object #"<<++index<<std::endl;
-        //}
+        int index = 0;
+        for(auto o : this->Objects()) {
+            std::cout << "Rendered object #"<<++index<<std::endl;
+        }
     }
 };
+
+
 
 
 struct Gui : GameConcept {
 
     using Systems = meta::list<RenderSystem, MoverSystem>;
 
-    //void ObjectAdded(GameObject<T>* object) {}
-    //void ObjectRemoved(GameObject<T>* object) {}
     
-    /*GameObject<T>* CreateGadget(float position) {
-        auto object = this->World().CreateObject();
+    GameWorldBase* world;
+    
+    void Initialize(GameWorldBase* world) {
+        this->world = world;
+    }
+    
+    GameObjectBase* CreateGadget(float position) {
+        auto object = world->CreateObject();
+        object->AddComponent<Transform>();
+        object->AddComponent<Renderable>();
         return object;
     }
-    */
-    
 };
 

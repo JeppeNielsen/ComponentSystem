@@ -11,6 +11,7 @@
 #include <tuple>
 
 struct GameWorldBase;
+struct GameObjectBase;
 struct TypeInfo;
 
 namespace meta {
@@ -246,5 +247,50 @@ HAS_OPTIONAL_METHOD(Initialize, void(GameWorldBase*));
 HAS_OPTIONAL_METHOD(Update, void(float));
 HAS_OPTIONAL_METHOD(Render, void());
 HAS_OPTIONAL_METHOD(GetType, TypeInfo());
+HAS_OPTIONAL_METHOD(ObjectAdded, void(GameObjectBase*));
+HAS_OPTIONAL_METHOD(ObjectRemoved, void(GameObjectBase*));
+
+
+namespace static_if_detail {
+
+struct identity {
+    template<typename T>
+    T operator()(T&& x) const {
+        return std::forward<T>(x);
+    }
+};
+
+template<typename Param, bool Cond>
+struct statement {
+    template<typename F>
+    void then(Param param, const F& f){
+        f(param);
+    }
+
+    template<typename F>
+    void else_(const F&){}
+};
+
+template<typename Param>
+struct statement<Param, false> {
+    template<typename F>
+    void then(Param param, const F&){}
+
+    template<typename F>
+    void else_(const F& f){
+        f(identity());
+    }
+};
+
+} //end of namespace static_if_detail
+
+template<bool Cond, typename Param, typename F>
+static_if_detail::statement<Param, Cond> static_if(Param param, F const& f){
+    static_if_detail::statement<Param, Cond> if_;
+    if_.then(param, f);
+    return if_;
+}
+
+
 
 }

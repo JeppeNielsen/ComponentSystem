@@ -18,26 +18,29 @@ using Settings = GameSettings<MoverSystem, RenderSystem, Gui>;
 
 
 
-//template<typename T>
-//struct Debug;
+template<typename T>
+struct Debug;
 
 int main() {
-
 
   //  Debug<SpecificGameSettings::Systems> hej;
 
     //std::cout << GameComponent::GetComponentID<OtherComponent>()<<std::endl;
     
     GameWorld<Settings> world;
-    
     world.Initialize();
+    
+    auto gadget = world.GetSystem<Gui>().CreateGadget(0);
     
     auto object = world.CreateObject();
     
     Transform* t = object->AddComponent<Transform>();
     object->AddComponent<Velocity>();
     
+    t->x = 100;
+    
     t->x = 4;
+    
     
     {
         t->x++;
@@ -48,8 +51,13 @@ int main() {
     t->x += 5;
     
     world.Update(0);
-    object->RemoveComponent<Transform>();
+    
+    object->Remove();
+    
+    //object->RemoveComponent<Transform>();
     world.Update(0);
+    world.Update(0);
+    
     
     /*
     object->AddComponent<Transform>()->x = 4;

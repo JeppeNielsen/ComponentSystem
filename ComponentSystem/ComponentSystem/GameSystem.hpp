@@ -12,9 +12,6 @@
 #include "GameObjectBase.hpp"
 #include <vector>
 
-template<typename T>
-class GameWorld;
-
 template<typename... ComponentList>
 class GameSystem {
 public:

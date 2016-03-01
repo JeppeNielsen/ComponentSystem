@@ -10,4 +10,5 @@
 
 int GameComponent::componentCounter = 0;
 
+int GameComponent::systemCounter = 0;
 
