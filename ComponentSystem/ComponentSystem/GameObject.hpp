@@ -195,9 +195,7 @@ public:
         return GetComponent<Component>();
     }
     
-    using SerializePredicate = std::function<bool(GameObject*, size_t)>;
-    
-    void ToJson(std::ostream& stream, SerializePredicate predicate) {
+    void ToJson(std::ostream& stream, SerializePredicate predicate) override {
         minijson::writer_configuration config;
         config = config.pretty_printing(true);
         minijson::object_writer writer(stream, config);

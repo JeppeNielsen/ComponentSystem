@@ -14,7 +14,6 @@
 #include "minijson_reader.hpp"
 #include <type_traits>
 #include <assert.h>
-#include "Property.hpp"
 #ifdef SCRIPTING_ENABLED
 #include "IScriptSystem.hpp"
 #endif
@@ -37,7 +36,6 @@ private:
     using RenderSystems = typename Settings::RenderSystems;
     using ObjectAddedSystems = typename Settings::ObjectAddedSystems;
     using ObjectRemovedSystems = typename Settings::ObjectRemovedSystems;
-    
     
     using ComponentSystems = typename Settings::ComponentSystemsTuple;
     
