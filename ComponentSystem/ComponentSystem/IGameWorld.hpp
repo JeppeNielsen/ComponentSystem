@@ -1,5 +1,5 @@
 //
-//  GameWorldBase.hpp
+//  IGameWorld.hpp
 //  ComponentSystem
 //
 //  Created by Jeppe Nielsen on 28/02/16.
@@ -13,9 +13,9 @@
 #include "GameObjectBase.hpp"
 #include "IDHelper.hpp"
 
-class GameWorldBase {
+class IGameWorld {
 protected:
-    virtual ~GameWorldBase() { }
+    virtual ~IGameWorld() { }
     
     std::vector<std::array<std::function<void*(void*)>,2>> commands;
     std::vector<std::function<void*()>> getSystemCommands;

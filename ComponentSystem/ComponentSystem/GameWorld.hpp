@@ -7,7 +7,7 @@
 //
 
 #pragma once
-#include "GameWorldBase.hpp"
+#include "IGameWorld.hpp"
 #include "GameSettings.hpp"
 #include "Container.hpp"
 #include "minijson_writer.hpp"
@@ -21,7 +21,7 @@
 #include "IDHelper.hpp"
 
 template<typename Settings>
-class GameWorld : public GameWorldBase {
+class GameWorld : public IGameWorld {
 private:
 
     friend class GameObject<Settings>;

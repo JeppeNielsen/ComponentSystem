@@ -30,7 +30,7 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
     
     InnerSystem* innerSystem;
     
-    void Initialize(GameWorldBase* world) {
+    void Initialize(IGameWorld* world) {
         innerSystem = &world->GetSystem<InnerSystem>();
     }
     
@@ -76,11 +76,10 @@ struct RenderSystem : GameSystem<Transform, Renderable> {
 struct Gui : GameConcept {
 
     using Systems = meta::list<RenderSystem, MoverSystem>;
-
     
-    GameWorldBase* world;
+    IGameWorld* world;
     
-    void Initialize(GameWorldBase* world) {
+    void Initialize(IGameWorld* world) {
         this->world = world;
     }
     

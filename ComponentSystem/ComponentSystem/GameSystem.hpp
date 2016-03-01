@@ -8,7 +8,7 @@
 
 #pragma once
 #include "metaLib.hpp"
-#include "GameWorldBase.hpp"
+#include "IGameWorld.hpp"
 #include "GameObjectBase.hpp"
 #include <vector>
 

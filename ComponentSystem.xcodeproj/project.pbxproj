@@ -69,7 +69,7 @@
 		72F5CFC41C81C16D00C970EC /* GameObjectBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameObjectBase.hpp; sourceTree = "<group>"; };
 		72F5CFC61C81C1D900C970EC /* IDHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IDHelper.hpp; sourceTree = "<group>"; };
 		72F5CFC71C81C21600C970EC /* IDHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDHelper.cpp; sourceTree = "<group>"; };
-		72F5CFCA1C8344BB00C970EC /* GameWorldBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameWorldBase.hpp; sourceTree = "<group>"; };
+		72F5CFCA1C8344BB00C970EC /* IGameWorld.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IGameWorld.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,7 +127,7 @@
 				72C987691C4AEB36008BEFF3 /* GameSettings.hpp */,
 				72C9876A1C4AEB36008BEFF3 /* GameSystem.hpp */,
 				72C9876B1C4AEB36008BEFF3 /* GameWorld.hpp */,
-				72F5CFCA1C8344BB00C970EC /* GameWorldBase.hpp */,
+				72F5CFCA1C8344BB00C970EC /* IGameWorld.hpp */,
 			);
 			path = ComponentSystem;
 			sourceTree = "<group>";
