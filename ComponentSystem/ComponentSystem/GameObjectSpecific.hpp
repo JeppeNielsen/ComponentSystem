@@ -37,8 +37,6 @@ private:
     
     using GameWorld = GameWorld<Settings>;
     
-    using ObjectCollection = std::vector<GameObjectSpecific*>;
-    
     typename Settings::Bitset activeComponents;
     typename Settings::Bitset removedComponents;
     
@@ -47,7 +45,6 @@ private:
     bool isRemoved;
     typename Container<GameObjectSpecific>::ObjectInstance* instance;
     GameWorld* world;
-    ObjectCollection children;
     
     friend class Container<GameObjectSpecific>::ObjectInstance;
     
@@ -63,22 +60,7 @@ private:
 #endif
     }
     
-    GameObjectSpecific() {
-        Parent = 0;
-        Parent.Changed.Bind([this]() {
-            assert(Parent!=this);
-            GameObjectSpecific* prevParent = Parent.PreviousValue();
-            if (prevParent) {
-                auto& children = prevParent->children;
-                children.erase(std::find(children.begin(), children.end(), this));
-            }
-            
-            if (Parent) {
-                Parent()->children.push_back(this);
-            }
-        });
-        world = 0;
-    }
+    GameObjectSpecific() : world(0) { }
     
     void SetWorld(GameWorld* w) {
         if (world) return;
@@ -92,9 +74,6 @@ private:
     GameObjectSpecific(const GameObjectSpecific& other) = default;
     
 public:
-
-    Property<GameObjectSpecific*> Parent;
-    const ObjectCollection& Children() { return children; }
     
     void Remove() override {
         if (isRemoved) return;
@@ -250,8 +229,8 @@ private:
     
     void WriteJson(minijson::object_writer& writer, SerializePredicate predicate) {
 
-        minijson::object_writer GameObjectSpecific = writer.nested_object("GameObjectSpecific");
-        minijson::array_writer components = GameObjectSpecific.nested_array("Components");
+        minijson::object_writer gameObject = writer.nested_object("GameObject");
+        minijson::array_writer components = gameObject.nested_array("Components");
         
         meta::for_each_in_tuple(world->serializableComponents, [this, &components, &predicate] (auto componentPointer) {
             using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
@@ -265,19 +244,20 @@ private:
         components.close();
         
         if (!children.empty()) {
-            minijson::array_writer children_object = GameObjectSpecific.nested_array("Children");
+            minijson::array_writer children_object = gameObject.nested_array("Children");
             for(auto child : children) {
                 if (predicate && !predicate(child, -1)) {
                     continue;
                 }
+                GameObjectSpecific* childSpecific = (GameObjectSpecific*)child;
                 minijson::object_writer child_object = children_object.nested_object();
-                child->WriteJson(child_object, predicate);
+                childSpecific->WriteJson(child_object, predicate);
                 child_object.close();
             }
             children_object.close();
         }
         
-        GameObjectSpecific.close();
+        gameObject.close();
     }
     
     template<typename Component>

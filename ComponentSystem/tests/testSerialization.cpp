@@ -33,7 +33,13 @@ int main() {
     auto gadget = world.GetSystem<Gui>().CreateGadget(0);
     gadget->AddComponent<Velocity>();
     
+    auto child = world.GetSystem<Gui>().CreateGadget(0);
+    
+    child->Parent = gadget;
+    
     gadget->ToJson(std::cout);
+    
+    
     //, [] (auto o, auto t) {
     //    return t != GameComponent::GetComponentID<Transform>();
     //});

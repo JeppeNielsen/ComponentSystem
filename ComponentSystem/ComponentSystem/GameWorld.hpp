@@ -117,7 +117,7 @@ private:
         GameObjectSpecific* object = 0;
          minijson::parse_object(context, [&] (const char* n, minijson::value v) {
             std::string name = n;
-            if (name == "GameObjectSpecific" && v.type() == minijson::Object) {
+            if (name == "GameObject" && v.type() == minijson::Object) {
                 object = (GameObjectSpecific*)CreateObject();
                 minijson::parse_object(context, [&] (const char* n, minijson::value v) {
                     std::string name = n;
