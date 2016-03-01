@@ -15,8 +15,7 @@
 template<typename... ComponentList>
 class GameSystem {
 public:
-    friend class GameWorldBase;
-
+    
     using Components = meta::list<ComponentList...>;
     virtual ~GameSystem() {};
     
