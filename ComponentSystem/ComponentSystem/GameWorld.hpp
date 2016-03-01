@@ -18,7 +18,7 @@
 #include "IScriptSystem.hpp"
 #endif
 #include "GameObject.hpp"
-#include "GameComponent.hpp"
+#include "IDHelper.hpp"
 
 template<typename Settings>
 class GameWorld : public GameWorldBase {
@@ -85,7 +85,7 @@ private:
     void InitializeCommands() {
         meta::for_each_in_tuple(components, [this] (auto& component) {
             using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
-            int componentIndex = GameComponent::GetComponentID<ComponentType>();
+            int componentIndex = IDHelper::GetComponentID<ComponentType>();
             if (componentIndex>=commands.size()) {
                 commands.resize(componentIndex+1);
             }
@@ -103,7 +103,7 @@ private:
         meta::for_each_in_tuple(systems, [&](auto& system) {
             using SystemType = std::remove_const_t<std::remove_reference_t<decltype(system)>>;
             
-            int systemIndex = GameComponent::GetSystemID<SystemType>();
+            int systemIndex = IDHelper::GetSystemID<SystemType>();
             if (systemIndex>=getSystemCommands.size()) {
                 getSystemCommands.resize(systemIndex+1);
             }

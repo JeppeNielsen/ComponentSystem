@@ -127,7 +127,7 @@ public:
         if (!HasComponent<Component>()) {
             return 0;
         }
-        return &((typename Container<Component>::ObjectInstance*)components[GameComponent::GetComponentID<Component>()])->object;
+        return &((typename Container<Component>::ObjectInstance*)components[IDHelper::GetComponentID<Component>()])->object;
     }
     
     template<typename Component>
@@ -168,7 +168,7 @@ public:
             
             activeComponents[Settings::template GetComponentID<Component>()] = false;
             removedComponents[Settings::template GetComponentID<Component>()] = false;
-            int componentID = GameComponent::GetComponentID<Component>();
+            int componentID = IDHelper::GetComponentID<Component>();
             typename Container<Component>::ObjectInstance* instance = (typename Container<Component>::ObjectInstance*)components[componentID];
             auto& container = std::get<Settings::template GetComponentID<Component>()>(world->components);
             container.RemoveObject(instance);
@@ -218,7 +218,7 @@ private:
     template<typename Component>
     void SetComponent(typename Container<Component>::ObjectInstance* instance) {
         activeComponents[Settings::template GetComponentID<Component>()] = true;
-        components[GameComponent::GetComponentID<Component>()] = instance;
+        components[IDHelper::GetComponentID<Component>()] = instance;
         auto activeComponentsBefore = activeComponents;
 #ifdef SCRIPTING_ENABLED
         auto activeScriptComponentsBefore = activeScriptComponents;
@@ -256,7 +256,7 @@ private:
         meta::for_each_in_tuple(world->serializableComponents, [this, &components, &predicate] (auto componentPointer) {
             using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
             if (HasComponent<ComponentType>()) {
-                if (!(predicate && !predicate(this, GameComponent::GetComponentID<ComponentType>()))) {
+                if (!(predicate && !predicate(this, IDHelper::GetComponentID<ComponentType>()))) {
                     SerializeComponent<ComponentType>(components, false, 0);
                 }
             }

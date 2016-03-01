@@ -53,20 +53,21 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
 
 struct RenderSystem : GameSystem<Transform, Renderable> {
 
-    void ObjectAdded(GameObjectBase* object) {
-        std::cout << "RenderSystem::ObjectAdded"<<std::endl;
-    }
+    //void ObjectAdded(GameObjectBase* object) {
+    //    std::cout << "RenderSystem::ObjectAdded"<<std::endl;
+    //}
 
-    void ObjectRemoved(GameObjectBase* object) {
-        std::cout << "RenderSystem::ObjectRemoved"<<std::endl;
-    }
+    //void ObjectRemoved(GameObjectBase* object) {
+    //    std::cout << "RenderSystem::ObjectRemoved"<<std::endl;
+    //}
     
-    void Update(float dt) {
+    /*void Update(float dt) {
         int index = 0;
         for(auto o : this->Objects()) {
             std::cout << "Rendered object #"<<++index<<std::endl;
         }
     }
+    */
 };
 
 

@@ -11,7 +11,7 @@
 #include <functional>
 #include <iostream>
 #include "GameObjectBase.hpp"
-#include "GameComponent.hpp"
+#include "IDHelper.hpp"
 
 class GameWorldBase {
 protected:
@@ -25,6 +25,6 @@ public:
 
     template<typename System>
     System& GetSystem() {
-        return *((System*)getSystemCommands[GameComponent::GetSystemID<System>()]());
+        return *((System*)getSystemCommands[IDHelper::GetSystemID<System>()]());
     }
 };

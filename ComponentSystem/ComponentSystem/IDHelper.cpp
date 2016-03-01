@@ -6,9 +6,9 @@
 //  Copyright © 2016 Jeppe Nielsen. All rights reserved.
 //
 
-#include "GameComponent.hpp"
+#include "IDHelper.hpp"
 
-int GameComponent::componentCounter = 0;
+int IDHelper::componentCounter = 0;
 
-int GameComponent::systemCounter = 0;
+int IDHelper::systemCounter = 0;
 

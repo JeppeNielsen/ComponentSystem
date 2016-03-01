@@ -7,7 +7,7 @@
 //
 
 #pragma once
-#include "GameComponent.hpp"
+#include "IDHelper.hpp"
 
 class GameObjectBase {
 protected:
@@ -15,7 +15,7 @@ protected:
     Component* components;
 
     GameObjectBase() {
-        int numberOfComponents = GameComponent::NumberOfComponents();
+        int numberOfComponents = IDHelper::NumberOfComponents();
         components = new Component[numberOfComponents];
         for(int i=0; i<numberOfComponents; ++i) {
             components[i] = 0;
@@ -28,17 +28,17 @@ protected:
 public:
     template<typename T>
     T* GetComponent() {
-        return (T*)components[GameComponent::GetComponentID<T>()];
+        return (T*)components[IDHelper::GetComponentID<T>()];
     }
 
     template<typename T>
     T* AddComponent() {
-        return (T*)commands->operator[](GameComponent::GetComponentID<T>())[0](this);
+        return (T*)commands->operator[](IDHelper::GetComponentID<T>())[0](this);
     }
     
     template<typename T>
     void RemoveComponent() {
-        commands->operator[](GameComponent::GetComponentID<T>())[1](this);
+        commands->operator[](IDHelper::GetComponentID<T>())[1](this);
     }
     
     virtual void Remove() = 0;

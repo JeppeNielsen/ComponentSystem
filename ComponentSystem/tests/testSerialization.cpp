@@ -31,32 +31,16 @@ int main() {
     world.Initialize();
     
     auto gadget = world.GetSystem<Gui>().CreateGadget(0);
+    gadget->AddComponent<Velocity>();
     
-    auto object = world.CreateObject();
+    gadget->ToJson(std::cout);
+    //, [] (auto o, auto t) {
+    //    return t != GameComponent::GetComponentID<Transform>();
+    //});
     
-    Transform* t = object->AddComponent<Transform>();
-    object->AddComponent<Velocity>();
+    //        return true;//componentType == WorldSettings::GetComponentID<Transform>();
+    //});
     
-    t->x = 100;
-    
-    t->x = 4;
-    
-    
-    {
-        t->x++;
-    }
-    
-    t->x += 5;
-    
-    t->x += 5;
-    
-    world.Update(0);
-    
-    object->Remove();
-    
-    //object->RemoveComponent<Transform>();
-    world.Update(0);
-    world.Update(0);
     
     
     /*

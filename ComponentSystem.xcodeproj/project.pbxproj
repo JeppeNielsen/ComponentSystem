@@ -16,7 +16,7 @@
 		72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72C987791C4AEB36008BEFF3 /* Timer.cpp */; };
 		72E3CF9F1C7514FA002DA95E /* testSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72E3CF921C7514FA002DA95E /* testSerialization.cpp */; };
 		72F5CFC51C81C16D00C970EC /* GameObjectBase.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 72F5CFC41C81C16D00C970EC /* GameObjectBase.hpp */; };
-		72F5CFC81C81C21600C970EC /* GameComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72F5CFC71C81C21600C970EC /* GameComponent.cpp */; };
+		72F5CFC81C81C21600C970EC /* IDHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72F5CFC71C81C21600C970EC /* IDHelper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -67,8 +67,8 @@
 		72E3CF921C7514FA002DA95E /* testSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testSerialization.cpp; sourceTree = "<group>"; };
 		72E3CFA61C7515DB002DA95E /* Systems.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Systems.hpp; sourceTree = "<group>"; };
 		72F5CFC41C81C16D00C970EC /* GameObjectBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameObjectBase.hpp; sourceTree = "<group>"; };
-		72F5CFC61C81C1D900C970EC /* GameComponent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameComponent.hpp; sourceTree = "<group>"; };
-		72F5CFC71C81C21600C970EC /* GameComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameComponent.cpp; sourceTree = "<group>"; };
+		72F5CFC61C81C1D900C970EC /* IDHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IDHelper.hpp; sourceTree = "<group>"; };
+		72F5CFC71C81C21600C970EC /* IDHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDHelper.cpp; sourceTree = "<group>"; };
 		72F5CFCA1C8344BB00C970EC /* GameWorldBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameWorldBase.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,8 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				72C987681C4AEB36008BEFF3 /* Container.hpp */,
-				72F5CFC71C81C21600C970EC /* GameComponent.cpp */,
-				72F5CFC61C81C1D900C970EC /* GameComponent.hpp */,
+				72F5CFC71C81C21600C970EC /* IDHelper.cpp */,
+				72F5CFC61C81C1D900C970EC /* IDHelper.hpp */,
 				7212B3561C6E59DC009C29F7 /* GameObject.hpp */,
 				72F5CFC41C81C16D00C970EC /* GameObjectBase.hpp */,
 				72C987691C4AEB36008BEFF3 /* GameSettings.hpp */,
@@ -280,7 +280,7 @@
 				72E3CF9F1C7514FA002DA95E /* testSerialization.cpp in Sources */,
 				7279EE3B1C5EA5020026F8C5 /* ScriptClass.cpp in Sources */,
 				72C9877E1C4AEB36008BEFF3 /* Timer.cpp in Sources */,
-				72F5CFC81C81C21600C970EC /* GameComponent.cpp in Sources */,
+				72F5CFC81C81C21600C970EC /* IDHelper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

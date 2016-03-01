@@ -8,7 +8,7 @@
 
 #pragma once
 
-class GameComponent {
+class IDHelper {
 private:
     static int componentCounter;
     static int systemCounter;
