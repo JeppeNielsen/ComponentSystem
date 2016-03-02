@@ -73,7 +73,7 @@ public:
     
     template<typename T>
     T* AddComponent(GameObject* source) {
-        return (T*)commands->operator[](IDHelper::GetComponentID<T>()).addComponentReference(this);
+        return (T*)commands->operator[](IDHelper::GetComponentID<T>()).addComponentReference(this, source);
     }
     
     template<typename T>
