@@ -16,8 +16,21 @@ class GameObject;
 
 using ObjectCollection = std::vector<GameObject*>;
 
+class IGameWorld;
+
 class GameObject {
 protected:
+    
+    friend class IGameWorld;
+
+    struct Command {
+        std::function<void*(GameObject*)> addComponent;
+        std::function<void*(GameObject*, GameObject*)> addComponentReference;
+        std::function<void(GameObject*)> removeComponent;
+    };
+    
+    using Commands = std::vector<Command>;
+
     using Component = void*;
     Component* components;
 
@@ -44,7 +57,7 @@ protected:
     }
     virtual ~GameObject() { delete[] components; }
     
-    std::vector<std::array<std::function<void*(void*)>,2>>* commands;
+    Commands* commands;
     ObjectCollection children;
 
 public:
@@ -55,12 +68,17 @@ public:
 
     template<typename T>
     T* AddComponent() {
-        return (T*)commands->operator[](IDHelper::GetComponentID<T>())[0](this);
+        return (T*)commands->operator[](IDHelper::GetComponentID<T>()).addComponent(this);
+    }
+    
+    template<typename T>
+    T* AddComponent(GameObject* source) {
+        return (T*)commands->operator[](IDHelper::GetComponentID<T>()).addComponentReference(this);
     }
     
     template<typename T>
     void RemoveComponent() {
-        commands->operator[](IDHelper::GetComponentID<T>())[1](this);
+        commands->operator[](IDHelper::GetComponentID<T>()).removeComponent(this);
     }
     
     Property<GameObject*> Parent;

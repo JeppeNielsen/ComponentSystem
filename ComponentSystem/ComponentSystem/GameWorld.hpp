@@ -89,11 +89,15 @@ private:
             if (componentIndex>=commands.size()) {
                 commands.resize(componentIndex+1);
             }
-            commands[componentIndex][0] = [](void* gameObjectPtr) {
+            commands[componentIndex].addComponent = [](GameObject* gameObjectPtr) {
               GameObjectSpecific* go = (GameObjectSpecific*)gameObjectPtr;
               return go->template AddComponent<ComponentType>();
             };
-            commands[componentIndex][1] = [](void* gameObjectPtr) -> void* {
+            commands[componentIndex].addComponentReference = [](GameObject* gameObjectPtr, GameObject* source) {
+              GameObjectSpecific* go = (GameObjectSpecific*)gameObjectPtr;
+              return go->template AddComponent<ComponentType>((GameObjectSpecific*) source);
+            };
+            commands[componentIndex].removeComponent = [](void* gameObjectPtr) -> void* {
               GameObjectSpecific* go = (GameObjectSpecific*)gameObjectPtr;
               go->template RemoveComponent<ComponentType>();
               return 0;

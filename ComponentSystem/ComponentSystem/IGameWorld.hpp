@@ -17,7 +17,7 @@ class IGameWorld {
 protected:
     virtual ~IGameWorld() { }
     
-    std::vector<std::array<std::function<void*(void*)>,2>> commands;
+    GameObject::Commands commands;
     std::vector<std::function<void*()>> getSystemCommands;
 public:
     virtual int ObjectCount() = 0;
