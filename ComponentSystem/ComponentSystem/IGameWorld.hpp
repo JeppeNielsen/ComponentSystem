@@ -20,8 +20,12 @@ protected:
     std::vector<std::array<std::function<void*(void*)>,2>> commands;
     std::vector<std::function<void*()>> getSystemCommands;
 public:
+    virtual int ObjectCount() = 0;
+    virtual GameObject* GetObject(int index) = 0;
+    
     virtual GameObject* CreateObject() = 0;
     virtual GameObject* CreateObject(std::istream &jsonStream, std::function<void(GameObject*)> onCreated) = 0;
+    
 
     template<typename System>
     System& GetSystem() {

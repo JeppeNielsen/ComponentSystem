@@ -11,6 +11,7 @@
 #include "IGameWorld.hpp"
 #include "GameObject.hpp"
 #include <vector>
+#include <map>
 
 template<typename... ComponentList>
 class GameSystem {
@@ -28,6 +29,17 @@ public:
 public:
     const ObjectCollection& Objects() {
         return objects;
+    }
+    
+    using MetaData = std::map<GameObject*, void*>;
+    MetaData metadata;
+    
+    void SetMetaData(GameObject* object, void* data) {
+        metadata[object] = data;
+    }
+    
+    void* GetMetaData(GameObject* object) {
+        return metadata[object];
     }
 };
 

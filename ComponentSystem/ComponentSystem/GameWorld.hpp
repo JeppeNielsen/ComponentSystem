@@ -227,11 +227,11 @@ public:
        list.clear();
     }
 
-    int ObjectCount() {
+    int ObjectCount() override {
         return objects.Size();
     }
     
-    GameObjectSpecific* GetObject(int index) {
+    GameObject* GetObject(int index) override {
         return objects.Get(index);
     }
 

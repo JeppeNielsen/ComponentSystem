@@ -66,6 +66,8 @@ public:
     Property<GameObject*> Parent;
     const ObjectCollection& Children() { return children; }
     
+    Property<int> Order;
+    
     virtual void Remove() = 0;
     
     using SerializePredicate = std::function<bool(GameObject*, int)>;
