@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <iostream>
+#include <typeinfo>
+
 class IDHelper {
 private:
     static int componentCounter;
@@ -20,6 +23,7 @@ public:
     template<typename T>
     static int GetComponentID() {
         static int componentID = componentCounter++;
+        std::cout << " type index  "<< componentID<<" : "<< typeid(T).name()<<std::endl;
         return componentID;
     }
     

@@ -7,10 +7,10 @@
 //
 
 #pragma once
-#include "GameSystem.hpp"
+#include "GameWorld.hpp"
 #include "Components.hpp"
 
-struct MoverSystem : GameSystem<Transform, Velocity> {
+struct MoverSystem : public GameSystem<Transform, Velocity> {
     
     
     struct InnerSystem : GameSystem<Transform> {
@@ -25,15 +25,9 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
         }
     };
 
-    using Systems = meta::list<InnerSystem>;
+    //using Systems = meta::list<InnerSystem>;
     
-    
-    InnerSystem* innerSystem;
-    
-    void Initialize(IGameWorld* world) {
-        innerSystem = &world->GetSystem<InnerSystem>();
-    }
-    
+        
     void ObjectAdded(GameObject* object) {
         std::cout << "MoverSystem added: " << object->GetComponent<Transform>()->x << std::endl;
         //std::cout << "Mover System :: Object Added"<<std::endl;
@@ -51,7 +45,7 @@ struct MoverSystem : GameSystem<Transform, Velocity> {
     }
 };
 
-struct RenderSystem : GameSystem<Transform, Renderable> {
+struct RenderSystem : public GameSystem<Transform, Renderable> {
 
     //void ObjectAdded(GameObject* object) {
     //    std::cout << "RenderSystem::ObjectAdded"<<std::endl;
@@ -73,13 +67,13 @@ struct RenderSystem : GameSystem<Transform, Renderable> {
 
 
 
-struct Gui : GameConcept {
+struct Gui : public GameConcept {
 
-    using Systems = meta::list<RenderSystem, MoverSystem>;
+    //using Systems = meta::list<RenderSystem, MoverSystem>;
     
-    IGameWorld* world;
+    GameWorld* world;
     
-    void Initialize(IGameWorld* world) {
+    void Initialize(GameWorld* world) {
         this->world = world;
     }
     

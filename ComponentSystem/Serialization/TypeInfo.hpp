@@ -10,8 +10,8 @@
 #include <vector>
 #include <iostream>
 #include <type_traits>
+#include "MetaLibrary.hpp"
 #include "JsonSerializer.hpp"
-#include "metaLib.hpp"
 
 template<class T>
 class FieldInfo;
@@ -230,7 +230,7 @@ public:
 };
 
 template<typename T>
-struct JsonSerializer<T, typename std::enable_if_t< meta::HasGetTypeFunction::apply<T>::value >> {
+struct JsonSerializer<T, typename std::enable_if_t< Meta::HasGetTypeFunction::apply<T>::value >> {
     static void Serialize(std::string& key, const T& value, minijson::object_writer& writer) {
         auto type = ((T&)value).GetType();
         minijson::object_writer object = writer.nested_object(key.c_str());
@@ -250,6 +250,7 @@ struct JsonSerializer<T, typename std::enable_if_t< meta::HasGetTypeFunction::ap
         type.Deserialize(context);
     }
 };
+
 
 inline std::string className(const std::string& prettyFunction)
 {

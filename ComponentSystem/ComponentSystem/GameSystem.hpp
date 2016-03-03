@@ -7,22 +7,17 @@
 //
 
 #pragma once
-#include "metaLib.hpp"
-#include "IGameWorld.hpp"
-#include "GameObject.hpp"
+#include <tuple>
 #include <vector>
 #include <map>
 
-template<typename... ComponentList>
-class GameSystem {
-public:
-    
-    using Components = meta::list<ComponentList...>;
-    virtual ~GameSystem() {};
-    
-    using Systems = meta::list<>;
+class GameWorld;
+class GameObject;
 
-public:
+class IGameSystem {
+protected:
+    virtual ~IGameSystem() {}
+    
     using ObjectCollection = std::vector<GameObject*>;
     ObjectCollection objects;
 
@@ -31,6 +26,7 @@ public:
         return objects;
     }
     
+protected:
     using MetaData = std::map<GameObject*, void*>;
     MetaData metadata;
     
@@ -41,6 +37,35 @@ public:
     void* GetMetaData(GameObject* object) {
         return metadata[object];
     }
+    
+    virtual void Initialize(GameWorld* world) { }
+    virtual void Update(float dt) { }
+    virtual void Render() { }
+    virtual void ObjectAdded(GameObject* object) {}
+    virtual void ObjectRemoved(GameObject* object) {}
+    
+    int index;
+    
+    friend class GameObject;
+    friend class GameWorld;
+};
+
+
+template<typename... ComponentList>
+class GameSystem : public IGameSystem {
+protected:
+    GameSystem() { }
+    virtual ~GameSystem() {}
+    
+    using Components = std::tuple<ComponentList*...>;
+    
+    //using Systems = meta::list<>;
+    
+    //void Initialize(GameWorld* world) {
+        
+    //}
+    
+    virtual void Initialize(GameWorld* world);
 };
 
 class GameConcept : public GameSystem<> {

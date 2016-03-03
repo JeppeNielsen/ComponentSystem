@@ -39,7 +39,7 @@ public:
     bool Build();
     bool LoadLib();
     void UnloadLib();
-    
+    /*
     template<typename Settings>
     void AddGameWorld(GameWorld<Settings>& world) {
         int numberOfSystems = countSystems();
@@ -92,7 +92,7 @@ public:
     }
 
     template<typename T>
-    TypeInfo GetTypeInfo(GameObjectSpecific<T>& object, int index) {
+    TypeInfo GetTypeInfo(GameObject<T>& object, int index) {
         void* component = object.GetScriptComponent(index);
         if (!component) {
             return TypeInfo();
@@ -103,7 +103,7 @@ public:
         deleteTypeInfo(info);
         return t;
     }
-    
+    */
 private:
     void ExtractScriptClasses();
     void WriteMainIncludes(std::ofstream &file);

@@ -7,26 +7,35 @@
 //
 
 #include <iostream>
-#include "GameSystem.hpp"
 #include "GameWorld.hpp"
-#include "ScriptWorld.hpp"
 #include "Systems.hpp"
 
-using Settings = GameSettings<MoverSystem, RenderSystem, Gui>;
-
-
-
-
+//#include "ScriptWorld.hpp"
 
 template<typename T>
 struct Debug;
 
+
+
 int main() {
+
+    GameWorldInitializer<MoverSystem,RenderSystem> initializer;
+
+    GameWorld world;
+    world.Initialize(initializer);
+    
+    {
+        int breek = 3;
+    
+    }
+    
+    
+    
 
   //  Debug<SpecificGameSettings::Systems> hej;
 
     //std::cout << GameComponent::GetComponentID<OtherComponent>()<<std::endl;
-    
+    /*
     GameWorld<Settings> world;
     world.Initialize();
     
@@ -38,7 +47,7 @@ int main() {
     child->Parent = gadget;
     
     gadget->ToJson(std::cout);
-    
+    */
     
     //, [] (auto o, auto t) {
     //    return t != GameComponent::GetComponentID<Transform>();
