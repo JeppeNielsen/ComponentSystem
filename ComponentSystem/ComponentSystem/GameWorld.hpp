@@ -410,6 +410,7 @@ void GameSystem<ComponentList...>::CreateComponents(GameWorld *world, int system
             componentSystems.resize(componentID + 1);
             addComponent.resize(componentID + 1);
             removeComponent.resize(componentID + 1);
+            getTypeComponent.resize(componentID + 1);
         }
         if (!components[componentID]) {
             components[componentID] = new Container<ComponentType>;
