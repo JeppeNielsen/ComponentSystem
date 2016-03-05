@@ -61,6 +61,21 @@ private:
     GameConstants::Actions createActions;
     GameConstants::Actions removeActions;
     
+    std::vector<std::function<void(GameObject*)>> addComponent;
+    std::vector<std::function<void(GameObject*)>> removeComponent;
+    std::vector<std::function<TypeInfo(GameObject*)>> getTypeComponent;
+    
+    
+    bool TryGetComponentIndex(std::string componentName, int& index) {
+        for(int i=0; i<componentNames.size(); ++i) {
+            if (componentNames[i]==componentName) {
+                index = i;
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /*
     GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObject*)>& onCreated) {
         GameObject* object = 0;
@@ -98,14 +113,6 @@ private:
     */
 public:
 
-    template<typename Class>
-    static std::string GetClassName() {
-        std::string functionName = __PRETTY_FUNCTION__;
-        const std::string token = "Class = ";
-        size_t equal = functionName.find(token) + token.size();
-        return functionName.substr(equal, functionName.size() - equal - 1);
-    }
-
     template<typename Initializer>
     void Initialize(const Initializer& initializer) {
         systems = initializer.CreateSystems();
@@ -114,7 +121,9 @@ public:
         for(int i=0; i<systems.size(); ++i) {
             systems[i]->CreateComponents(this, i);
         }
-        
+        for(auto c : components) {
+            c->Initialize();
+        }
         for(auto s : systems) {
             s->Initialize(this);
         }
@@ -147,9 +156,6 @@ public:
     
     GameWorld() {
         objects.Initialize();
-        for(auto c : components) {
-            c->Initialize();
-        }
     }
     
     
@@ -392,16 +398,32 @@ void GameSystem<ComponentList...>::CreateComponents(GameWorld *world, int system
         auto& components = world->components;
         auto& componentNames = world->componentNames;
         auto& componentSystems = world->componentSystems;
+        auto& addComponent = world->addComponent;
+        auto& removeComponent = world->removeComponent;
+        auto& getTypeComponent = world->getTypeComponent;
+        
         using ComponentType = std::remove_pointer_t<decltype(c)>;
         int componentID = IDHelper::GetComponentID<ComponentType>();
         if (componentID>=components.size()) {
             components.resize(componentID + 1, 0);
             componentNames.resize(componentID + 1);
             componentSystems.resize(componentID + 1);
+            addComponent.resize(componentID + 1);
+            removeComponent.resize(componentID + 1);
         }
         if (!components[componentID]) {
             components[componentID] = new Container<ComponentType>;
-            componentNames[componentID] = GameWorld::GetClassName<ComponentType>();
+            componentNames[componentID] = IDHelper::GetClassName<ComponentType>();
+            addComponent[componentID] = [](GameObject* object) {
+                object->AddComponent<ComponentType>();
+            };
+            removeComponent[componentID] = [](GameObject* object) {
+                object->RemoveComponent<ComponentType>();
+            };
+            getTypeComponent[componentID] = [](GameObject* object) -> TypeInfo {
+                auto component = object->GetComponent<ComponentType>();
+                return component->GetType();
+            };
         }
         world->systemBitsets[systemIndex][componentID] = true;
         componentSystems[componentID].push_back(world->systems[systemIndex]);

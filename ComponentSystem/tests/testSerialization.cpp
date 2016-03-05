@@ -19,10 +19,22 @@ struct Debug;
 
 int main() {
 
-    GameWorldInitializer<MoverSystem,RenderSystem> initializer;
+    GameWorldInitializer<MoverSystem, RenderSystem> initializer;
 
     GameWorld world;
     world.Initialize(initializer);
+    
+    
+    GameObject* object = world.CreateObject();
+    
+    object->AddComponent<Transform>();
+    object->AddComponent<Velocity>();
+    object->AddComponent<Renderable>();
+    
+    object->ToJson(std::cout);
+    
+    
+    world.Update(1.0f);
     
     {
         int breek = 3;

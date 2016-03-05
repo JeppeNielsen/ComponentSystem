@@ -28,17 +28,17 @@ struct MoverSystem : public GameSystem<Transform, Velocity> {
     //using Systems = meta::list<InnerSystem>;
     
         
-    void ObjectAdded(GameObject* object) {
+    void ObjectAdded(GameObject* object) override{
         std::cout << "MoverSystem added: " << object->GetComponent<Transform>()->x << std::endl;
         //std::cout << "Mover System :: Object Added"<<std::endl;
     }
     
-    void ObjectRemoved(GameObject* object) {
+    void ObjectRemoved(GameObject* object) override {
         std::cout << "MoverSystem removed: " << object-> GetComponent<Transform>()->x << std::endl;
         //std::cout << "Mover System :: Object Removed"<<std::endl;
     }
     
-    void Update(float dt) {
+    void Update(float dt) override {
         //for(auto o : this->Objects()) {
         //    o->template GetComponent<Transform>()->x += o->template GetComponent<Velocity>()->x * dt;
         //}
@@ -47,13 +47,13 @@ struct MoverSystem : public GameSystem<Transform, Velocity> {
 
 struct RenderSystem : public GameSystem<Transform, Renderable> {
 
-    //void ObjectAdded(GameObject* object) {
-    //    std::cout << "RenderSystem::ObjectAdded"<<std::endl;
-    //}
+    void ObjectAdded(GameObject* object) override {
+        std::cout << "RenderSystem::ObjectAdded"<<std::endl;
+    }
 
-    //void ObjectRemoved(GameObject* object) {
-    //    std::cout << "RenderSystem::ObjectRemoved"<<std::endl;
-    //}
+    void ObjectRemoved(GameObject* object) override {
+        std::cout << "RenderSystem::ObjectRemoved"<<std::endl;
+    }
     
     /*void Update(float dt) {
         int index = 0;

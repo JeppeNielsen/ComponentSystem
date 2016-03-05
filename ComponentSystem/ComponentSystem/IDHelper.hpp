@@ -19,11 +19,18 @@ public:
     const static int NumberOfComponents() {
         return componentCounter;
     }
+    
+    template<typename Class>
+    static std::string GetClassName() {
+        std::string functionName = __PRETTY_FUNCTION__;
+        const std::string token = "Class = ";
+        size_t equal = functionName.find(token) + token.size();
+        return functionName.substr(equal, functionName.size() - equal - 1);
+    }
 
     template<typename T>
     static int GetComponentID() {
         static int componentID = componentCounter++;
-        std::cout << " type index  "<< componentID<<" : "<< typeid(T).name()<<std::endl;
         return componentID;
     }
     

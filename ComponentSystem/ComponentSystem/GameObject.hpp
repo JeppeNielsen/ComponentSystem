@@ -95,17 +95,14 @@ public:
     
     template<typename Component>
     Component* AddComponent(GameObject* source);
-    /*
+    
+    void AddComponent(int componentID);
+    void RemoveComponent(int componentID);
+    
+    
     using SerializePredicate = std::function<bool(GameObject*, int)>;
     
-    void ToJson(std::ostream& stream, SerializePredicate predicate) {
-        minijson::writer_configuration config;
-        config = config.pretty_printing(true);
-        minijson::object_writer writer(stream, config);
-        WriteJson(writer, predicate);
-        writer.close();
-    }
-    */
+    void ToJson(std::ostream& stream, SerializePredicate predicate = 0);
     
     /*
     std::vector<TypeInfo> GetComponentTypeInfos() {
@@ -124,87 +121,9 @@ private:
     template<typename Component>
     void SetComponent(typename Container<Component>::ObjectInstance* instance);
     
-    /*
-    void WriteJson(minijson::object_writer& writer, SerializePredicate predicate) {
-
-        minijson::object_writer gameObject = writer.nested_object("GameObject");
-        minijson::array_writer components = gameObject.nested_array("Components");
-        
-        meta::for_each_in_tuple(world->serializableComponents, [this, &components, &predicate] (auto componentPointer) {
-            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
-            if (HasComponent<ComponentType>()) {
-                if (!(predicate && !predicate(this, IDHelper::GetComponentID<ComponentType>()))) {
-                    SerializeComponent<ComponentType>(components, false, 0);
-                }
-            }
-        });
-
-        components.close();
-        
-        if (!children.empty()) {
-            minijson::array_writer children_object = gameObject.nested_array("Children");
-            for(auto child : children) {
-                if (predicate && !predicate(child, -1)) {
-                    continue;
-                }
-                GameObject* childSpecific = (GameObject*)child;
-                minijson::object_writer child_object = children_object.nested_object();
-                childSpecific->WriteJson(child_object, predicate);
-                child_object.close();
-            }
-            children_object.close();
-        }
-        
-        gameObject.close();
-    }
-    
-    template<typename Component>
-    void SerializeComponent(minijson::array_writer& writer, bool isReference, std::string* referenceID ) {
-        minijson::object_writer componentWriter = writer.nested_object();
-        Component* component = GetComponent<Component>();
-        auto type = component->GetType();
-        std::string& name = world->componentNames[Settings::template GetComponentID<Component>()];
-        if (!isReference) {
-            minijson::object_writer jsonComponent = componentWriter.nested_object(name.c_str());
-            type.Serialize(jsonComponent);
-            jsonComponent.close();
-        } else {
-            std::string referenceName = name + ":ref";
-            minijson::object_writer jsonComponent = componentWriter.nested_object(referenceName.c_str());
-            if (!referenceID) {
-                jsonComponent.write("id", "");
-            } else {
-                jsonComponent.write("id", *referenceID);
-            }
-            jsonComponent.close();
-        }
-        componentWriter.close();
-    }
-    
-    void AddComponent(minijson::istream_context& context, std::string componentName) {
-        bool addedAny = false;
-        meta::for_each_in_tuple(world->serializableComponents, [this, &context, &componentName, &addedAny] (auto componentPointer) {
-            if (addedAny) {
-                return;
-            }
-            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
-            if (componentName == world->componentNames[Settings::template GetComponentID<ComponentType>()]) {
-                if (!HasComponent<ComponentType>()) {
-                    ComponentType* component = AddComponent<ComponentType>();
-                    auto type = component->GetType();
-                    type.Deserialize(context);
-                    addedAny = true;
-                } else {
-                    std::cout<<"Only one component per type allowed per object"<<std::endl;
-                    minijson::ignore(context);
-                }
-            }
-        });
-        if (!addedAny) {
-            minijson::ignore(context);
-        }
-    }
-    */
+    void WriteJson(minijson::object_writer& writer, SerializePredicate predicate);
+    void SerializeComponent(int componentID, minijson::array_writer& writer, bool isReference, std::string* referenceID );
+    void AddComponent(minijson::istream_context& context, std::string componentName);
     
     template<typename Component>
     TypeInfo GetComponentTypeInfo() {
