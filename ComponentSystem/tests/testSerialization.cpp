@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include "GameWorld.hpp"
 #include "Systems.hpp"
 
@@ -27,11 +28,44 @@ int main() {
     
     GameObject* object = world.CreateObject();
     
-    object->AddComponent<Transform>();
-    object->AddComponent<Velocity>();
-    object->AddComponent<Renderable>();
+    object->AddComponent<Transform>()->x = 123;
+    object->AddComponent<Velocity>()->info.TestVar =343;
+    object->AddComponent<Renderable>()->imageNo = 43;
     
-    object->ToJson(std::cout);
+    
+    {
+        std::ofstream file;
+        file.open ("TestObject.json");
+        object->ToJson(file);
+        file.close();
+    }
+    
+    
+    
+    {
+        std::ifstream file;
+        file.open("TestObject.json");
+        GameObject* loadedObject = world.CreateObject(file, [](GameObject* go) { });
+        file.close();
+        
+        loadedObject->ToJson(std::cout);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //std::cout << object->GetComponent<Transform>()->x<<std::endl;
+    
+    
+    
+    
+    
+    
     
     
     world.Update(1.0f);

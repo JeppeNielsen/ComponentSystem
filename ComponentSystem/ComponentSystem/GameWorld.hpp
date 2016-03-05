@@ -22,7 +22,6 @@
 #include "GameSystem.hpp"
 #include "Container.hpp"
 
-
 template<typename... Systems>
 class GameWorldInitializer {
 public:
@@ -65,68 +64,16 @@ private:
     std::vector<std::function<void(GameObject*)>> removeComponent;
     std::vector<std::function<TypeInfo(GameObject*)>> getTypeComponent;
     
+    bool TryGetComponentIndex(std::string componentName, int& index);
+    GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObject*)>& onCreated);
+    void InitializeWorld();
     
-    bool TryGetComponentIndex(std::string componentName, int& index) {
-        for(int i=0; i<componentNames.size(); ++i) {
-            if (componentNames[i]==componentName) {
-                index = i;
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /*
-    GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObject*)>& onCreated) {
-        GameObject* object = 0;
-         minijson::parse_object(context, [&] (const char* n, minijson::value v) {
-            std::string name = n;
-            if (name == "GameObject" && v.type() == minijson::Object) {
-                object = (GameObject*)CreateObject();
-                minijson::parse_object(context, [&] (const char* n, minijson::value v) {
-                    std::string name = n;
-                    if (name == "Components" && v.type() == minijson::Array && object) {
-                        minijson::parse_array(context, [&] (minijson::value v) {
-                            if (v.type() == minijson::Object) {
-                                minijson::parse_object(context, [&] (const char* n, minijson::value v) {
-                                    object->AddComponent(context, n);
-                                });
-                            }
-                        });
-                    } else if (name == "Children" && v.type() == minijson::Array && object) {
-                        minijson::parse_array(context, [&] (minijson::value v) {
-                            GameObject* child = LoadObject(context, onCreated);
-                            if (child) {
-                                child->Parent = object;
-                            }
-                        });
-                    }
-                    
-                    if (onCreated) {
-                        onCreated(object);
-                    }
-                });
-            }
-        });
-        return object;
-    }
-    */
 public:
 
     template<typename Initializer>
     void Initialize(const Initializer& initializer) {
         systems = initializer.CreateSystems();
-        systemBitsets.resize(systems.size());
-        componentSystems.resize(systems.size());
-        for(int i=0; i<systems.size(); ++i) {
-            systems[i]->CreateComponents(this, i);
-        }
-        for(auto c : components) {
-            c->Initialize();
-        }
-        for(auto s : systems) {
-            s->Initialize(this);
-        }
+        InitializeWorld();
     }
 
     template<typename System>
@@ -134,99 +81,17 @@ public:
         return *((System*)systems[IDHelper::GetSystemID<System>()]);
     }
 
-    GameObject* CreateObject() {
-        auto object = objects.CreateObjectNoReset();
-        object->object.instance = object;
-        object->object.SetWorld(this);
-        object->object.Reset();
-        return &object->object;
-    }
+    GameObject* CreateObject();
+    GameObject* CreateObject(std::istream &jsonStream, std::function<void(GameObject*)> onCreated);
+    GameWorld();
     
-    GameObject* CreateObject(std::istream &jsonStream, std::function<void(GameObject*)> onCreated) {
-        minijson::istream_context context(jsonStream);
-        GameObject* object = 0;
-        /*try {
-            object = LoadObject(context, onCreated);
-        } catch (std::exception e) {
-            std::cout << e.what() << std::endl;
-        }
-        */
-        return object;
-    }
-    
-    GameWorld() {
-        objects.Initialize();
-    }
-    
-    
-    void Update(float dt) {
-        DoActions(createActions);
-        DoActions(removeActions);
-        
-        for(auto system : systems) {
-            system->Update(dt);
-        }
-        
-        /*meta::for_each_in_tuple(updateSystems, [this, dt] (auto system) {
-            std::get<
-                    Settings::template GetSystemID<
-                        std::remove_pointer_t< decltype(system)>
-                    >()
-                >(systems).Update(dt);
-        });
-        */
-        
-#ifdef SCRIPTING_ENABLED
-        for(auto scriptSystem : scriptSystems) {
-            scriptSystem->Update(dt);
-        }
-#endif
-    }
-    
-    void Render() {
-        for(auto system : systems) {
-            system->Render();
-        }
-        /*
-        meta::for_each_in_tuple(renderSystems, [this] (auto system) {
-            std::get<
-                    Settings::template GetSystemID<
-                        std::remove_pointer_t< decltype(system)>
-                    >()
-                >(systems).Render();
-        });
-        */
-    }
-
-    void DoActions(GameConstants::Actions& list) {
-       for(int i=0; i<list.size(); ++i) {
-            list[i]();
-       }
-       list.clear();
-    }
-
-    int ObjectCount() {
-        return objects.Size();
-    }
-    
-    GameObject* GetObject(int index) {
-        return objects.Get(index);
-    }
-
-    void Clear() {
-        for(int i=0; i<objects.Size(); ++i) {
-            objects.Get(i)->Remove();
-        }
-        DoActions(createActions);
-        DoActions(removeActions);
-    }
-    
-    ~GameWorld() {
-        Clear();
-        for(auto c : components) {
-            delete c;
-        }
-    }
+    void Update(float dt);
+    void Render();
+    void DoActions(GameConstants::Actions& list);
+    int ObjectCount();
+    GameObject* GetObject(int index);
+    void Clear();
+    ~GameWorld();
     
 #ifdef SCRIPTING_ENABLED
     //Scripting
@@ -251,23 +116,7 @@ public:
     using ScriptSystemsData = std::vector<ScriptSystemData>;
     ScriptSystemsData scriptSystemsData;
     
-    void ClearScripingData(std::function<void(IScriptSystem*)> onSystemDeleted) {
-        for(int i=0; i<ObjectCount(); ++i) {
-            GetObject(i)->ClearScriptingData();
-        }
-
-        for(int i=0; i<typename Settings::UniqueComponents{}.size(); ++i) {
-            staticScriptSystemComponents[i].clear();
-        }
-        dynamicScriptSystemComponents.clear();
-        scriptComponents.clear();
-        for(auto scriptSystem : scriptSystems) {
-            onSystemDeleted(scriptSystem);
-        }
-        scriptSystems.clear();
-        scriptSystemsData.clear();
-    }
-
+    void ClearScripingData(std::function<void(IScriptSystem*)> onSystemDeleted);
     void InitializeScriptData(int numSystems, int numComponents,
                 std::function<IScriptSystem*(int)> onSystemCreate,
                 std::function<void(Container<void*>&, int)> onComponentCreate,
@@ -276,24 +125,7 @@ public:
                             ScriptSystemComponents& dynamicScriptSystemComponents,
                             ScriptSystemsData& scriptSystemsData)> onSystemData
                 
-                ) {
-        
-        for(int i=0; i<numSystems; i++) {
-            scriptSystems.push_back(onSystemCreate(i));
-        }
-        
-        scriptComponents.resize(numComponents);
-        for(int i=0; i<numComponents; ++i) {
-            onComponentCreate(scriptComponents[i], i);
-        }
-        
-        dynamicScriptSystemComponents.resize(numComponents);
-        onSystemData(staticScriptSystemComponents, dynamicScriptSystemComponents, scriptSystemsData);
-        
-        for(int i=0; i<ObjectCount(); ++i) {
-            GetObject(i)->InitializeScriptingData();
-        }
-    }
+                );
 #endif
 };
 
@@ -430,14 +262,3 @@ void GameSystem<ComponentList...>::CreateComponents(GameWorld *world, int system
         componentSystems[componentID].push_back(world->systems[systemIndex]);
     });
 }
-
-
-
-
-
-
-
-
-
-
-

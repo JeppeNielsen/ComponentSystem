@@ -125,6 +125,7 @@ void GameObject::AddComponent(minijson::istream_context& context, std::string co
         
         int componentID;
         if (world->TryGetComponentIndex(componentName, componentID) && !activeComponents[componentID]) {
+            AddComponent(componentID);
             auto type = world->getTypeComponent[componentID](this);
             type.Deserialize(context);
         } else {
@@ -180,5 +181,157 @@ void GameObject::SerializeComponent(int componentID, minijson::array_writer& wri
     }
     componentWriter.close();
 }
+
+
+#ifdef SCRIPTING_ENABLED
+
+void* GameObject::GetComponent(int componentID) override {
+    //&((typename Container<Component>::ObjectInstance*)components[componentID])->object;
+    return components[componentID]; // this works since "object" is first in ObjectInstance;
+}
+
+void* GameObject::AddComponent(int componentID) override {
+    int counter = 0;
+    
+    meta::for_each_in_tuple(world->components, [this, &counter, componentID] (auto& component) {
+        if (counter == componentID) {
+            using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
+            AddComponent<ComponentType>();
+        }
+        counter++;
+    });
+    return GetComponent(componentID);
+}
+
+void GameObject::RemoveComponent(int componentID) override {
+    int counter = 0;
+    meta::for_each_in_tuple(world->components, [this, &counter, componentID] (auto& component) {
+        if (counter == componentID) {
+            using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
+            RemoveComponent<ComponentType>();
+        }
+        counter++;
+    });
+}
+
+void GameObject::ClearScriptingData() {
+    delete[] scriptComponents;
+    delete[] scriptSystemIndices;
+    activeScriptComponents.clear();
+    removedScriptComponents.clear();
+}
+
+void GameObject::InitializeScriptingData() {
+    std::size_t numScriptComponents = world->scriptComponents.size();
+    scriptComponents = new ScriptComponent[numScriptComponents];
+    for (int i=0; i<numScriptComponents; i++) {
+        scriptComponents[i]=0;
+    }
+    scriptSystemIndices = new int[world->scriptSystems.size()];
+    activeScriptComponents.resize(numScriptComponents);
+    removedScriptComponents.resize(numScriptComponents);
+}
+
+void* GameObject::GetScriptComponent(int componentID) override {
+    if (!activeScriptComponents[componentID]) return 0;
+    typename Container<void*>::ObjectInstance* instance = (typename Container<void*>::ObjectInstance*)scriptComponents[componentID];
+    return instance->object;
+}
+
+void* GameObject::AddScriptComponent(int componentID) override {
+    if (activeScriptComponents[componentID]) {
+        return scriptComponents[componentID];
+    }
+    
+    activeScriptComponents[componentID] = true;
+    scriptComponents[componentID] = world->scriptComponents[componentID].CreateObject();
+    
+    auto activeComponentsBefore = activeComponents;
+    auto activeScriptComponentsBefore = activeScriptComponents;
+    world->createActions.emplace_back([this, componentID, activeComponentsBefore, activeScriptComponentsBefore]() {
+        CheckForScriptSystemsAddition(world->dynamicScriptSystemComponents[componentID], activeComponentsBefore, activeScriptComponentsBefore);
+    });
+    
+    return scriptComponents[componentID];
+}
+
+void GameObject::RemoveScriptComponent(int componentID) override {
+    if (!activeScriptComponents[componentID]) return;
+    
+    if (removedScriptComponents[componentID]) return;
+    removedScriptComponents[componentID] = true;
+    
+    world->removeActions.emplace_back([this, componentID]() {
+        
+        auto activeScriptComponentsBefore = activeScriptComponents;
+        
+        activeScriptComponents[componentID] = false;
+        removedScriptComponents[componentID] = false;
+        
+        CheckForScriptSystemsRemoval(world->dynamicScriptSystemComponents[componentID], activeComponents, activeScriptComponentsBefore);
+        
+        typename Container<void*>::ObjectInstance* instance = (typename Container<void*>::ObjectInstance*)scriptComponents[componentID];
+        world->scriptComponents[componentID].RemoveObject(instance);
+    });
+}
+
+void GameObject::CheckForScriptSystemsAddition(const std::vector<short>& systems, const typename Settings::Bitset& activeComponentsBefore, const typename GameWorld::ScriptBitset& activeScriptComponentsBefore) {
+    for(int i = 0; i<systems.size(); ++i) {
+        short systemIndex = systems[i];
+        IScriptSystem* system = world->scriptSystems[systemIndex];
+        auto& systemData = world->scriptSystemsData[systemIndex];
+        if (systemData.staticComponents!=0 && !((activeComponentsBefore & systemData.staticComponents) == systemData.staticComponents)) {
+            continue;
+        }
+        std::size_t componentCount = systemData.scriptComponents.size();
+        bool match = true;
+        for(int j=0; j<componentCount; ++j) {
+            if (!activeScriptComponentsBefore[systemData.scriptComponents[j]]) {
+                match = false;
+                break;
+            }
+        }
+        if (!match) continue;
+        scriptSystemIndices[systemIndex] = system->AddObject(this);
+        system->ObjectAdded(this);
+    }
+}
+
+void GameObject::CheckForScriptSystemsRemoval(const std::vector<short>& systems, const typename Settings::Bitset& activeComponentsBefore, const typename GameWorld::ScriptBitset& activeScriptComponentsBefore) {
+
+    for(int i = 0; i<systems.size(); ++i) {
+        short systemIndex = systems[i];
+        IScriptSystem* system = world->scriptSystems[systemIndex];
+        auto& systemData = world->scriptSystemsData[systemIndex];
+        if (systemData.staticComponents!=0 && !((activeComponentsBefore & systemData.staticComponents) == systemData.staticComponents)) {
+            continue;
+        }
+        std::size_t componentCount = systemData.scriptComponents.size();
+        bool match = true;
+        for(int j=0; j<componentCount; ++j) {
+            if (!activeScriptComponentsBefore[systemData.scriptComponents[j]]) {
+                match = false;
+                break;
+            }
+        }
+        if (!match) continue;
+        system->ObjectRemoved(this);
+        int index = scriptSystemIndices[systemIndex];
+        auto* last = system->RemoveObject(index);
+        GameObject* lastGameObject = (GameObject*)last;
+        lastGameObject->scriptSystemIndices[systemIndex] = index;
+    }
+}
+#endif
+
+
+
+
+
+
+
+
+
+
 
 
