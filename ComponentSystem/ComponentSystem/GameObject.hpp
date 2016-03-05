@@ -11,6 +11,7 @@
 #include "IDHelper.hpp"
 #include "TypeInfo.hpp"
 #include "Container.hpp"
+#include "GameConstants.hpp"
 
 class GameWorld;
 
@@ -38,7 +39,7 @@ public:
 private:
     friend class GameWorld;
     
-    using Bitset = std::bitset<64>;
+    using Bitset = GameConstants::Bitset;
     
     Bitset activeComponents;
     Bitset removedComponents;

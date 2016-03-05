@@ -10,39 +10,33 @@
 #include <tuple>
 #include <vector>
 #include <map>
+#include "GameConstants.hpp"
 
 class GameWorld;
 class GameObject;
 
 class IGameSystem {
 protected:
-    virtual ~IGameSystem() {}
+    virtual ~IGameSystem();
     
     using ObjectCollection = std::vector<GameObject*>;
     ObjectCollection objects;
 
 public:
-    const ObjectCollection& Objects() {
-        return objects;
-    }
-    
+    const ObjectCollection& Objects();
 protected:
     using MetaData = std::map<GameObject*, void*>;
     MetaData metadata;
     
-    void SetMetaData(GameObject* object, void* data) {
-        metadata[object] = data;
-    }
+    void SetMetaData(GameObject* object, void* data);
+    void* GetMetaData(GameObject* object);
     
-    void* GetMetaData(GameObject* object) {
-        return metadata[object];
-    }
-    
-    virtual void Initialize(GameWorld* world) { }
-    virtual void Update(float dt) { }
-    virtual void Render() { }
-    virtual void ObjectAdded(GameObject* object) {}
-    virtual void ObjectRemoved(GameObject* object) {}
+    virtual void Initialize(GameWorld* world);
+    virtual void Update(float dt);
+    virtual void Render();
+    virtual void ObjectAdded(GameObject* object);
+    virtual void ObjectRemoved(GameObject* object);
+    virtual void CreateComponents(GameWorld *world, int systemIndex) = 0;
     
     int index;
     
@@ -50,22 +44,15 @@ protected:
     friend class GameWorld;
 };
 
-
 template<typename... ComponentList>
 class GameSystem : public IGameSystem {
 protected:
     GameSystem() { }
-    virtual ~GameSystem() {}
+    virtual ~GameSystem() { }
     
     using Components = std::tuple<ComponentList*...>;
     
-    //using Systems = meta::list<>;
-    
-    //void Initialize(GameWorld* world) {
-        
-    //}
-    
-    virtual void Initialize(GameWorld* world);
+    void CreateComponents(GameWorld *world, int systemIndex) override;
 };
 
 class GameConcept : public GameSystem<> {

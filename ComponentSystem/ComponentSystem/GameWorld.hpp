@@ -8,6 +8,7 @@
 
 #pragma once
 #include <vector>
+#include "GameConstants.hpp"
 #include "minijson_writer.hpp"
 #include "minijson_reader.hpp"
 #include <type_traits>
@@ -44,86 +45,21 @@ public:
 
 class GameWorld {
 private:
-
-    using Bitset = std::bitset<64>;
-
     friend class GameObject;
+
     using Objects = Container<GameObject>;
-    
-    using Systems = std::vector<IGameSystem*>;
-    using SystemBitsets = std::vector<Bitset>;
-    
-    using Components = std::vector<void*>;
-    using ComponentNames = std::vector<std::string>;
-    using ComponentSystems = std::vector<std::vector<IGameSystem*>>;
-    
-    using Actions = std::vector<std::function<void()>>;
-    
+
     Objects objects;
     
-    Systems systems;
-    SystemBitsets systemBitsets;
+    GameConstants::Systems systems;
+    GameConstants::SystemBitsets systemBitsets;
     
-    Components components;
-    ComponentNames componentNames;
-    ComponentSystems componentSystems;
+    GameConstants::Components components;
+    GameConstants::ComponentNames componentNames;
+    GameConstants::ComponentSystems componentSystems;
     
-    Actions createActions;
-    Actions removeActions;
-    
-    
-    
-    void InitializeSystemBitsets() {
-        /*meta::for_each_in_tuple(systems, [&](auto& system) {
-            using SystemType = std::remove_const_t<std::remove_reference_t<decltype(system)>>;
-            meta::for_each_in_tuple(meta::IteratorPointer<typename SystemType::Components>{}.Iterate(), [&,this](auto component) {
-                systemBitsets[Settings::template GetSystemID<SystemType>()]
-                             [Settings::template GetComponentID<std::remove_pointer_t< decltype(component) >>()] = true;
-            });
-        });
-        */
-    }
-    
-    void InitializeComponentNames() {
-        //componentNames = Settings::GetComponentNames();
-    }
-    
-    void InitializeCommands() {
-    /*
-        meta::for_each_in_tuple(components, [this] (auto& component) {
-            using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
-            int componentIndex = IDHelper::GetComponentID<ComponentType>();
-            if (componentIndex>=commands.size()) {
-                commands.resize(componentIndex+1);
-            }
-            commands[componentIndex].addComponent = [](GameObject* gameObjectPtr) {
-              GameObject* go = (GameObject*)gameObjectPtr;
-              return go->template AddComponent<ComponentType>();
-            };
-            commands[componentIndex].addComponentReference = [](GameObject* gameObjectPtr, GameObject* source) {
-              GameObject* go = (GameObject*)gameObjectPtr;
-              return go->template AddComponent<ComponentType>((GameObject*) source);
-            };
-            commands[componentIndex].removeComponent = [](void* gameObjectPtr) -> void* {
-              GameObject* go = (GameObject*)gameObjectPtr;
-              go->template RemoveComponent<ComponentType>();
-              return 0;
-            };
-        });
-        
-        meta::for_each_in_tuple(systems, [&](auto& system) {
-            using SystemType = std::remove_const_t<std::remove_reference_t<decltype(system)>>;
-            
-            int systemIndex = IDHelper::GetSystemID<SystemType>();
-            if (systemIndex>=getSystemCommands.size()) {
-                getSystemCommands.resize(systemIndex+1);
-            }
-            getSystemCommands[systemIndex] = [this]() -> void* {
-                return &GetSystem<SystemType>();
-            };
-        });
-        */
-    }
+    GameConstants::Actions createActions;
+    GameConstants::Actions removeActions;
     
     /*
     GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObject*)>& onCreated) {
@@ -160,12 +96,25 @@ private:
         return object;
     }
     */
-    
 public:
+
+    template<typename Class>
+    static std::string GetClassName() {
+        std::string functionName = __PRETTY_FUNCTION__;
+        const std::string token = "Class = ";
+        size_t equal = functionName.find(token) + token.size();
+        return functionName.substr(equal, functionName.size() - equal - 1);
+    }
 
     template<typename Initializer>
     void Initialize(const Initializer& initializer) {
         systems = initializer.CreateSystems();
+        systemBitsets.resize(systems.size());
+        componentSystems.resize(systems.size());
+        for(int i=0; i<systems.size(); ++i) {
+            systems[i]->CreateComponents(this, i);
+        }
+        
         for(auto s : systems) {
             s->Initialize(this);
         }
@@ -197,26 +146,13 @@ public:
     }
     
     GameWorld() {
-        InitializeSystemBitsets();
-        InitializeComponentNames();
-        InitializeCommands();
         objects.Initialize();
-        //meta::for_each_in_tuple_non_const(components, [](auto& container) {
-        //    container.Initialize();
-        //});
+        for(auto c : components) {
+            c->Initialize();
+        }
     }
-
-    void Initialize() {
-        /*meta::for_each_in_tuple(initializeSystems, [&](auto system) {
-            std::get<
-                Settings::template GetSystemID<
-                    std::remove_pointer_t<decltype(system)>
-                >()
-            >(systems).Initialize(this);
-        });
-        */
-    }
-
+    
+    
     void Update(float dt) {
         DoActions(createActions);
         DoActions(removeActions);
@@ -256,7 +192,7 @@ public:
         */
     }
 
-    void DoActions(Actions& list) {
+    void DoActions(GameConstants::Actions& list) {
        for(int i=0; i<list.size(); ++i) {
             list[i]();
        }
@@ -281,14 +217,10 @@ public:
     
     ~GameWorld() {
         Clear();
+        for(auto c : components) {
+            delete c;
+        }
     }
-    
-//    void EnumerateComponentClasses(std::function<void(std::string, int)> callback) {
-//        meta::for_each_in_tuple(serializableComponents, [this, callback] (auto componentPointer) {
-//            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
-//            callback(componentNames[Settings::template GetComponentID<ComponentType>()], Settings::template GetComponentID<ComponentType>());
-//        });
-//    }
     
 #ifdef SCRIPTING_ENABLED
     //Scripting
@@ -453,21 +385,26 @@ void GameObject::SetComponent(typename Container<Component>::ObjectInstance *ins
     });
 }
 
-
-
 template<typename... ComponentList>
-void GameSystem<ComponentList...>::Initialize(GameWorld *world) {
+void GameSystem<ComponentList...>::CreateComponents(GameWorld *world, int systemIndex) {
     std::tuple<ComponentList*...> componentsTuple;
-    Meta::for_each_in_tuple_non_const(componentsTuple, [world](auto c) {
+    Meta::for_each_in_tuple_non_const(componentsTuple, [world, systemIndex](auto c) {
         auto& components = world->components;
+        auto& componentNames = world->componentNames;
+        auto& componentSystems = world->componentSystems;
         using ComponentType = std::remove_pointer_t<decltype(c)>;
         int componentID = IDHelper::GetComponentID<ComponentType>();
         if (componentID>=components.size()) {
             components.resize(componentID + 1, 0);
+            componentNames.resize(componentID + 1);
+            componentSystems.resize(componentID + 1);
         }
         if (!components[componentID]) {
             components[componentID] = new Container<ComponentType>;
+            componentNames[componentID] = GameWorld::GetClassName<ComponentType>();
         }
+        world->systemBitsets[systemIndex][componentID] = true;
+        componentSystems[componentID].push_back(world->systems[systemIndex]);
     });
 }
 
