@@ -53,18 +53,7 @@ private:
     GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObject*)>& onCreated);
     void InitializeWorld();
     
-    template<typename System>
-    System* CreateSystem() {
-        int systemID = IDHelper::GetSystemID<System>();
-        if (systemID>=systems.size()) {
-            systems.resize(systemID + 1, 0);
-        }
-        if (!systems[systemID]) {
-            systems[systemID] = new System();
-            systems[systemID]->index = (int)(systems.size() - 1);
-        }
-        return (System*)systems[systemID];
-    }
+    
     
 public:
 
@@ -74,7 +63,7 @@ public:
         std::tuple<Systems*...> systemsTuple;
         Meta::for_each_in_tuple_non_const(systemsTuple, [this](auto t) {
             using SystemType = std::remove_pointer_t<decltype(t)>;
-            CreateSystem<SystemType>();
+            AddSystem<SystemType>();
         });
         InitializeWorld();
         isInitializing = false;
@@ -82,8 +71,22 @@ public:
 
     template<typename System>
     System* GetSystem() {
-        if (isInitializing) return CreateSystem<System>();
+        if (isInitializing) return AddSystem<System>();
         return (System*)systems[IDHelper::GetSystemID<System>()];
+    }
+    
+    template<typename System>
+    System* AddSystem() {
+        if (!isInitializing) return GetSystem<System>();
+        int systemID = IDHelper::GetSystemID<System>();
+        if (systemID>=systems.size()) {
+            systems.resize(systemID + 1, 0);
+        }
+        if (!systems[systemID]) {
+            systems[systemID] = new System();
+            systems[systemID]->index = (int)(systems.size() - 1);
+        }
+        return (System*)systems[systemID];
     }
     
     GameObject* CreateObject();

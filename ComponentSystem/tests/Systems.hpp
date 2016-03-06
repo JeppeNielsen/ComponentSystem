@@ -29,7 +29,7 @@ struct MoverSystem : public GameSystem<Transform, Velocity> {
     };
     
     void Initialize(GameWorld* world) override {
-        world->GetSystem<PlayerSystem>();
+        world->AddSystem<PlayerSystem>();
     };
 
     //using Systems = meta::list<InnerSystem>;
