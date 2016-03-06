@@ -9,6 +9,8 @@
 #pragma once
 #include "Event.hpp"
 
+namespace Pocket {
+
 template<class Value>
 class Property {
 private:
@@ -82,3 +84,4 @@ Value& Property<Value>::PreviousValue() const {
     return previousValue;
 }
 
+}

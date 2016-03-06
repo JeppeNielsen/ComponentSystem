@@ -11,6 +11,8 @@
 #include <map>
 #include <vector>
 
+namespace Pocket {
+  
 class ScriptClass {
 public:
     using Children = std::map<std::string, ScriptClass>;
@@ -35,3 +37,5 @@ public:
     
     void Print();
 };
+
+}

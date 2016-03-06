@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include "TypeInfo.hpp"
+
+using namespace Pocket;
+
 struct Transform {
 	int x;
 	int y;

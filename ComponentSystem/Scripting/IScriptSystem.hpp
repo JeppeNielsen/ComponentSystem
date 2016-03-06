@@ -8,6 +8,9 @@
 
 #pragma once
 #include <vector>
+
+namespace Pocket {
+  
 struct IGameObject;
 
 struct IScriptSystem {
@@ -18,3 +21,5 @@ struct IScriptSystem {
     virtual int AddObject(IGameObject* object) = 0;
     virtual IGameObject* RemoveObject(int indexToRemove) = 0;
 };
+
+}

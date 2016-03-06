@@ -10,6 +10,8 @@
 #include <vector>
 #include <functional>
 
+namespace Pocket {
+
 template<class... T>
 class Event {
 private:
@@ -101,6 +103,4 @@ public:
     }
 };
 
-
-
-
+}

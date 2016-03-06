@@ -13,6 +13,8 @@
 #include "MetaLibrary.hpp"
 #include "JsonSerializer.hpp"
 
+namespace Pocket {
+
 template<class T>
 class FieldInfo;
 
@@ -279,4 +281,5 @@ return fields; \
 } \
 private:
 
+}
 

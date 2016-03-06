@@ -13,6 +13,7 @@
 #include "IScriptSystem.hpp"
 
 using namespace std;
+using namespace Pocket;
 
 vector<string> Compile(const string &cmd) {
     FILE*           fp;

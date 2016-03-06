@@ -13,6 +13,8 @@
 #include "ScriptClass.hpp"
 #include "GameWorld.hpp"
 
+namespace Pocket {
+
 class IScriptSystem;
 class TypeInfo;
 
@@ -99,3 +101,5 @@ private:
     GetTypeInfoFunction getTypeInfo;
     DeleteTypeInfo deleteTypeInfo;
 };
+
+}

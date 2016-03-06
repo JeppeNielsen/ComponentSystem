@@ -13,6 +13,8 @@
 #include "Container.hpp"
 #include "GameConstants.hpp"
 
+namespace Pocket {
+
 class GameWorld;
 
 #ifdef SCRIPTING_ENABLED
@@ -149,3 +151,5 @@ private:
     void CheckForScriptSystemsRemoval(const std::vector<short>& systems, const GameConstants::Bitset& activeComponentsBefore, const typename GameConstants::ScriptBitset& activeScriptComponentsBefore);
 #endif
 };
+
+}

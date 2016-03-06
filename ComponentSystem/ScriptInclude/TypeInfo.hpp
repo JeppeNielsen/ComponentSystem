@@ -12,6 +12,8 @@
 #include "FieldInfoIndexer.hpp"
 #include <functional>
 
+namespace Pocket {
+  
 template<class T>
 class FieldInfo;
 
@@ -103,3 +105,5 @@ public:
 #define TYPE_FIELDS_BEGIN()
 #define TYPE_FIELD(field)
 #define TYPE_FIELDS_END
+
+}

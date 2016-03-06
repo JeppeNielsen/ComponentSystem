@@ -16,6 +16,7 @@
 #include <algorithm>
 
 using namespace std;
+using namespace Pocket;
 
 std::string
 basename( std::string const& pathname )

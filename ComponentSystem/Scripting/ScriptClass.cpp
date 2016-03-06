@@ -9,7 +9,7 @@
 #include "ScriptClass.hpp"
 #include <iostream>
 
-
+using namespace Pocket;
 
 void ScriptClass::Print() {
     
