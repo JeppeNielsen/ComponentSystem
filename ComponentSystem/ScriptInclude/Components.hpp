@@ -49,9 +49,9 @@ struct Renderable {
     //Renderable() { std::cout<<"Renderable ctor"<<std::endl; }
     //~Renderable() { std::cout<<"Renderable dtor"<<std::endl; }
     
-    TYPE_FIELDS_BEGIN()
-    TYPE_FIELD(imageNo)
-    TYPE_FIELDS_END
+    //TYPE_FIELDS_BEGIN()
+    //TYPE_FIELD(imageNo)
+    //TYPE_FIELDS_END
 };
 
 struct Touchable {

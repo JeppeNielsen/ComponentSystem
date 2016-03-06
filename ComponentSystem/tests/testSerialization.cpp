@@ -20,17 +20,21 @@ struct Debug;
 
 int main() {
 
-    GameWorldInitializer<MoverSystem, RenderSystem> initializer;
+    GameWorldInitializer<MoverSystem, RenderSystem, Gui> initializer;
 
     GameWorld world;
     world.Initialize(initializer);
     
+    GameObject* gadget = world.GetSystem<Gui>().CreateGadget(10);
+    
+    gadget->ToJson(std::cout);
     
     GameObject* object = world.CreateObject();
     
     object->AddComponent<Transform>()->x = 123;
     object->AddComponent<Velocity>()->info.TestVar =343;
     object->AddComponent<Renderable>()->imageNo = 43;
+    
     
     
     {

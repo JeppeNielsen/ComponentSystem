@@ -31,7 +31,13 @@ GameObject::GameObject() : world(0)  {
     });
 }
 
-GameObject::~GameObject() { delete[] components; delete[] systemIndices; }
+GameObject::~GameObject() {
+    delete[] components;
+    delete[] systemIndices;
+#if SCRIPTING_ENABLED
+    ClearScriptingData();
+#endif
+}
 
 void GameObject::Remove() {
     if (isRemoved) return;
@@ -73,9 +79,14 @@ void GameObject::SetWorld(GameWorld* w) {
 #endif
 }
 
-void GameObject::AddComponent(int componentID) {
-    if (activeComponents[componentID]) return;
-    world->addComponent[componentID](this);
+void* GameObject::GetComponent(int componentID) {
+    if (!activeComponents[componentID]) return 0;
+    return components[componentID];
+}
+
+void* GameObject::AddComponent(int componentID) {
+    if (activeComponents[componentID]) return components[componentID];
+    return world->addComponent[componentID](this);
 }
 
 void GameObject::RemoveComponent(int componentID) {
@@ -126,8 +137,12 @@ void GameObject::AddComponent(minijson::istream_context& context, std::string co
         int componentID;
         if (world->TryGetComponentIndex(componentName, componentID) && !activeComponents[componentID]) {
             AddComponent(componentID);
-            auto type = world->getTypeComponent[componentID](this);
-            type.Deserialize(context);
+            if (world->getTypeComponent[componentID]) {
+                auto type = world->getTypeComponent[componentID](this);
+                type.Deserialize(context);
+            } else {
+                minijson::ignore(context);
+            }
         } else {
             minijson::ignore(context);
         }
@@ -163,11 +178,13 @@ void GameObject::AddComponent(minijson::istream_context& context, std::string co
 void GameObject::SerializeComponent(int componentID, minijson::array_writer& writer, bool isReference, std::string* referenceID ) {
     if (!activeComponents[componentID]) return;
     minijson::object_writer componentWriter = writer.nested_object();
-    auto type = world->getTypeComponent[componentID](this);
     std::string& name = world->componentNames[componentID];
     if (!isReference) {
         minijson::object_writer jsonComponent = componentWriter.nested_object(name.c_str());
-        type.Serialize(jsonComponent);
+        if (world->getTypeComponent[componentID]) {
+            auto type = world->getTypeComponent[componentID](this);
+            type.Serialize(jsonComponent);
+        }
         jsonComponent.close();
     } else {
         std::string referenceName = name + ":ref";
@@ -184,35 +201,6 @@ void GameObject::SerializeComponent(int componentID, minijson::array_writer& wri
 
 
 #ifdef SCRIPTING_ENABLED
-
-void* GameObject::GetComponent(int componentID) override {
-    //&((typename Container<Component>::ObjectInstance*)components[componentID])->object;
-    return components[componentID]; // this works since "object" is first in ObjectInstance;
-}
-
-void* GameObject::AddComponent(int componentID) override {
-    int counter = 0;
-    
-    meta::for_each_in_tuple(world->components, [this, &counter, componentID] (auto& component) {
-        if (counter == componentID) {
-            using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
-            AddComponent<ComponentType>();
-        }
-        counter++;
-    });
-    return GetComponent(componentID);
-}
-
-void GameObject::RemoveComponent(int componentID) override {
-    int counter = 0;
-    meta::for_each_in_tuple(world->components, [this, &counter, componentID] (auto& component) {
-        if (counter == componentID) {
-            using ComponentType = meta::mp_rename<std::remove_const_t<std::remove_reference_t<decltype(component)>>, meta::ReturnContainedType>;
-            RemoveComponent<ComponentType>();
-        }
-        counter++;
-    });
-}
 
 void GameObject::ClearScriptingData() {
     delete[] scriptComponents;
@@ -232,13 +220,13 @@ void GameObject::InitializeScriptingData() {
     removedScriptComponents.resize(numScriptComponents);
 }
 
-void* GameObject::GetScriptComponent(int componentID) override {
+void* GameObject::GetScriptComponent(int componentID) {
     if (!activeScriptComponents[componentID]) return 0;
     typename Container<void*>::ObjectInstance* instance = (typename Container<void*>::ObjectInstance*)scriptComponents[componentID];
     return instance->object;
 }
 
-void* GameObject::AddScriptComponent(int componentID) override {
+void* GameObject::AddScriptComponent(int componentID) {
     if (activeScriptComponents[componentID]) {
         return scriptComponents[componentID];
     }
@@ -255,7 +243,7 @@ void* GameObject::AddScriptComponent(int componentID) override {
     return scriptComponents[componentID];
 }
 
-void GameObject::RemoveScriptComponent(int componentID) override {
+void GameObject::RemoveScriptComponent(int componentID) {
     if (!activeScriptComponents[componentID]) return;
     
     if (removedScriptComponents[componentID]) return;
@@ -275,7 +263,7 @@ void GameObject::RemoveScriptComponent(int componentID) override {
     });
 }
 
-void GameObject::CheckForScriptSystemsAddition(const std::vector<short>& systems, const typename Settings::Bitset& activeComponentsBefore, const typename GameWorld::ScriptBitset& activeScriptComponentsBefore) {
+void GameObject::CheckForScriptSystemsAddition(const std::vector<short>& systems, const GameConstants::Bitset& activeComponentsBefore, const GameConstants::ScriptBitset& activeScriptComponentsBefore) {
     for(int i = 0; i<systems.size(); ++i) {
         short systemIndex = systems[i];
         IScriptSystem* system = world->scriptSystems[systemIndex];
@@ -297,7 +285,7 @@ void GameObject::CheckForScriptSystemsAddition(const std::vector<short>& systems
     }
 }
 
-void GameObject::CheckForScriptSystemsRemoval(const std::vector<short>& systems, const typename Settings::Bitset& activeComponentsBefore, const typename GameWorld::ScriptBitset& activeScriptComponentsBefore) {
+void GameObject::CheckForScriptSystemsRemoval(const std::vector<short>& systems, const GameConstants::Bitset& activeComponentsBefore, const GameConstants::ScriptBitset& activeScriptComponentsBefore) {
 
     for(int i = 0; i<systems.size(); ++i) {
         short systemIndex = systems[i];

@@ -60,7 +60,7 @@ private:
     GameConstants::Actions createActions;
     GameConstants::Actions removeActions;
     
-    std::vector<std::function<void(GameObject*)>> addComponent;
+    std::vector<std::function<void*(GameObject*)>> addComponent;
     std::vector<std::function<void(GameObject*)>> removeComponent;
     std::vector<std::function<TypeInfo(GameObject*)>> getTypeComponent;
     
@@ -95,7 +95,7 @@ public:
     
 #ifdef SCRIPTING_ENABLED
     //Scripting
-    using StaticScriptSystemComponents = std::array<std::vector<short>, typename Settings::UniqueComponents{}.size()>;
+    using StaticScriptSystemComponents = std::vector<std::vector<short>>;
     StaticScriptSystemComponents staticScriptSystemComponents;
     using ScriptSystemComponents = std::vector<std::vector<short>>;
     ScriptSystemComponents dynamicScriptSystemComponents;
@@ -103,10 +103,8 @@ public:
     using ScriptComponents = std::vector<Container<void*>>;
     ScriptComponents scriptComponents;
     
-    using ScriptBitset = std::vector<bool>;
-    
     struct ScriptSystemData {
-        typename Settings::Bitset staticComponents;
+        GameConstants::Bitset staticComponents;
         std::vector<short> scriptComponents;
     };
     
@@ -159,7 +157,7 @@ void GameObject::RemoveComponent() {
         
 #ifdef SCRIPTING_ENABLED
         auto activeScriptComponentsBefore = activeScriptComponents;
-        CheckForScriptSystemsRemoval(world->staticScriptSystemComponents[Settings::template GetComponentID<Component>()], activeComponentsBefore, activeScriptComponentsBefore);
+        CheckForScriptSystemsRemoval(world->staticScriptSystemComponents[IDHelper::GetComponentID<Component>()], activeComponentsBefore, activeScriptComponentsBefore);
 #endif
         
         int componentID = IDHelper::GetComponentID<Component>();
@@ -218,7 +216,7 @@ void GameObject::SetComponent(typename Container<Component>::ObjectInstance *ins
         }
 
 #ifdef SCRIPTING_ENABLED
-        CheckForScriptSystemsAddition(world->staticScriptSystemComponents[Settings::template GetComponentID<Component>()], activeComponentsBefore, activeScriptComponentsBefore);
+        CheckForScriptSystemsAddition(world->staticScriptSystemComponents[IDHelper::GetComponentID<Component>()], activeComponentsBefore, activeScriptComponentsBefore);
 #endif
     });
 }
@@ -247,16 +245,21 @@ void GameSystem<ComponentList...>::CreateComponents(GameWorld *world, int system
         if (!components[componentID]) {
             components[componentID] = new Container<ComponentType>;
             componentNames[componentID] = IDHelper::GetClassName<ComponentType>();
-            addComponent[componentID] = [](GameObject* object) {
-                object->AddComponent<ComponentType>();
+            addComponent[componentID] = [](GameObject* object) -> void* {
+                return object->AddComponent<ComponentType>();
             };
             removeComponent[componentID] = [](GameObject* object) {
                 object->RemoveComponent<ComponentType>();
             };
-            getTypeComponent[componentID] = [](GameObject* object) -> TypeInfo {
-                auto component = object->GetComponent<ComponentType>();
-                return component->GetType();
-            };
+            
+            ComponentType* ptr = 0;
+            Meta::static_if<Meta::HasGetTypeFunction::apply<ComponentType>::value, ComponentType*>(ptr, [&getTypeComponent, componentID](auto p) {
+                using SerializedComponentType = std::remove_pointer_t<decltype(p)>;
+                getTypeComponent[componentID] = [](GameObject* object) -> TypeInfo {
+                    auto component = object->GetComponent<SerializedComponentType>();
+                    return component->GetType();
+                };
+            });
         }
         world->systemBitsets[systemIndex][componentID] = true;
         componentSystems[componentID].push_back(world->systems[systemIndex]);

@@ -62,6 +62,9 @@ void GameWorld::InitializeWorld() {
     for(auto c : components) {
         c->Initialize();
     }
+#if SCRIPTING_ENABLED
+    staticScriptSystemComponents.resize(components.size());
+#endif
     for(auto s : systems) {
         s->Initialize(this);
     }
@@ -151,7 +154,7 @@ void GameWorld::ClearScripingData(std::function<void(IScriptSystem*)> onSystemDe
         GetObject(i)->ClearScriptingData();
     }
 
-    for(int i=0; i<typename Settings::UniqueComponents{}.size(); ++i) {
+    for(int i=0; i<components.size(); ++i) {
         staticScriptSystemComponents[i].clear();
     }
     dynamicScriptSystemComponents.clear();

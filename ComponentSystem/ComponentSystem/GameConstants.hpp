@@ -26,4 +26,7 @@ struct GameConstants {
     using ComponentNames = std::vector<std::string>;
     using ComponentSystems = std::vector<std::vector<IGameSystem*>>;
     using Actions = std::vector<std::function<void()>>;
+#if SCRIPTING_ENABLED
+    using ScriptBitset = std::vector<bool>;
+#endif
 };

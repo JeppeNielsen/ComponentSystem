@@ -96,10 +96,16 @@ public:
     template<typename Component>
     Component* AddComponent(GameObject* source);
     
-    void AddComponent(int componentID);
+ #if SCRIPTING_ENABLED
+    void* GetComponent(int componentID) override;
+    void* AddComponent(int componentID) override;
+    void RemoveComponent(int componentID) override;
+#else
+    void* GetComponent(int componentID);
+    void* AddComponent(int componentID);
     void RemoveComponent(int componentID);
-    
-    
+#endif
+
     using SerializePredicate = std::function<bool(GameObject*, int)>;
     
     void ToJson(std::ostream& stream, SerializePredicate predicate = 0);
@@ -127,13 +133,10 @@ private:
     
     int* scriptSystemIndices;
     
-    typename GameWorld::ScriptBitset activeScriptComponents;
-    typename GameWorld::ScriptBitset removedScriptComponents;
+    GameConstants::ScriptBitset activeScriptComponents;
+    GameConstants::ScriptBitset removedScriptComponents;
 
-    void* GetComponent(int componentID) override;
 private:
-    void* AddComponent(int componentID) override;
-    void RemoveComponent(int componentID) override;
     void ClearScriptingData();
     void InitializeScriptingData();
 public:
@@ -142,7 +145,7 @@ public:
     void* AddScriptComponent(int componentID) override;
     void RemoveScriptComponent(int componentID) override;
 private:
-    void CheckForScriptSystemsAddition(const std::vector<short>& systems, const typename Settings::Bitset& activeComponentsBefore, const typename GameWorld::ScriptBitset& activeScriptComponentsBefore);
-    void CheckForScriptSystemsRemoval(const std::vector<short>& systems, const typename Settings::Bitset& activeComponentsBefore, const typename GameWorld::ScriptBitset& activeScriptComponentsBefore);
+    void CheckForScriptSystemsAddition(const std::vector<short>& systems, const GameConstants::Bitset& activeComponentsBefore, const typename GameConstants::ScriptBitset& activeScriptComponentsBefore);
+    void CheckForScriptSystemsRemoval(const std::vector<short>& systems, const GameConstants::Bitset& activeComponentsBefore, const typename GameConstants::ScriptBitset& activeScriptComponentsBefore);
 #endif
 };
