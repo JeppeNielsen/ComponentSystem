@@ -69,9 +69,9 @@ struct FieldEditorProperty : public FieldInfoEditor<Property<T>, void, void> {
         
         if (currentValue!=prevValue) {
             prevValue = currentValue;
-            this->field->Set(currentValue);
+            this->field->operator()(currentValue);
         } else {
-            currentValue = this->field->GetValue();
+            currentValue = this->field->operator();
             prevValue = currentValue;
         }
         editor->Update(dt);
