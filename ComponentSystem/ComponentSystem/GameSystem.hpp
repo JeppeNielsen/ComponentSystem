@@ -50,8 +50,6 @@ protected:
     GameSystem() { }
     virtual ~GameSystem() { }
     
-    using Components = std::tuple<ComponentList*...>;
-    
     void CreateComponents(GameWorld *world, int systemIndex) override;
 };
 

@@ -22,27 +22,6 @@
 #include "GameSystem.hpp"
 #include "Container.hpp"
 
-template<typename... Systems>
-class GameWorldInitializer {
-public:
-    std::vector<IGameSystem*> CreateSystems() const {
-        std::vector<IGameSystem*> systems;
-        std::tuple<Systems*...> systemsTuple;
-        Meta::for_each_in_tuple_non_const(systemsTuple, [&systems](auto t) {
-            using SystemType = std::remove_pointer_t<decltype(t)>;
-            int systemID = IDHelper::GetSystemID<SystemType>();
-            if (systemID>=systems.size()) {
-                systems.resize(systemID + 1, 0);
-            }
-            if (!systems[systemID]) {
-                systems[systemID] = new SystemType();
-                systems[systemID]->index = (int)(systems.size() - 1);
-            }
-        });
-        return systems;
-    }
-};
-
 class GameWorld {
 private:
     friend class GameObject;
@@ -68,23 +47,45 @@ private:
     std::vector<std::function<void(GameObject*)>> removeComponent;
     std::vector<std::function<TypeInfo(GameObject*)>> getTypeComponent;
     
+    bool isInitializing;
+    
     bool TryGetComponentIndex(std::string componentName, int& index);
     GameObject* LoadObject(minijson::istream_context &context, std::function<void(GameObject*)>& onCreated);
     void InitializeWorld();
     
+    template<typename System>
+    System* CreateSystem() {
+        int systemID = IDHelper::GetSystemID<System>();
+        if (systemID>=systems.size()) {
+            systems.resize(systemID + 1, 0);
+        }
+        if (!systems[systemID]) {
+            systems[systemID] = new System();
+            systems[systemID]->index = (int)(systems.size() - 1);
+        }
+        return (System*)systems[systemID];
+    }
+    
 public:
 
-    template<typename Initializer>
-    void Initialize(const Initializer& initializer) {
-        systems = initializer.CreateSystems();
+    template<typename... Systems>
+    void Initialize() {
+        isInitializing = true;
+        std::tuple<Systems*...> systemsTuple;
+        Meta::for_each_in_tuple_non_const(systemsTuple, [this](auto t) {
+            using SystemType = std::remove_pointer_t<decltype(t)>;
+            CreateSystem<SystemType>();
+        });
         InitializeWorld();
+        isInitializing = false;
     }
 
     template<typename System>
-    System& GetSystem() {
-        return *((System*)systems[IDHelper::GetSystemID<System>()]);
+    System* GetSystem() {
+        if (isInitializing) return CreateSystem<System>();
+        return (System*)systems[IDHelper::GetSystemID<System>()];
     }
-
+    
     GameObject* CreateObject();
     GameObject* CreateObject(std::istream &jsonStream, std::function<void(GameObject*)> onCreated);
     GameWorld();

@@ -54,6 +54,9 @@ GameObject* GameWorld::LoadObject(minijson::istream_context &context, std::funct
 }
 
 void GameWorld::InitializeWorld() {
+    for(auto s : systems) {
+        s->Initialize(this);
+    }
     systemBitsets.resize(systems.size());
     componentSystems.resize(systems.size());
     for(int i=0; i<systems.size(); ++i) {
@@ -65,9 +68,6 @@ void GameWorld::InitializeWorld() {
 #if SCRIPTING_ENABLED
     staticScriptSystemComponents.resize(components.size());
 #endif
-    for(auto s : systems) {
-        s->Initialize(this);
-    }
 }
 
 GameObject* GameWorld::CreateObject() {

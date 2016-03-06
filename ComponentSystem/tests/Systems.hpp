@@ -11,9 +11,12 @@
 #include "Components.hpp"
 
 struct MoverSystem : public GameSystem<Transform, Velocity> {
+
+    struct Player {
+        std::string name;
+    };
     
-    
-    struct InnerSystem : GameSystem<Transform> {
+    struct PlayerSystem : GameSystem<Transform, Player> {
         void ObjectAdded(GameObject* object) {
             std::cout << "InnerSystem added: " << object->GetComponent<Transform>()->x << std::endl;
         
@@ -23,6 +26,10 @@ struct MoverSystem : public GameSystem<Transform, Velocity> {
             std::cout << "InnerSystem removed: " << object-> GetComponent<Transform>()->x << std::endl;
         
         }
+    };
+    
+    void Initialize(GameWorld* world) override {
+        world->GetSystem<PlayerSystem>();
     };
 
     //using Systems = meta::list<InnerSystem>;

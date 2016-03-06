@@ -30,28 +30,19 @@ int main() {
 
     scriptWorld.Build();
     
-    GameWorldInitializer<MoverSystem, RenderSystem, Gui> initializer;
-    
     GameWorld world;
-    world.Initialize(initializer);
+    world.Initialize<MoverSystem, RenderSystem, Gui>();
     
     scriptWorld.AddGameWorld(world);
     
+    /*
     GameObject* object = world.CreateObject();
     
     object->AddComponent<Transform>();
     object->AddComponent<Velocity>();
 
     world.Update(1.0f);
-
-{
-
-    int breek = 6;
-
-}
-    
-    
-    /*
+    */
     
     {
         auto obj = world.CreateObject();
@@ -124,9 +115,6 @@ int main() {
     w.close();
     
     }
-
-    */
-    
     
     return 0;
 }

@@ -20,12 +20,10 @@ struct Debug;
 
 int main_nothingHere() {
 
-    GameWorldInitializer<MoverSystem, RenderSystem, Gui> initializer;
-
     GameWorld world;
-    world.Initialize(initializer);
+    world.Initialize<MoverSystem, RenderSystem, Gui>();
     
-    GameObject* gadget = world.GetSystem<Gui>().CreateGadget(10);
+    GameObject* gadget = world.GetSystem<Gui>()->CreateGadget(10);
     
     gadget->ToJson(std::cout);
     
