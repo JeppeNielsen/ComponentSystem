@@ -50,21 +50,19 @@ struct SpriteSystem : GameSystem<Transform, Sprite> {
     }
 };
 
-struct MoverSystem : GameSystem<Transform> {
+struct ScriptTransformSystem : GameSystem<Transform> {
     
     void ObjectAdded(GameObject* object) {
-        std::cout << "MoverSystem::ObjectAdded"<<std::endl;
+        std::cout << "ScriptTransformSystem::ObjectAdded"<<std::endl;
     }
         
     void ObjectRemoved(GameObject* object) {
-        std::cout << "MoverSystem::ObjectRemoved"<<std::endl;
+        std::cout << "ScriptTransformSystem::ObjectRemoved"<<std::endl;
     }
 
     void Update(float dt) {
        //std::cout << Objects()[0]->GetComponent<Sprite>()->width<<std::endl;
     }
-    
-
 };
 
 struct JumpSystem : GameSystem<Transform, Jumpable> {

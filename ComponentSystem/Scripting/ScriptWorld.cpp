@@ -478,3 +478,78 @@ void Container<void*>::ResetInstance(Container<void *>::ObjectInstance *instance
     ResetComponent func = (*(resetComponent));
     func(contextIndex, instance->object, defaultObject->object);
 }
+
+
+void ScriptWorld::AddGameWorld(GameWorld& world) {
+
+    worldComponentNames.clear();
+    for(int i=0; i<world.componentNames.size(); ++i) {
+        worldComponentNames.push_back({ world.componentNames[i], i });
+    }
+
+    int numberOfSystems = countSystems();
+    int numberOfComponents = countComponents();
+
+    world.InitializeScriptData(
+        numberOfSystems, numberOfComponents,
+        [this](int index) {
+            return createSystem(index);
+        },
+        [this](auto& scriptContainer, int index) {
+            scriptContainer.createContext = &createComponent;
+            scriptContainer.deleteContext = &deleteComponent;
+            scriptContainer.resetContext = &resetComponent;
+            scriptContainer.contextIndex = index;
+            scriptContainer.Initialize();
+        },
+        [this](auto& staticScriptSystemComponents, auto& dynamicScriptSystemComponents, auto& scriptSystemsData) {
+        
+            auto& scriptSystems = scriptClasses.children["Systems"].children;
+        
+            int index = 0;
+            for (auto& scriptSystem : scriptSystems) {
+                GameWorld::ScriptSystemData data;
+                for (auto& component : scriptSystem.second.templateArguments) {
+                    int componentIndex;
+                    bool staticComponent;
+                    if (FindComponentIndex(component, staticComponent, componentIndex)) {
+                        if (staticComponent) {
+                            staticScriptSystemComponents[componentIndex].push_back(index);
+                            data.staticComponents[componentIndex] = true;
+                        } else {
+                            dynamicScriptSystemComponents[componentIndex].push_back(index);
+                            data.scriptComponents.push_back(componentIndex);
+                        }
+                    }
+                }
+                scriptSystemsData.push_back(data);
+                index++;
+            }
+        }
+    );
+}
+
+void ScriptWorld::RemoveGameWorld(GameWorld& world) {
+    world.ClearScripingData([this] (auto scriptSystem){
+        deleteSystem(scriptSystem);
+    });
+}
+
+TypeInfo ScriptWorld::GetTypeInfo(GameObject& object, int index) {
+    void* component = object.GetScriptComponent(index);
+    if (!component) {
+        return TypeInfo();
+    }
+    TypeInfo* info = getTypeInfo(index, component);
+    TypeInfo t;
+    t.UpdateFromPointer(info);
+    deleteTypeInfo(info);
+    return t;
+}
+
+
+
+
+
+
+

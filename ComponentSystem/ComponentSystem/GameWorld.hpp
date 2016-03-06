@@ -36,6 +36,7 @@ public:
             }
             if (!systems[systemID]) {
                 systems[systemID] = new SystemType();
+                systems[systemID]->index = (int)(systems.size() - 1);
             }
         });
         return systems;
@@ -45,6 +46,9 @@ public:
 class GameWorld {
 private:
     friend class GameObject;
+#if SCRIPTING_ENABLED
+    friend class ScriptWorld;
+#endif
 
     using Objects = Container<GameObject>;
 

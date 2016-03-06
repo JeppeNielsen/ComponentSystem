@@ -6,115 +6,16 @@
 //  Copyright © 2016 Jeppe Nielsen. All rights reserved.
 //
 
-#define SCRIPTING_ENABLED
+//#define SCRIPTING_ENABLED
 
-#include "GameSettings.hpp"
-#include "GameSystem.hpp"
 #include "GameWorld.hpp"
-#include "metaLib.hpp"
-#include <type_traits>
 #include "ScriptWorld.hpp"
-#include "Components.hpp"
+#include "Systems.hpp"
 
-template<typename T>
-struct MoverSystem : GameSystem<T, Transform, Velocity> {
-
-    struct TransformSystem : GameSystem<T, Transform> {
-    
-        
-        struct OtherSystem : GameSystem<T, Velocity> {
-        
-            void ObjectAdded(GameObject<T>* object) {
-                
-            }
-            
-            void ObjectRemoved(GameObject<T>* object) {
-            
-            }
-            
-        };
-        
-        using Systems = meta::list<OtherSystem>;
-        
-        void ObjectAdded(GameObject<T>* object) {
-            auto& t = this->World().template GetSystem<OtherSystem>();
-            
-            int bla = 4;
-            bla++;
-            
-        }
-        
-        void ObjectRemoved(GameObject<T>* object) {
-        
-        }
-        
-    };
-    
-    using Systems = meta::list<TransformSystem, typename TransformSystem::OtherSystem>;
-
-    TransformSystem* transformSystem;
-    
-    void Initialize() {
-        transformSystem = &this->World().template GetSystem<TransformSystem>();
-        
-        
-        
-        int hej = 3;
-        hej++;
-        
-        std::cout << "MoverSystem"<<std::endl;
-        
-    }
-
-    void ObjectAdded(GameObject<T>* object) {
-    
-    
-        std::cout << "Object added: " << object->template GetComponent<Transform>()->x << std::endl;
-    }
-    
-    void ObjectRemoved(GameObject<T>* object) {
-        std::cout << "Object removed: " << object->template GetComponent<Transform>()->x << std::endl;
-        
-    }
-    
-    void Update(float dt) {
-        for(auto o : this->Objects()) {
-            o->template GetComponent<Transform>()->x += o->template GetComponent<Velocity>()->x * dt;
-        }
-        
-        std::cout <<" TransformSystem::Count = " << transformSystem->template Objects().size()<< std::endl;
-    }
-};
-
-template<typename T>
-struct RenderSystem : GameSystem<T, Transform, Renderable> {
-
-    void ObjectAdded(GameObject<T>* object) {
-        std::cout << "RenderSystem::ObjectAdded"<<std::endl;
-    }
-
-    void ObjectRemoved(GameObject<T>* object) {
-        std::cout << "RenderSystem::ObjectRemoved"<<std::endl;
-    }
-    
-    void Update(float dt) {
-        int index = 0;
-        for(auto o : this->Objects()) {
-            std::cout << "Rendered object #"<<++index<<std::endl;
-        }
-    }
-};
-
-struct SpecificGameSettings : GameSettings<
-        MoverSystem<SpecificGameSettings>,
-        RenderSystem<SpecificGameSettings>
-        >
-{ };
-
-int main_TestScriptWorld() {
+int main() {
 
     ScriptWorld scriptWorld;
-    scriptWorld.SetWorldType<SpecificGameSettings>();
+    //scriptWorld.SetWorldType<SpecificGameSettings>();
     scriptWorld.SetFiles(
     "ScriptExample.so",
     "/Projects/ComponentSystem/ComponentSystem/ScriptInclude",
@@ -128,18 +29,33 @@ int main_TestScriptWorld() {
     
 
     scriptWorld.Build();
-
-    GameWorld<SpecificGameSettings> world;
-    world.Initialize();
+    
+    GameWorldInitializer<MoverSystem, RenderSystem, Gui> initializer;
+    
+    GameWorld world;
+    world.Initialize(initializer);
     
     scriptWorld.AddGameWorld(world);
     
+    GameObject* object = world.CreateObject();
     
+    object->AddComponent<Transform>();
+    object->AddComponent<Velocity>();
+
+    world.Update(1.0f);
+
+{
+
+    int breek = 6;
+
+}
+    
+    
+    /*
     
     {
         auto obj = world.CreateObject();
         obj->AddComponent<Transform>();
-        
         obj->GetComponent<Transform>()->x = 1234;
         
         
@@ -209,7 +125,7 @@ int main_TestScriptWorld() {
     
     }
 
-    
+    */
     
     
     return 0;

@@ -18,7 +18,7 @@ struct Debug;
 
 
 
-int main() {
+int main_nothingHere() {
 
     GameWorldInitializer<MoverSystem, RenderSystem, Gui> initializer;
 
