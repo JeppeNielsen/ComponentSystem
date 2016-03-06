@@ -26,6 +26,11 @@ struct MoverSystem : public GameSystem<Transform, Velocity> {
             std::cout << "InnerSystem removed: " << object-> GetComponent<Transform>()->x << std::endl;
         
         }
+        
+        void Initialize(GameWorld* world) {
+            std::cout << "Player System :: Initialize"<<std::endl;
+        }
+        
     };
     
     void Initialize(GameWorld* world) override {

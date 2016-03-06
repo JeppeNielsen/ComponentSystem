@@ -54,9 +54,21 @@ GameObject* GameWorld::LoadObject(minijson::istream_context &context, std::funct
 }
 
 void GameWorld::InitializeWorld() {
-    for(auto s : systems) {
-        s->Initialize(this);
+    std::vector<IGameSystem*> initializedSystems;
+    while (true) {
+        std::vector<IGameSystem*> systemsToInitialize;
+        for (auto s : systems) {
+            if (std::find(initializedSystems.begin(), initializedSystems.end(), s)==initializedSystems.end()) {
+                systemsToInitialize.push_back(s);
+            }
+        }
+        if (systemsToInitialize.empty()) break;
+        for(auto s : systemsToInitialize) {
+            initializedSystems.push_back(s);
+            s->Initialize(this);
+        }
     }
+    
     systemBitsets.resize(systems.size());
     componentSystems.resize(systems.size());
     for(int i=0; i<systems.size(); ++i) {
