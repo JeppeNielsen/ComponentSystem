@@ -19,7 +19,7 @@ struct Transform {
     //Transform() { std::cout<<"Transform ctor"<<std::endl; }
     //~Transform() { std::cout<<"Transform dtor"<<std::endl; }
     
-    TYPE_FIELDS_BEGIN()
+    TYPE_FIELDS_BEGIN
     TYPE_FIELD(x)
     TYPE_FIELD(y)
     TYPE_FIELDS_END
@@ -34,14 +34,14 @@ struct Velocity {
     struct Info {
         int TestVar;
         
-        TYPE_FIELDS_BEGIN()
+        TYPE_FIELDS_BEGIN
         TYPE_FIELD(TestVar)
         TYPE_FIELDS_END
     };
     
     Info info;
     
-    TYPE_FIELDS_BEGIN()
+    TYPE_FIELDS_BEGIN
     TYPE_FIELD(x)
     TYPE_FIELD(y)
     TYPE_FIELD(info)
@@ -53,7 +53,7 @@ struct Renderable {
     //Renderable() { std::cout<<"Renderable ctor"<<std::endl; }
     //~Renderable() { std::cout<<"Renderable dtor"<<std::endl; }
     
-    //TYPE_FIELDS_BEGIN()
+    //TYPE_FIELDS_BEGIN
     //TYPE_FIELD(imageNo)
     //TYPE_FIELDS_END
 };
@@ -63,7 +63,7 @@ struct Touchable {
     //Touchable() { std::cout<<"Renderable ctor"<<std::endl; }
     //~Touchable() { std::cout<<"Renderable dtor"<<std::endl; }
     
-    TYPE_FIELDS_BEGIN()
+    TYPE_FIELDS_BEGIN
     TYPE_FIELD(clickThrough)
     TYPE_FIELDS_END
 };

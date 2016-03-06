@@ -69,9 +69,9 @@ struct FieldEditorProperty : public FieldInfoEditor<Property<T>, void, void> {
         
         if (currentValue!=prevValue) {
             prevValue = currentValue;
-            this->field->operator()(currentValue);
+            this->field->operator=(currentValue);
         } else {
-            currentValue = this->field->operator();
+            currentValue = this->field->operator()();
             prevValue = currentValue;
         }
         editor->Update(dt);
@@ -232,7 +232,7 @@ public:
 };
 
 template<typename T>
-struct JsonSerializer<T, typename std::enable_if_t< Meta::HasGetTypeFunction::apply<T>::value >> {
+struct JsonSerializer<T, typename std::enable_if_t< Pocket::Meta::HasGetTypeFunction::apply<T>::value >> {
     static void Serialize(std::string& key, const T& value, minijson::object_writer& writer) {
         auto type = ((T&)value).GetType();
         minijson::object_writer object = writer.nested_object(key.c_str());
@@ -241,7 +241,7 @@ struct JsonSerializer<T, typename std::enable_if_t< Meta::HasGetTypeFunction::ap
     }
     
     static void Serialize(const T& value, minijson::array_writer& writer) {
-        auto type = value.GetType();
+        auto type = ((T&)value).GetType();
         minijson::object_writer object = writer.nested_object();
         type.Serialize(object);
         object.close();
@@ -252,7 +252,6 @@ struct JsonSerializer<T, typename std::enable_if_t< Meta::HasGetTypeFunction::ap
         type.Deserialize(context);
     }
 };
-
 
 inline std::string className(const std::string& prettyFunction)
 {
@@ -267,7 +266,7 @@ inline std::string className(const std::string& prettyFunction)
 
 #define __CLASS_NAME__ className(__PRETTY_FUNCTION__)
 
-#define TYPE_FIELDS_BEGIN() \
+#define TYPE_FIELDS_BEGIN \
 public: \
 TypeInfo GetType() { \
 TypeInfo fields; \
@@ -282,4 +281,3 @@ return fields; \
 private:
 
 }
-
