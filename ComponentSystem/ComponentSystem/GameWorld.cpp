@@ -139,6 +139,9 @@ GameWorld::~GameWorld() {
     for(auto c : components) {
         delete c;
     }
+    for(auto s : systems) {
+        delete s;
+    }
 }
 
 
