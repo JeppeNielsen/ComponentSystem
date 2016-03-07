@@ -273,6 +273,7 @@ void ScriptWorld::WriteMainGameObject(std::ofstream &file) {
     file << "private:"<<std::endl;
     file << "    virtual void* GetComponent(int componentID) = 0;"<<std::endl;
     file << "    virtual void* AddComponent(int componentID) = 0;"<<std::endl;
+    file << "    virtual void* AddComponent(int componentID, GameObject* referenceObject) = 0;"<<std::endl;
     file << "    virtual void RemoveComponent(int componentID) = 0;"<<std::endl;
     file << "    virtual void* GetScriptComponent(int componentID) = 0; "<< std::endl;
     file << "    virtual void* AddScriptComponent(int componentID) = 0; "<< std::endl;

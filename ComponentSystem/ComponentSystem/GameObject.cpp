@@ -91,6 +91,11 @@ void* GameObject::AddComponent(int componentID) {
     return world->addComponent[componentID](this);
 }
 
+void* GameObject::AddComponent(int componentID, GameObject* referenceObject) {
+    if (activeComponents[componentID]) return components[componentID];
+    return world->addComponentReference[componentID](this, referenceObject);
+}
+
 void GameObject::RemoveComponent(int componentID) {
     if (!activeComponents[componentID]) return;
     world->removeComponent[componentID](this);
@@ -111,7 +116,12 @@ void GameObject::WriteJson(minijson::object_writer& writer, SerializePredicate p
     
     for(int i=0; i<world->components.size(); ++i) {
         if (!(predicate && !predicate(this, i))) {
-            SerializeComponent(i, components, false, 0);
+            std::string* referenceID = 0;
+            bool isReference = !ownedComponents[i];
+            if (isReference) {
+                referenceID = world->FindIDFromReferenceObject(this, i);
+            }
+            SerializeComponent(i, components, isReference, referenceID);
         }
     }
  
@@ -135,9 +145,10 @@ void GameObject::WriteJson(minijson::object_writer& writer, SerializePredicate p
 }
 
 void GameObject::AddComponent(minijson::istream_context& context, std::string componentName) {
-        
-        int componentID;
-        if (world->TryGetComponentIndex(componentName, componentID) && !activeComponents[componentID]) {
+    int componentID;
+    bool isReference;
+    if (world->TryGetComponentIndex(componentName, componentID, isReference) && !activeComponents[componentID]) {
+        if (!isReference) {
             AddComponent(componentID);
             if (world->getTypeComponent[componentID]) {
                 auto type = world->getTypeComponent[componentID](this);
@@ -146,36 +157,28 @@ void GameObject::AddComponent(minijson::istream_context& context, std::string co
                 minijson::ignore(context);
             }
         } else {
-            minijson::ignore(context);
-        }
-    
-    /*
-        bool addedAny = false;
-        meta::for_each_in_tuple(world->serializableComponents, [this, &context, &componentName, &addedAny] (auto componentPointer) {
-            if (addedAny) {
-                return;
-            }
-            using ComponentType = std::remove_const_t< std::remove_pointer_t<decltype(componentPointer)> >;
-            if (componentName == world->componentNames[Settings::template GetComponentID<ComponentType>()]) {
-                if (!HasComponent<ComponentType>()) {
-                    ComponentType* component = AddComponent<ComponentType>();
-                    auto type = component->GetType();
-                    type.Deserialize(context);
-                    addedAny = true;
+            std::string referenceID = "";
+            minijson::parse_object(context, [&] (const char* n, minijson::value v) {
+                std::string id = n;
+                if (id == "id" && v.type()==minijson::String) {
+                    referenceID = v.as_string();
+                    GameObject* referenceObject = world->FindObjectFromID(referenceID);
+                    if (!referenceObject) {
+                        //object not found with id, try assign first object with this component
+                        referenceObject = world->FindFirstObjectWithComponentID(componentID);
+                    }
+                    if (referenceObject) {
+                        AddComponent(componentID, referenceObject);
+                    }
                 } else {
-                    std::cout<<"Only one component per type allowed per object"<<std::endl;
                     minijson::ignore(context);
                 }
-            }
-        });
-        if (!addedAny) {
-            
+            });
         }
+    } else {
+        minijson::ignore(context);
     }
-*/
-
 }
-
 
 void GameObject::SerializeComponent(int componentID, minijson::array_writer& writer, bool isReference, std::string* referenceID ) {
     if (!activeComponents[componentID]) return;
@@ -201,6 +204,14 @@ void GameObject::SerializeComponent(int componentID, minijson::array_writer& wri
     componentWriter.close();
 }
 
+void GameObject::SetID(std::string id) {
+    world->AddObjectID(this, id);
+}
+
+std::string GameObject::GetID() {
+    std::string* id = world->GetObjectID(this);
+    return id ? *id : "";
+}
 
 #ifdef SCRIPTING_ENABLED
 
