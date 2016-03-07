@@ -102,7 +102,7 @@ public:
     std::string name;
 };
 
-#define TYPE_FIELDS_BEGIN()
+#define TYPE_FIELDS_BEGIN
 #define TYPE_FIELD(field)
 #define TYPE_FIELDS_END
 
